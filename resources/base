@@ -1,0 +1,5 @@
+#parser	INTERVAL	DEFAULT_GPS	DEFAULT_TYPE	DEFAULT_KEYWORD	URL
+lipka_cz	w	50.1946183N, 16.5779075E	kurz    ekologie	http://www.lipka.cz/kalendar-akci?idm=37&filtr=3
+adamov_cz	w	49.2955625N, 16.6638408E	akce	město	https://www.adamov.cz/kalendar-akci
+vismo	m	49.9412524495N, 14.2406344861E	akce	obecní	https://www.morinka.eu/ap
+ceska_inspirace	w	49.9483886N, 15.2681647E	akce	kultura	https://www.ceskainspirace.cz/kalendar-akci/

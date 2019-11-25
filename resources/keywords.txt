@@ -1,0 +1,69 @@
+airsoft
+auta
+auto	auta
+badminton
+balet
+baletu	balet
+běh
+běhu	běhu
+běžecká	běh
+běžecký	běh
+ekologie
+filosofie
+fotbal
+fotbalem	fotbal
+fotbalová	fotbal
+fotbalový	fotbal
+gastronomie
+historie
+hudba
+hudební	hudba
+kniha
+knihovna
+knižní	kniha
+košíková
+kultura
+kulturní	kultura
+minifotbal
+motorka
+motorky
+muzeum
+muzika
+petanque
+ping-pong
+pingpong
+pionýr
+pionýrský	pionýr
+politika
+pétanque
+příroda
+přírodní	příroda
+rock
+rocková	rock
+rockový	rock
+skautská	skaut
+skautský	skaut
+skautů	skaut
+spartak
+sport
+sportovní	sport
+turistická	turistika
+turistický	turistika
+turistika
+turisty	turistika
+velikonoce
+velikonoční	velikonoce
+vesmír
+vesmíru	vesmír
+vinařská	víno
+vinařský	víno
+vinná	víno
+vinný	víno
+vzdělání
+víno
+věda
+vědecký	věda
+úklid
+žen	ženy
+žena	ženy
+ženy

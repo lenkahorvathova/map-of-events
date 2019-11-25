@@ -1,0 +1,16 @@
+# Byte-compiled
+__pycache__/
+*.pyc
+
+# IntelliJ
+.idea/
+*.iml
+
+# Environment
+venv/
+
+# DB / Data
+data/
+
+# macOS
+.DS_Store

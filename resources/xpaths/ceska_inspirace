@@ -1,0 +1,9 @@
+base //table[contains(@class, "search_results")]
+element .//tr/td[1]
+title .//a[contains(@class, "akce")]/span[contains(@class, "akce_title")]/text()
+text .//a[contains(@class, "akce")]/span[last()]/text()
+url .//a[contains(@class, "akce")]/@href
+date .//a[contains(@class, "akce")]/span[contains(@class, "start")]/text()
+types .//a[contains(@class, "akce")]/span[contains(@class, "start")]/following-sibling::span/following-sibling::span/text()
+keywords .//a[contains(@class, "akce")]/span[last()]/text()
+location .//a[contains(@class, "akce")]/span[contains(@class, "start")]/following-sibling::span/text()
