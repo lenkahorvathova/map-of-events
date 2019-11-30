@@ -1,0 +1,1006 @@
+[
+    {
+        "url": "http://hermanicky.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://novaves-bv.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://obec.domasov.net/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://praha18.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://skalsko.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://sviadnov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "https://www.mestopacov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "https://www.morinka.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://vapennypodol.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.barchovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.belaobec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.benesov-city.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.bohunovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.brandysek.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.brezany-obec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.brodce.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.broumov-mesto.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.brtnice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.bubovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.bucovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.bysice.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.bystriceph.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.ceperka.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.cercany.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.ceska-kamenice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.chocen-mesto.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.chrlice.brno.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.chynov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.dobrovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.dolany-ol.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.dolni-dunajovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.dolnikounice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.drahelcice-obec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.drasov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.dudin.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.frydlantno.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.fulnek.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.habruvka.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.heralec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.hlubocky.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.hnevkovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.holstejn.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.horice.org/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.hornilapac.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.horosedly.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.hradcanyutisnova.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.hrubavrbka.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.hury.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.hybralec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.jablonneno.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.jablonnevp.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.jamneujihlavy.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.janovuhrenska.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.jaromericenr.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.jenisov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.jevisovka.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.jihlava.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.jiretin.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.jirikovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.jundrov.info/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kamenicenl.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kameniceujihlavy.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kly.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.knoviz.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kohoutovice.brno.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kojetice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kolaje.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kosovahora.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kostelecncl.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kostelecno.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kralovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kralovopole.brno.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kraluv-dvur.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.krasikovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.krasnahora.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.krasova.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.krchleby.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.leskovicehb.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.libesice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.libhost.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.libisany.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.lipnicens.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.lodenice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.lomnice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.loucen.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.lovcice.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.lubenec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.lukanadjihlavou.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.malomerice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.malsovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mesto-chlumec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mesto-doksy.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mestohabartov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mestokladno.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mestokourim.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mestokyjov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mesto-most.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mestopelhrimov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mestorudna.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mestosec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mestoterezin.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mesto-ustek.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mestysmarsovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.meucaslav.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.meulovo.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mezimesti.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.misovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mlekosrby.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mnetes.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mokra-horakov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.moravskypisek.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.morberoun.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mratin.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.muas.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mulitvinov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.muunhost.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.muzdanice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.neratovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.nosislav.info/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.novabystrice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.novy-bor.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.novybydzov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.novy-liskovec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obecbrehy.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obeccholina.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obec-dobsice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obec-hovorany.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obecjanovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obecknyk.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obeckolec.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obeckrizany.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obeclipov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obeclobendava.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obec-ondrejov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obecpozden.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obecpuklice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obecslavetin.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obecsopotnice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obecstaremesto.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obecvysoka.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obeczeliv.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.ob-vis.net/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.ochozubrna.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.odry.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.olesna.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.omice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.opatovice.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.ostrovacice.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.pavlov-pe.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.peruc.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.pletenyujezd.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.pocatky.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.praha-dubec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.prestavlkyuprerova.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.pribyslav.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.prisnotice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.pruhonice-obec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.putimov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.repin.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.rokycany.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.rychnov-city.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.rynarec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.samotisky.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.sezemice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.skripel.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.slavikov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.smecno-mesto.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.smetanovalhota.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.smrzovka.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.spaleneporici.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.srbska-kamenice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.stare-herminovy.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.steblova.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.stoky.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.stonarov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.strancice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.straznice-mesto.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.streliceubrna.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.stremy.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.syrovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.trebovle-obec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.trest.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.tsviny.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.tucapy.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.tvarozna-lhota.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.tynecnadlabem.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.uhlirskejanovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.unicov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.valasskeklobouky.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.velkeporici.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.velke-zernoseky.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.velkytynec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.vernerice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.veseli-nad-moravou.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.vetrnyjenikov.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.vilemov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.vilemovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.vlastec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.vlkos.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.vyskov-mesto.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.vysokestudnice.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.vysoky-ujezd-urad.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.zebetin.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.zilina-obec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.zirovnice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.zitenice.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.zlatehory.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.zliv.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.batelov.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.blazovice.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.brzkov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.chlistov.info/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.dobronin.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.domanin.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.domasovusternberka.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.jerisno.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kolodeje.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kolovraty.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kosicky.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.krnov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.krupka-mesto.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.kvetinov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.melnik.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mesin.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mestochrast.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mestojachymov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mesto-miroslav.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mestosazava.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mestosmirice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mesto-zubri.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mestysliten.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mezibori.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.mostyujablunkova.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.munovapaka.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.nasavrky.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.novehamry.eu/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obecbudikov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obecradslavice.com/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.obecveseli.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.postoloprty.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.pouzdrany.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.pozorice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.provodov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.sedlec-prcice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.senozaty.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.stitna-popov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.sulejovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.svabov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.velkepopovice.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.velkyberanov.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "url": "http://www.zachrastany.cz/ap",
+        "parser": "vismo"
+    }
+]

@@ -1,9 +1,12 @@
 import json
+import os
 
 from bs4 import BeautifulSoup
 
+VISMO_RESEARCH_DIR_PATH = "data/tmp/vismo_research"
 
-def has_events(html_file_path):
+
+def has_events(html_file_path: str) -> bool:
     with open(html_file_path, 'r') as content:
         document = BeautifulSoup(content, 'html.parser')
         calendar = document.find('div', {'id': 'kalendarAkci'})
@@ -20,17 +23,20 @@ def has_events(html_file_path):
         return False
 
 
-def prepare_output(description, num_of_sites, list_of_sites, all_sites):
-    return description + " " + str(num_of_sites) + "/" + str(all_sites) + "\n" \
-           + str(list_of_sites) + "\n" \
-           + "-----------------------------------------" + "\n"
+def prepare_output(description: str, num_of_sites: int, list_of_sites: list) -> dict:
+    return {
+        description: {
+            "count": num_of_sites,
+            "list": list_of_sites
+        }
+    }
 
 
 def get_statistics():
     without_calendar_sites, error_sites, without_events_sites, with_events_sites = 0, 0, 0, 0
     without_calendar_sites_list, error_sites_list, without_events_sites_list, with_events_sites_list = [], [], [], []
 
-    with open("data/tmp/vismo_research/sites_data.json") as json_file:
+    with open(os.path.join(VISMO_RESEARCH_DIR_PATH, "sites_data.json"), 'r') as json_file:
         data = json.load(json_file)
 
     for site in data:
@@ -59,19 +65,22 @@ def get_statistics():
 
     all_sites = without_calendar_sites + error_sites + without_events_sites + with_events_sites
     statistics = [
-        ("Sites without calendar:", without_calendar_sites, without_calendar_sites_list),
-        ("Sites with error:", error_sites, error_sites_list),
-        ("Sites without events:", without_events_sites, without_events_sites_list),
-        ("Sites with events:", with_events_sites, with_events_sites_list),
+        ("sites_without_calendar", without_calendar_sites, without_calendar_sites_list),
+        ("sites_with_error", error_sites, error_sites_list),
+        ("sites_without_events", without_events_sites, without_events_sites_list),
+        ("sites_with_events", with_events_sites, with_events_sites_list),
     ]
 
-    with open("data/tmp/vismo_research/output.txt", 'w') as output_file:
+    with open(os.path.join(VISMO_RESEARCH_DIR_PATH, "output.json"), 'w') as output_file:
 
-        output_text = ""
+        output = {}
         for stat in statistics:
-            output_text += prepare_output(stat[0], stat[1], stat[2], all_sites)
+            output.update(prepare_output(stat[0], stat[1], stat[2]))
 
-        output_file.write(output_text)
+        output_file.write(json.dumps({
+            "all": all_sites,
+            "statistics": output
+        }, indent=4))
 
 
 if __name__ == '__main__':
