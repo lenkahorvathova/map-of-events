@@ -1,9 +1,2 @@
-base //div[contains(@class, "obsah") and contains(@id, "kalendarAkci")]
-element .//div[contains(@class, "dok")]//ul/li
-title .//div[contains(@class, "obsahAkce")]/strong/a/text()
-text .//div[contains(@class, "obsahAkce")]/div[contains(@class, "perex2")]/text()
-url .//div[contains(@class, "obsahAkce")]/strong/a/@href
-date concat(.//div[contains(@class, "datum")]/span[contains(@class, "rok")]/text(), "-", .//div[contains(@class, "datum")]/span[contains(@class, "mesic")]/text(), "-", .//span[contains(@class, "den")]/span[contains(@class, "hodnota")]/text())
-types .//div[contains(@class, "typAkce")]/a/text()
-keywords .//div[contains(@class, "obsahAkce")]/div[contains(@class, "perex2")]/text()
-location 
+root //div[contains(@class, "obsah") and contains(@id, "kalendarAkci")]
+url .//div[contains(@class, "dok")]//ul/li//strong/a/@href
