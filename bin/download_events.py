@@ -7,9 +7,8 @@ from urllib.parse import urljoin
 import requests
 from lxml import etree
 
-from lib.utils import create_connection, setup_db
+from lib.utils import create_connection
 
-DATABASE_PATH = "data/map_of_events.db"
 INPUT_SITES_BASE_FILE_PATH = "resources/input_sites_base.json"
 DATA_DIR_PATH = "data/html_content"
 TEMPLATES_DIR_PATH = "resources/xpaths"
@@ -57,12 +56,10 @@ def download_events() -> None:
     Outputs DOWNLOAD_EVENTS_OUTPUT_FILE_PATH with info about most recent run of the script.
     """
 
-    connection = create_connection(DATABASE_PATH)
+    connection = create_connection()
     log_output = []
 
     with connection:
-        setup_db(connection)
-
         cursor = connection.execute('''SELECT url FROM websites''')
         input_urls = [url[0] for url in cursor.fetchall()]
 

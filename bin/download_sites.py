@@ -5,9 +5,8 @@ from datetime import datetime
 
 import requests
 
-from lib.utils import create_connection, setup_db
+from lib.utils import create_connection
 
-DATABASE_PATH = "data/map_of_events.db"
 INPUT_SITES_BASE_FILE_PATH = "resources/input_sites_base.json"
 DATA_DIR_PATH = "data/html_content"
 
@@ -20,11 +19,9 @@ def download_sites() -> None:
     Stores a website's HTML file path and timestamp of a download into the database.
     """
 
-    connection = create_connection(DATABASE_PATH)
+    connection = create_connection()
 
     with connection:
-        setup_db(connection)
-
         with open(INPUT_SITES_BASE_FILE_PATH, 'r') as base_file:
             base_dict = json.load(base_file)
             input_urls = [(base["url"].strip(), base["domain"].strip()) for base in base_dict]
