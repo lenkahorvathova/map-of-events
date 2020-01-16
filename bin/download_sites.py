@@ -5,10 +5,8 @@ from datetime import datetime
 
 import requests
 
+from lib.constants import DATA_DIR_PATH, INPUT_SITES_BASE_FILE_PATH
 from lib.utils import create_connection
-
-INPUT_SITES_BASE_FILE_PATH = "resources/input_sites_base.json"
-DATA_DIR_PATH = "data/html_content"
 
 
 def download_sites() -> None:

@@ -4,8 +4,9 @@ from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 
-VISMO_RESEARCH_DATA_DIR_PATH = "data/tmp/vismo_research"
-VISMO_RESEARCH_DOWNLOAD_SITES_OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "download_sites_output.json")
+from bin.utils.vismo_research.download_sites import VISMO_RESEARCH_DWNLD_SITES_OUTPUT_FILE_PATH
+from lib.constants import VISMO_RESEARCH_DATA_DIR_PATH
+
 VISMO_RESEARCH_GET_STATS_OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "get_stats_output.json")
 
 
@@ -67,7 +68,7 @@ def prepare_output(description: str, num_of_sites: int, list_of_sites: list) -> 
 
 def get_statistics() -> None:
     """
-    Gets statistics about Vismo websites from VISMO_RESEARCH_DOWNLOAD_SITES_OUTPUT_FILE_PATH
+    Gets statistics about Vismo websites from VISMO_RESEARCH_DWNLD_SITES_OUTPUT_FILE_PATH
         (unreachable sites, sites without /ap page, sites without calendar, valid sites).
     Outputs VISMO_RESEARCH_GET_STATS_OUTPUT_FILE_PATH with these statistics.
     """
@@ -75,7 +76,7 @@ def get_statistics() -> None:
     without_ap_page_sites, error_sites, without_calendar_sites, with_calendar_sites = 0, 0, 0, 0
     without_ap_page_sites_list, error_sites_list, without_calendar_sites_list, with_calendar_sites_list = [], [], [], []
 
-    with open(VISMO_RESEARCH_DOWNLOAD_SITES_OUTPUT_FILE_PATH, 'r') as json_file:
+    with open(VISMO_RESEARCH_DWNLD_SITES_OUTPUT_FILE_PATH, 'r') as json_file:
         data = json.load(json_file)
 
     for site in data:

@@ -7,12 +7,11 @@ from urllib.parse import urljoin
 import requests
 from lxml import etree
 
+from lib.constants import DATA_DIR_PATH, TEMPLATES_DIR_PATH, INPUT_SITES_BASE_FILE_PATH
 from lib.utils import create_connection
 
-INPUT_SITES_BASE_FILE_PATH = "resources/input_sites_base.json"
-DATA_DIR_PATH = "data/html_content"
-TEMPLATES_DIR_PATH = "resources/xpaths"
 DOWNLOAD_EVENTS_OUTPUT_FILE_PATH = "data/tmp/download_events_output.json"
+EVENTS_FOLDER_NAME = "events"
 
 with open(INPUT_SITES_BASE_FILE_PATH, 'r') as base_file:
     BASE_DICT = json.load(base_file)
@@ -93,7 +92,7 @@ def download_events() -> None:
                         log_file_obj["events_list"].append(event_url)
 
                         try:
-                            html_file_dir = os.path.join(DATA_DIR_PATH, domain, "events")
+                            html_file_dir = os.path.join(DATA_DIR_PATH, domain, EVENTS_FOLDER_NAME)
                             os.makedirs(html_file_dir, exist_ok=True)
 
                             r = requests.get(event_url, timeout=30)

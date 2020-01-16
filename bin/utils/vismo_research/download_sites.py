@@ -6,10 +6,11 @@ from urllib.parse import urlparse
 
 import requests
 
+from lib.constants import VISMO_RESEARCH_DATA_DIR_PATH
+
 VISMO_RESEARCH_INPUT_URLS_FILE_PATH = "resources/research/vismo_urls.txt"
-VISMO_RESEARCH_DATA_DIR_PATH = "data/tmp/vismo_research"
 VISMO_RESEARCH_HTML_CONTENT_DIR_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "html_content")
-VISMO_RESEARCH_DOWNLOAD_SITES_OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "download_sites_output.json")
+VISMO_RESEARCH_DWNLD_SITES_OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "download_sites_output.json")
 
 
 def download_sites_helper(url: str) -> dict:
@@ -56,7 +57,7 @@ def download_sites() -> None:
         specified in the VISMO_RESEARCH_INPUT_URLS_FILE_PATH.
     Uses multiprocessing to speed up the process
         (a function executed in parallel across input URLs is "download_sites_helper").
-    Outputs VISMO_RESEARCH_DOWNLOAD_SITES_OUTPUT_FILE_PATH with information about each website.
+    Outputs VISMO_RESEARCH_DWNLD_SITES_OUTPUT_FILE_PATH with information about each website.
     """
 
     with open(VISMO_RESEARCH_INPUT_URLS_FILE_PATH, 'r') as vismo_urls:
@@ -66,7 +67,7 @@ def download_sites() -> None:
         with Pool(5) as p:
             sites = p.map(download_sites_helper, input_urls)
 
-    with open(VISMO_RESEARCH_DOWNLOAD_SITES_OUTPUT_FILE_PATH, 'w') as g:
+    with open(VISMO_RESEARCH_DWNLD_SITES_OUTPUT_FILE_PATH, 'w') as g:
         g.write(json.dumps(sites, indent=4))
 
 

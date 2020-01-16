@@ -1,11 +1,8 @@
 import json
-import os
 from urllib.parse import urlparse
 
-VISMO_RESEARCH_DATA_DIR_PATH = "data/tmp/vismo_research"
-VISMO_RESEARCH_GET_STATS_OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "get_stats_output.json")
-
-INPUT_SITES_BASE_FILE_PATH = "resources/input_sites_base.json"
+from bin.utils.vismo_research.get_statistics import VISMO_RESEARCH_GET_STATS_OUTPUT_FILE_PATH
+from lib.constants import INPUT_SITES_BASE_FILE_PATH
 
 
 def generate_input() -> None:
