@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS events_raw (
   url TEXT UNIQUE,
   html_file_path TEXT,
   downloaded TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-
 );
 
 CREATE TABLE IF NOT EXISTS websites (

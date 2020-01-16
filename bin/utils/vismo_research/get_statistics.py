@@ -4,10 +4,20 @@ from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 
-VISMO_RESEARCH_DIR_PATH = "data/tmp/vismo_research"
+VISMO_RESEARCH_DATA_DIR_PATH = "data/tmp/vismo_research"
+VISMO_RESEARCH_DOWNLOAD_SITES_OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "download_sites_output.json")
+VISMO_RESEARCH_GET_STATS_OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "get_stats_output.json")
 
 
 def has_events(html_file_path: str) -> bool:
+    """
+    Checks a HTML content at html_file_path to find out if website is able to have events.
+
+    :param html_file_path: a path to a file with a website's HTML content
+    :return: False, if website doesn't have a calendar or there is a "no-events" warning;
+             True, otherwise
+    """
+
     with open(html_file_path, 'r') as content:
         document = BeautifulSoup(content, 'html.parser')
         calendar = document.find('div', {'id': 'kalendarAkci'})
@@ -22,6 +32,13 @@ def has_events(html_file_path: str) -> bool:
 
 
 def sort_function(url: str) -> str:
+    """
+    A function for sorting URLS by their domains.
+
+    :param url: an URL to parse
+    :return: a domain string for alphabetical sorting
+    """
+
     domain = urlparse(url).hostname
     domain = domain.replace("www.", "").replace(".", "_").replace("-", "_")
 
@@ -29,6 +46,15 @@ def sort_function(url: str) -> str:
 
 
 def prepare_output(description: str, num_of_sites: int, list_of_sites: list) -> dict:
+    """
+    Prepares a dictionary for one of the stats for an output file.
+
+    :param description: a name of the specific statistics
+    :param num_of_sites: a count of sites complying with the description
+    :param list_of_sites: a list of the sites' URLs
+    :return: a dict combining the info
+    """
+
     list_of_sites.sort(key=sort_function)
 
     return {
@@ -39,11 +65,17 @@ def prepare_output(description: str, num_of_sites: int, list_of_sites: list) -> 
     }
 
 
-def get_statistics():
+def get_statistics() -> None:
+    """
+    Gets statistics about Vismo websites from VISMO_RESEARCH_DOWNLOAD_SITES_OUTPUT_FILE_PATH
+        (unreachable sites, sites without /ap page, sites without calendar, valid sites).
+    Outputs VISMO_RESEARCH_GET_STATS_OUTPUT_FILE_PATH with these statistics.
+    """
+
     without_ap_page_sites, error_sites, without_calendar_sites, with_calendar_sites = 0, 0, 0, 0
     without_ap_page_sites_list, error_sites_list, without_calendar_sites_list, with_calendar_sites_list = [], [], [], []
 
-    with open(os.path.join(VISMO_RESEARCH_DIR_PATH, "sites_data.json"), 'r') as json_file:
+    with open(VISMO_RESEARCH_DOWNLOAD_SITES_OUTPUT_FILE_PATH, 'r') as json_file:
         data = json.load(json_file)
 
     for site in data:
@@ -78,9 +110,9 @@ def get_statistics():
         ("sites_with_calendar", with_calendar_sites, with_calendar_sites_list),
     ]
 
-    with open(os.path.join(VISMO_RESEARCH_DIR_PATH, "output.json"), 'w') as output_file:
-
+    with open(VISMO_RESEARCH_GET_STATS_OUTPUT_FILE_PATH, 'w') as output_file:
         output = {}
+
         for stat in statistics:
             output.update(prepare_output(stat[0], stat[1], stat[2]))
 

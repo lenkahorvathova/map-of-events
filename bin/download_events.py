@@ -9,19 +9,36 @@ from lxml import etree
 
 from lib.utils import create_connection, setup_db
 
+DATABASE_PATH = "data/map_of_events.db"
+INPUT_SITES_BASE_FILE_PATH = "resources/input_sites_base.json"
 DATA_DIR_PATH = "data/html_content"
+TEMPLATES_DIR_PATH = "resources/xpaths"
+DOWNLOAD_EVENTS_OUTPUT_FILE_PATH = "data/tmp/download_events_output.json"
 
-with open("resources/input_sites_base.json", 'r') as base_file:
-    base_dict = json.load(base_file)
+with open(INPUT_SITES_BASE_FILE_PATH, 'r') as base_file:
+    BASE_DICT = json.load(base_file)
 
 
-def get_base(url: str):
-    for obj in base_dict:
+def get_base(url: str) -> None:
+    """
+    Gets information from input base file about websites.
+
+    :param url: an URL address of website by which it gets rest of the info
+    """
+
+    for obj in BASE_DICT:
         if obj['url'] == url:
             return obj
 
 
 def get_xpaths(xpath_file_path: str) -> dict:
+    """
+    Gets information from a template file and creates dictionary for it.
+
+    :param xpath_file_path: a file path of the template file
+    :return: a dictionary with info from the template
+    """
+
     xpath_dict = {}
 
     with open(xpath_file_path) as xpath_file:
@@ -32,18 +49,24 @@ def get_xpaths(xpath_file_path: str) -> dict:
     return xpath_dict
 
 
-def download_events():
-    connection = create_connection("data/map_of_events.db")
+def download_events() -> None:
+    """
+    Downloads HTML contents of pages with events of the input websites
+        from DATA_DIR_PATH/<<domain>>/ directory into DATA_DIR_PATH/<<domain>>/events/<<downloaded_at>>.html.
+    Stores a events' HTML file paths and timestamps of a download into the database.
+    Outputs DOWNLOAD_EVENTS_OUTPUT_FILE_PATH with info about most recent run of the script.
+    """
+
+    connection = create_connection(DATABASE_PATH)
     log_output = []
 
     with connection:
         setup_db(connection)
 
-        cursor = connection.execute("SELECT url FROM websites")
-        input_urls = cursor.fetchall()
+        cursor = connection.execute('''SELECT url FROM websites''')
+        input_urls = [url[0] for url in cursor.fetchall()]
 
         for url in input_urls:
-            url = url[0]
             base = get_base(url)
             domain = base["domain"]
             parser = base["parser"]
@@ -53,9 +76,9 @@ def download_events():
                 "files": []
             }
 
-            xpaths = get_xpaths(os.path.join("resources/xpaths", parser))
-
+            xpaths = get_xpaths(os.path.join(TEMPLATES_DIR_PATH, parser))
             current_dir = os.path.join(DATA_DIR_PATH, domain)
+
             for filename in os.listdir(current_dir):
 
                 log_file_obj = {
@@ -77,6 +100,7 @@ def download_events():
                             os.makedirs(html_file_dir, exist_ok=True)
 
                             r = requests.get(event_url, timeout=30)
+
                             print("Downloading URL", event_url, "...", r.status_code)
 
                             if r.status_code == 200:
@@ -104,7 +128,7 @@ def download_events():
 
             log_output.append(log_site_obj)
 
-    with open("data/tmp/download_events_output.json", 'w') as output_file:
+    with open(DOWNLOAD_EVENTS_OUTPUT_FILE_PATH, 'w') as output_file:
         output_file.write(json.dumps(log_output, indent=4))
 
 
