@@ -1,132 +1,116 @@
 import json
 import os
-import traceback
-from datetime import datetime
 from urllib.parse import urljoin
 
-import requests
 from lxml import etree
 
-from lib.constants import DATA_DIR_PATH, TEMPLATES_DIR_PATH, INPUT_SITES_BASE_FILE_PATH
-from lib.utils import create_connection
-
-DOWNLOAD_EVENTS_OUTPUT_FILE_PATH = "data/tmp/download_events_output.json"
-EVENTS_FOLDER_NAME = "events"
-
-with open(INPUT_SITES_BASE_FILE_PATH, 'r') as base_file:
-    BASE_DICT = json.load(base_file)
+from lib.constants import DATA_DIR_PATH
+from lib.utils import create_connection, load_base, get_xpaths, download_html_content
 
 
-def get_base(url: str) -> None:
-    """
-    Gets information from input base file about websites.
+class DownloadEvents:
+    """ Downloads an HTML content of an events' pages parsed from a calendar pages
+        and stores event's URL, HTML file path and timestamp of a download into the database.
 
-    :param url: an URL address of website by which it gets rest of the info
+    Outputs a json file with the download info about most recent run of the script.
     """
 
-    for obj in BASE_DICT:
-        if obj['url'] == url:
-            return obj
+    OUTPUT_FILE_PATH = "data/tmp/download_events_output.json"
+    EVENTS_FOLDER_NAME = "events"
 
+    def __init__(self) -> None:
+        self.connection = create_connection()
+        self.base_dict = load_base()
 
-def get_xpaths(xpath_file_path: str) -> dict:
-    """
-    Gets information from a template file and creates dictionary for it.
+    def run(self) -> None:
+        input_urls = self.load_input_urls()
+        events_to_insert, log_info = self.download_events(input_urls)
+        self.store_to_database(events_to_insert)
+        self.store_results(log_info)
 
-    :param xpath_file_path: a file path of the template file
-    :return: a dictionary with info from the template
-    """
+    def load_input_urls(self) -> list:
+        with self.connection:
+            cursor = self.connection.execute('''SELECT url FROM websites''')
+            return [url[0] for url in cursor.fetchall()]
 
-    xpath_dict = {}
+    def download_events(self, input_urls: list) -> (list, list):
+        events_to_insert = []
+        log_info = []
 
-    with open(xpath_file_path) as xpath_file:
-        for line in xpath_file:
-            key, xpath = line.split(' ', 1)
-            xpath_dict[key] = xpath.strip()
+        for website in input_urls:
+            website_events_to_insert, website_log_obj = self.process_website(website)
 
-    return xpath_dict
+            events_to_insert.extend(website_events_to_insert)
+            log_info.append(website_log_obj)
 
+        return events_to_insert, log_info
 
-def download_events() -> None:
-    """
-    Downloads HTML contents of pages with events of the input websites
-        from DATA_DIR_PATH/<<domain>>/ directory into DATA_DIR_PATH/<<domain>>/events/<<downloaded_at>>.html.
-    Stores a events' HTML file paths and timestamps of a download into the database.
-    Outputs DOWNLOAD_EVENTS_OUTPUT_FILE_PATH with info about most recent run of the script.
-    """
+    def process_website(self, url: str) -> (list, dict):
+        base = self.get_website_base(url)
+        domain = base["domain"]
 
-    connection = create_connection()
-    log_output = []
+        events_to_insert = []
+        website_log_obj = {
+            "domain": domain,
+            "files": []
+        }
 
-    with connection:
-        cursor = connection.execute('''SELECT url FROM websites''')
-        input_urls = [url[0] for url in cursor.fetchall()]
+        xpaths = get_xpaths(base["parser"])
+        current_dir = os.path.join(DATA_DIR_PATH, domain)
 
-        for url in input_urls:
-            base = get_base(url)
-            domain = base["domain"]
-            parser = base["parser"]
-
-            log_site_obj = {
-                "domain": domain,
-                "files": []
+        for filename in os.listdir(current_dir):
+            file_log_obj = {
+                "name": filename,
+                "events_list": []
             }
 
-            xpaths = get_xpaths(os.path.join(TEMPLATES_DIR_PATH, parser))
-            current_dir = os.path.join(DATA_DIR_PATH, domain)
+            with open(os.path.join(current_dir, filename)) as html_file:
+                dom = etree.parse(html_file, etree.HTMLParser())
+                root = dom.xpath(xpaths["root"])[0]
 
-            for filename in os.listdir(current_dir):
+                for el in root.xpath(xpaths["url"]):
+                    event_url = urljoin(url, el)
 
-                log_file_obj = {
-                    "name": filename,
-                    "events_list": []
-                }
+                    html_file_dir = os.path.join(DATA_DIR_PATH, domain, DownloadEvents.EVENTS_FOLDER_NAME)
+                    info_to_insert = download_html_content(event_url, html_file_dir)
 
-                with open(os.path.join(current_dir, filename)) as html_file:
-                    dom = etree.parse(html_file, etree.HTMLParser())
-                    root = dom.xpath(xpaths["root"])[0]
+                    if info_to_insert:
+                        events_to_insert.append(info_to_insert)
 
-                    for el in root.xpath(xpaths["url"]):
-                        event_url = urljoin(url, el)
+                    file_log_obj["events_list"].append(event_url)
 
-                        log_file_obj["events_list"].append(event_url)
+                file_log_obj["events_count"] = len(file_log_obj["events_list"])
 
-                        try:
-                            html_file_dir = os.path.join(DATA_DIR_PATH, domain, EVENTS_FOLDER_NAME)
-                            os.makedirs(html_file_dir, exist_ok=True)
+            website_log_obj["files"].append(file_log_obj)
 
-                            r = requests.get(event_url, timeout=30)
+        return events_to_insert, website_log_obj
 
-                            print("Downloading URL", event_url, "...", r.status_code)
+    def get_website_base(self, url: str) -> dict:
+        for obj in self.base_dict:
+            if obj['url'] == url:
+                return obj
 
-                            if r.status_code == 200:
-                                current_date = datetime.now()
-                                file_name = current_date.strftime("%Y-%m-%d_%H-%M-%S")
+    def store_to_database(self, events_to_insert: list) -> None:
+        with self.connection:
+            for event_info in events_to_insert:
+                url, html_file_path = event_info
 
-                                html_file_path = os.path.join(html_file_dir, file_name + ".html")
+                sql_command = '''
+                        INSERT INTO events_raw(url, html_file_path)
+                        VALUES(?, ?)
+                    '''
+                values = (url, html_file_path)
 
-                                with open(html_file_path, 'w') as f:
-                                    f.write(str(r.text))
+                self.connection.execute(sql_command, values)
 
-                                sql_command = ''' INSERT INTO events_raw(url, html_file_path)
-                                                  VALUES(?, ?) '''
-                                values = (event_url, html_file_path)
+            self.connection.commit()
 
-                                connection.execute(sql_command, values)
-
-                        except Exception:
-                            print("Downloading URL", event_url, "...", "Exception:")
-                            traceback.print_exc()
-
-                    log_file_obj["events_count"] = len(log_file_obj["events_list"])
-
-                log_site_obj["files"].append(log_file_obj)
-
-            log_output.append(log_site_obj)
-
-    with open(DOWNLOAD_EVENTS_OUTPUT_FILE_PATH, 'w') as output_file:
-        output_file.write(json.dumps(log_output, indent=4))
+    @staticmethod
+    def store_results(log_info: list) -> None:
+        with open(DownloadEvents.OUTPUT_FILE_PATH, 'w') as output_file:
+            output_file.write(json.dumps(log_info, indent=4))
 
 
 if __name__ == '__main__':
-    download_events()
+    download_events = DownloadEvents()
+    download_events.run()

@@ -1,22 +1,25 @@
 from lib.utils import create_connection
 
-SCHEMA_PATH = "resources/schema.sql"
 
+class SetupDB:
+    """ Sets up a database according to a specified schema. """
 
-def setup_db() -> None:
-    """
-    Sets up a database by a schema specified in SCHEMA_PATH.
-    """
+    SCHEMA_PATH = "resources/schema.sql"
 
-    connection = create_connection()
-    connection.execute("PRAGMA foreign_keys = ON")
+    def __init__(self):
+        self.connection = create_connection()
 
-    with open(SCHEMA_PATH, 'r') as file:
-        for command in file.read().split(";"):
-            connection.execute(command)
+    def run(self) -> None:
+        with self.connection:
+            self.connection.execute("PRAGMA foreign_keys = ON")
 
-        connection.commit()
+            with open(self.SCHEMA_PATH, 'r') as schema_file:
+                for command in schema_file.read().split(";"):
+                    self.connection.execute(command)
+
+            self.connection.commit()
 
 
 if __name__ == '__main__':
-    setup_db()
+    setup_db = SetupDB()
+    setup_db.run()

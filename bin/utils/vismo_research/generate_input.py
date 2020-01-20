@@ -1,35 +1,41 @@
 import json
-from urllib.parse import urlparse
 
-from bin.utils.vismo_research.get_statistics import VISMO_RESEARCH_GET_STATS_OUTPUT_FILE_PATH
+from bin.utils.vismo_research.get_statistics import GetStatistics
 from lib.constants import INPUT_SITES_BASE_FILE_PATH
+from lib.utils import get_domain_name
 
 
-def generate_input() -> None:
-    """
-    Generates INPUT_SITES_BASE_FILE_PATH of valid Vismo websites for main scripts.
-    """
+class GenerateInput:
+    """ Generates a base file of input websites from usable Vismo URLs for main scripts. """
 
-    with open(VISMO_RESEARCH_GET_STATS_OUTPUT_FILE_PATH, 'r') as statistics_file:
-        statistics_dict = json.load(statistics_file)
-        usable_urls = statistics_dict["statistics"]["sites_with_calendar"]["list"]
+    def run(self) -> None:
+        usable_urls = self.get_usable_urls()
+        self.store_results(usable_urls)
 
-    output = []
-    for url in usable_urls:
-        domain = urlparse(url).hostname
-        domain = domain.replace("www.", "").replace(".", "_").replace("-", "_")
+    @staticmethod
+    def get_usable_urls() -> list:
+        with open(GetStatistics.OUTPUT_FILE_PATH, 'r') as statistics_file:
+            statistics_dict = json.load(statistics_file)
 
-        output.append({
-            "domain": domain,
-            "url": url,
-            "parser": "vismo"
-        })
+        return statistics_dict["statistics"]["sites_with_calendar"]["list"]
 
-    # THIS OVERWRITES INPUT_SITES_BASE_FILE_PATH !
-    # if you want a new input to just append at the end of the file, instead of 'w' use 'a' option
-    with open(INPUT_SITES_BASE_FILE_PATH, 'w') as base_file:
-        base_file.write(json.dumps(output, indent=4))
+    @staticmethod
+    def store_results(usable_urls: list) -> None:
+        output = []
+
+        for url in usable_urls:
+            output.append({
+                "domain": get_domain_name(url),
+                "url": url,
+                "parser": "vismo"
+            })
+
+        # THIS OVERWRITES INPUT_SITES_BASE_FILE_PATH !
+        # if you want a new input to be just appended at the end of the file, instead of 'w' use 'a' option
+        with open(INPUT_SITES_BASE_FILE_PATH, 'w') as base_file:
+            base_file.write(json.dumps(output, indent=4))
 
 
 if __name__ == '__main__':
-    generate_input()
+    get_statistics = GenerateInput()
+    get_statistics.run()

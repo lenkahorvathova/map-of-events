@@ -1,59 +1,50 @@
-import json
 import os
-import traceback
-from datetime import datetime
 
-import requests
-
-from lib.constants import DATA_DIR_PATH, INPUT_SITES_BASE_FILE_PATH
-from lib.utils import create_connection
+from lib.constants import DATA_DIR_PATH
+from lib.utils import create_connection, load_base, download_html_content
 
 
-def download_sites() -> None:
-    """
-    Downloads HTML contents of main pages of the input websites
-        specified in the INPUT_SITES_BASE_FILE_PATH
-        into DATA_DIR_PATH/<<domain>>/<<downloaded_at>>.html.
-    Stores a website's HTML file path and timestamp of a download into the database.
-    """
+class DownloadSites:
+    """ Downloads an HTML content of a calendar page of input websites specified in a base file
+        and stores website's URL, HTML file path and timestamp of a download into the database. """
 
-    connection = create_connection()
+    def __init__(self) -> None:
+        self.connection = create_connection()
 
-    with connection:
-        with open(INPUT_SITES_BASE_FILE_PATH, 'r') as base_file:
-            base_dict = json.load(base_file)
-            input_urls = [(base["url"].strip(), base["domain"].strip()) for base in base_dict]
+    def run(self) -> None:
+        input_sites_base = load_base()
+        websites_to_insert = self.download_sites(input_sites_base)
+        self.store_to_database(websites_to_insert)
 
-            for url, domain in input_urls:
+    @staticmethod
+    def download_sites(input_sites_base: list) -> list:
+        websites_to_insert = []
 
-                try:
-                    html_file_dir = os.path.join(DATA_DIR_PATH, domain)
-                    os.makedirs(html_file_dir, exist_ok=True)
+        for input_site in input_sites_base:
+            html_file_dir = os.path.join(DATA_DIR_PATH, input_site["domain"])
+            info_to_insert = download_html_content(input_site["url"], html_file_dir)
 
-                    r = requests.get(url, timeout=30)
+            if info_to_insert:
+                websites_to_insert.append(info_to_insert)
 
-                    print("Downloading URL", url, "...", r.status_code)
+        return websites_to_insert
 
-                    if r.status_code == 200:
-                        current_date = datetime.now()
-                        file_name = current_date.strftime("%Y-%m-%d_%H-%M-%S")
-                        html_file_path = os.path.join(html_file_dir, file_name + ".html")
+    def store_to_database(self, websites_to_insert: list) -> None:
+        with self.connection:
+            for website_info in websites_to_insert:
+                url, html_file_path = website_info
 
-                        with open(html_file_path, 'w') as f:
-                            f.write(str(r.text))
+                sql_command = '''
+                    INSERT INTO websites(url, html_file_path)
+                    VALUES (?, ?)
+                '''
+                values = (url, html_file_path)
 
-                        sql_command = '''
-                            INSERT INTO websites(url, html_file_path)
-                            VALUES (?, ?)
-                        '''
-                        values = (url, html_file_path)
+                self.connection.execute(sql_command, values)
 
-                        connection.execute(sql_command, values)
-
-                except Exception:
-                    print("Downloading URL", url, "...", "Exception:")
-                    traceback.print_exc()
+            self.connection.commit()
 
 
 if __name__ == '__main__':
-    download_sites()
+    download_sites = DownloadSites()
+    download_sites.run()

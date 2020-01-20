@@ -30,6 +30,11 @@
         "parser": "vismo"
     },
     {
+        "domain": "bilovec_cz",
+        "url": "http://www.bilovec.cz/ap",
+        "parser": "vismo"
+    },
+    {
         "domain": "bily_kamen_cz",
         "url": "http://www.bily-kamen.cz/ap",
         "parser": "vismo"
@@ -47,11 +52,6 @@
     {
         "domain": "brandysek_cz",
         "url": "http://www.brandysek.cz/ap",
-        "parser": "vismo"
-    },
-    {
-        "domain": "branisovice_cz",
-        "url": "http://www.branisovice.cz/ap",
         "parser": "vismo"
     },
     {
@@ -187,11 +187,6 @@
     {
         "domain": "dolany_ol_cz",
         "url": "http://www.dolany-ol.cz/ap",
-        "parser": "vismo"
-    },
-    {
-        "domain": "dolni_dunajovice_cz",
-        "url": "http://www.dolni-dunajovice.cz/ap",
         "parser": "vismo"
     },
     {
@@ -710,11 +705,6 @@
         "parser": "vismo"
     },
     {
-        "domain": "mesto_polna_cz",
-        "url": "http://mesto-polna.cz/ap",
-        "parser": "vismo"
-    },
-    {
         "domain": "mesto_ustek_cz",
         "url": "http://www.mesto-ustek.cz/ap",
         "parser": "vismo"
@@ -935,6 +925,11 @@
         "parser": "vismo"
     },
     {
+        "domain": "neustupov_cz",
+        "url": "http://www.neustupov.cz/ap",
+        "parser": "vismo"
+    },
+    {
         "domain": "nosislav_info",
         "url": "http://www.nosislav.info/ap",
         "parser": "vismo"
@@ -1000,11 +995,6 @@
         "parser": "vismo"
     },
     {
-        "domain": "obec_domasov_net",
-        "url": "http://obec.domasov.net/ap",
-        "parser": "vismo"
-    },
-    {
         "domain": "obec_hovorany_cz",
         "url": "http://www.obec-hovorany.cz/ap",
         "parser": "vismo"
@@ -1052,6 +1042,11 @@
     {
         "domain": "obecarnolec_cz",
         "url": "http://www.obecarnolec.cz/ap",
+        "parser": "vismo"
+    },
+    {
+        "domain": "obecberovice_cz",
+        "url": "http://www.obecberovice.cz/ap",
         "parser": "vismo"
     },
     {
@@ -1420,11 +1415,6 @@
         "parser": "vismo"
     },
     {
-        "domain": "sezemice_cz",
-        "url": "http://www.sezemice.cz/ap",
-        "parser": "vismo"
-    },
-    {
         "domain": "skalsko_cz",
         "url": "http://skalsko.cz/ap",
         "parser": "vismo"
@@ -1702,11 +1692,6 @@
     {
         "domain": "vrcovice_cz",
         "url": "http://www.vrcovice.cz/ap",
-        "parser": "vismo"
-    },
-    {
-        "domain": "vyskov_mesto_cz",
-        "url": "http://www.vyskov-mesto.cz/ap",
         "parser": "vismo"
     },
     {

@@ -1,127 +1,120 @@
 import json
 import os
-from urllib.parse import urlparse
 
 from bs4 import BeautifulSoup
 
-from bin.utils.vismo_research.download_sites import VISMO_RESEARCH_DWNLD_SITES_OUTPUT_FILE_PATH
+from bin.utils.vismo_research.download_sites import DownloadSites
 from lib.constants import VISMO_RESEARCH_DATA_DIR_PATH
+from lib.utils import get_domain_name
 
-VISMO_RESEARCH_GET_STATS_OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "get_stats_output.json")
 
+class GetStatistics:
+    """ Gets statistics about Vismo websites by analysing downloaded HTML contents of calendar pages.
 
-def has_events(html_file_path: str) -> bool:
-    """
-    Checks a HTML content at html_file_path to find out if website is able to have events.
-
-    :param html_file_path: a path to a file with a website's HTML content
-    :return: False, if website doesn't have a calendar or there is a "no-events" warning;
-             True, otherwise
+    Statistics - sites returning an error, sites without a Vismo '/ap' page,
+        sites with an '/ap' page but without calendar, usable sites with calendar
+    Outputs a json file with counts and lists for these statistics.
     """
 
-    with open(html_file_path, 'r') as content:
-        document = BeautifulSoup(content, 'html.parser')
-        calendar = document.find('div', {'id': 'kalendarAkci'})
+    OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "get_stats_output.json")
 
-        if calendar is not None:
-            warning = calendar.find('span', {'class': 'vystraha'})
+    def run(self) -> None:
+        statistics_results = self.get_statistics()
+        self.store_results(statistics_results)
 
-            if warning is None:
-                return True
+    @staticmethod
+    def get_statistics() -> list:
+        """ Analyses downloaded HTML contents and prepares resulting statistics about Vismo websites.
 
-        return False
+        :return: a count of all Vismo websites and a list of prepared statistics tuples for an output file
+        """
 
+        error_sites_count, error_sites_list = 0, []
+        without_ap_page_sites_count, without_ap_page_sites_list = 0, []
+        without_calendar_sites_count, without_calendar_sites_list = 0, []
+        with_calendar_sites_count, with_calendar_sites_list = 0, []
 
-def sort_function(url: str) -> str:
-    """
-    A function for sorting URLS by their domains.
+        with open(DownloadSites.OUTPUT_FILE_PATH, 'r') as json_file:
+            downloaded_websites_info = json.load(json_file)
 
-    :param url: an URL to parse
-    :return: a domain string for alphabetical sorting
-    """
+        for website in downloaded_websites_info:
+            print("Checking URL", website["url"], "... ", end="")
 
-    domain = urlparse(url).hostname
-    domain = domain.replace("www.", "").replace(".", "_").replace("-", "_")
+            result = "NOK"
 
-    return domain
+            if website["response_code"] is None:
+                error_sites_count += 1
+                error_sites_list.append(website["url"])
 
+            elif website["response_code"] == 200:
 
-def prepare_output(description: str, num_of_sites: int, list_of_sites: list) -> dict:
-    """
-    Prepares a dictionary for one of the stats for an output file.
+                if GetStatistics.has_calendar(website["html_file_path"]):
+                    result = "OK"
+                    with_calendar_sites_count += 1
+                    with_calendar_sites_list.append(website["url"])
 
-    :param description: a name of the specific statistics
-    :param num_of_sites: a count of sites complying with the description
-    :param list_of_sites: a list of the sites' URLs
-    :return: a dict combining the info
-    """
-
-    list_of_sites.sort(key=sort_function)
-
-    return {
-        description: {
-            "count": num_of_sites,
-            "list": list_of_sites
-        }
-    }
-
-
-def get_statistics() -> None:
-    """
-    Gets statistics about Vismo websites from VISMO_RESEARCH_DWNLD_SITES_OUTPUT_FILE_PATH
-        (unreachable sites, sites without /ap page, sites without calendar, valid sites).
-    Outputs VISMO_RESEARCH_GET_STATS_OUTPUT_FILE_PATH with these statistics.
-    """
-
-    without_ap_page_sites, error_sites, without_calendar_sites, with_calendar_sites = 0, 0, 0, 0
-    without_ap_page_sites_list, error_sites_list, without_calendar_sites_list, with_calendar_sites_list = [], [], [], []
-
-    with open(VISMO_RESEARCH_DWNLD_SITES_OUTPUT_FILE_PATH, 'r') as json_file:
-        data = json.load(json_file)
-
-    for site in data:
-        result = "NOK"
-
-        if site["response_code"] is None:
-            error_sites += 1
-            error_sites_list.append(site["url"])
-
-        elif site["response_code"] == 200:
-
-            if has_events(site["html_file_path"]):
-                result = "OK"
-                with_calendar_sites += 1
-                with_calendar_sites_list.append(site["url"])
+                else:
+                    without_calendar_sites_count += 1
+                    without_calendar_sites_list.append(website["url"])
 
             else:
-                without_calendar_sites += 1
-                without_calendar_sites_list.append(site["url"])
+                without_ap_page_sites_count += 1
+                without_ap_page_sites_list.append(website["url"])
 
-        else:
-            without_ap_page_sites += 1
-            without_ap_page_sites_list.append(site["url"])
+            print(result)
 
-        print("Checked URL", site["url"], "...", result)
+        statistics_results = [
+            ("sites_with_error", error_sites_count, error_sites_list),
+            ("sites_without_ap_page", without_ap_page_sites_count, without_ap_page_sites_list),
+            ("sites_without_calendar", without_calendar_sites_count, without_calendar_sites_list),
+            ("sites_with_calendar", with_calendar_sites_count, with_calendar_sites_list),
+        ]
 
-    all_sites = without_ap_page_sites + error_sites + without_calendar_sites + with_calendar_sites
-    statistics = [
-        ("sites_with_error", error_sites, error_sites_list),
-        ("sites_without_ap_page", without_ap_page_sites, without_ap_page_sites_list),
-        ("sites_without_calendar", without_calendar_sites, without_calendar_sites_list),
-        ("sites_with_calendar", with_calendar_sites, with_calendar_sites_list),
-    ]
+        return statistics_results
 
-    with open(VISMO_RESEARCH_GET_STATS_OUTPUT_FILE_PATH, 'w') as output_file:
+    @staticmethod
+    def has_calendar(html_file_path: str) -> bool:
+        with open(html_file_path, 'r') as content:
+            document = BeautifulSoup(content, 'html.parser')
+            calendar = document.find('div', {'id': 'kalendarAkci'})
+
+            if calendar:
+                warning = calendar.find('span', {'class': 'vystraha'})
+                """ some websites contain a calendar but with a warning that its content is unavailable """
+
+                if not warning:
+                    return True
+
+            return False
+
+    @staticmethod
+    def store_results(statistics_results: list) -> None:
         output = {}
+        all_sites_count = 0
 
-        for stat in statistics:
-            output.update(prepare_output(stat[0], stat[1], stat[2]))
+        for statistic_tuple in statistics_results:
+            output.update(GetStatistics.prepare_statistic_dict(statistic_tuple))
+            all_sites_count += statistic_tuple[1]
 
-        output_file.write(json.dumps({
-            "count_all": all_sites,
-            "statistics": output
-        }, indent=4))
+        with open(GetStatistics.OUTPUT_FILE_PATH, 'w') as output_file:
+            output_file.write(json.dumps({
+                "count_all": all_sites_count,
+                "statistics": output
+            }, indent=4))
+
+    @staticmethod
+    def prepare_statistic_dict(statistic_tuple: (str, int, list)) -> dict:
+        description, sites_count, sites_list = statistic_tuple
+        sites_list.sort(key=get_domain_name)
+
+        return {
+            description: {
+                "count": sites_count,
+                "list": sites_list
+            }
+        }
 
 
 if __name__ == '__main__':
-    get_statistics()
+    get_statistics = GetStatistics()
+    get_statistics.run()
