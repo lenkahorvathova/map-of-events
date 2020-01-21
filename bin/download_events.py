@@ -1,17 +1,16 @@
-import json
 import os
 from urllib.parse import urljoin
 
 from lxml import etree
 
 from lib.constants import DATA_DIR_PATH
-from lib.utils import create_connection, load_base, get_xpaths, download_html_content
+from lib.utils import create_connection, load_base, get_xpaths, download_html_content, store_to_json_file
 
 
 class DownloadEvents:
-    """ Downloads an HTML content of an events' pages parsed from a calendar pages
-        and stores event's URL, HTML file path and timestamp of a download into the database.
+    """ Downloads an HTML content of an events' pages parsed from websites' calendar pages.
 
+    Stores event's URL, HTML file path and timestamp of a download into the database.
     Outputs a json file with the download info about most recent run of the script.
     """
 
@@ -26,7 +25,7 @@ class DownloadEvents:
         input_urls = self.load_input_urls()
         events_to_insert, log_info = self.download_events(input_urls)
         self.store_to_database(events_to_insert)
-        self.store_results(log_info)
+        store_to_json_file(log_info, DownloadEvents.OUTPUT_FILE_PATH)
 
     def load_input_urls(self) -> list:
         with self.connection:
@@ -66,21 +65,21 @@ class DownloadEvents:
 
             with open(os.path.join(current_dir, filename)) as html_file:
                 dom = etree.parse(html_file, etree.HTMLParser())
-                root = dom.xpath(xpaths["root"])[0]
 
-                for el in root.xpath(xpaths["url"]):
-                    event_url = urljoin(url, el)
+            root = dom.xpath(xpaths["root"])[0]
 
-                    html_file_dir = os.path.join(DATA_DIR_PATH, domain, DownloadEvents.EVENTS_FOLDER_NAME)
-                    info_to_insert = download_html_content(event_url, html_file_dir)
+            for el in root.xpath(xpaths["url"]):
+                event_url = urljoin(url, el)
 
-                    if info_to_insert:
-                        events_to_insert.append(info_to_insert)
+                html_file_dir = os.path.join(DATA_DIR_PATH, domain, DownloadEvents.EVENTS_FOLDER_NAME)
+                info_to_insert = download_html_content(event_url, html_file_dir)
 
-                    file_log_obj["events_list"].append(event_url)
+                if info_to_insert:
+                    events_to_insert.append(info_to_insert)
 
-                file_log_obj["events_count"] = len(file_log_obj["events_list"])
+                file_log_obj["events_list"].append(event_url)
 
+            file_log_obj["events_count"] = len(file_log_obj["events_list"])
             website_log_obj["files"].append(file_log_obj)
 
         return events_to_insert, website_log_obj
@@ -104,11 +103,6 @@ class DownloadEvents:
                 self.connection.execute(sql_command, values)
 
             self.connection.commit()
-
-    @staticmethod
-    def store_results(log_info: list) -> None:
-        with open(DownloadEvents.OUTPUT_FILE_PATH, 'w') as output_file:
-            output_file.write(json.dumps(log_info, indent=4))
 
 
 if __name__ == '__main__':

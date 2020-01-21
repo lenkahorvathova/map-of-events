@@ -4,25 +4,26 @@ from lib.constants import DATA_DIR_PATH
 from lib.utils import create_connection, load_base, download_html_content
 
 
-class DownloadSites:
-    """ Downloads an HTML content of a calendar page of input websites specified in a base file
-        and stores website's URL, HTML file path and timestamp of a download into the database. """
+class DownloadCalendars:
+    """ Downloads an HTML content of a calendar page of input websites specified in a base file.
+
+    Stores website's URL, HTML file path and timestamp of a download into the database.
+    """
 
     def __init__(self) -> None:
         self.connection = create_connection()
+        self.base_dict = load_base()
 
     def run(self) -> None:
-        input_sites_base = load_base()
-        websites_to_insert = self.download_sites(input_sites_base)
+        websites_to_insert = self.download_calendars()
         self.store_to_database(websites_to_insert)
 
-    @staticmethod
-    def download_sites(input_sites_base: list) -> list:
+    def download_calendars(self) -> list:
         websites_to_insert = []
 
-        for input_site in input_sites_base:
-            html_file_dir = os.path.join(DATA_DIR_PATH, input_site["domain"])
-            info_to_insert = download_html_content(input_site["url"], html_file_dir)
+        for input_website in self.base_dict:
+            html_file_dir = os.path.join(DATA_DIR_PATH, input_website["domain"])
+            info_to_insert = download_html_content(input_website["url"], html_file_dir)
 
             if info_to_insert:
                 websites_to_insert.append(info_to_insert)
@@ -46,5 +47,5 @@ class DownloadSites:
 
 
 if __name__ == '__main__':
-    download_sites = DownloadSites()
+    download_sites = DownloadCalendars()
     download_sites.run()

@@ -1,8 +1,8 @@
 import json
 
-from bin.utils.vismo_research.get_statistics import GetStatistics
+from bin.utils.vismo_research.compute_statistics import ComputeStatistics
 from lib.constants import INPUT_SITES_BASE_FILE_PATH
-from lib.utils import get_domain_name
+from lib.utils import get_domain_name, store_to_json_file
 
 
 class GenerateInput:
@@ -10,17 +10,18 @@ class GenerateInput:
 
     def run(self) -> None:
         usable_urls = self.get_usable_urls()
-        self.store_results(usable_urls)
+        store_to_json_file(self.prepare_output(usable_urls),
+                           INPUT_SITES_BASE_FILE_PATH)  # Note: this function overwrites the original base file
 
     @staticmethod
     def get_usable_urls() -> list:
-        with open(GetStatistics.OUTPUT_FILE_PATH, 'r') as statistics_file:
+        with open(ComputeStatistics.OUTPUT_FILE_PATH, 'r') as statistics_file:
             statistics_dict = json.load(statistics_file)
 
         return statistics_dict["statistics"]["sites_with_calendar"]["list"]
 
     @staticmethod
-    def store_results(usable_urls: list) -> None:
+    def prepare_output(usable_urls: list) -> list:
         output = []
 
         for url in usable_urls:
@@ -30,12 +31,9 @@ class GenerateInput:
                 "parser": "vismo"
             })
 
-        # THIS OVERWRITES INPUT_SITES_BASE_FILE_PATH !
-        # if you want a new input to be just appended at the end of the file, instead of 'w' use 'a' option
-        with open(INPUT_SITES_BASE_FILE_PATH, 'w') as base_file:
-            base_file.write(json.dumps(output, indent=4))
+        return output
 
 
 if __name__ == '__main__':
-    get_statistics = GenerateInput()
-    get_statistics.run()
+    generate_input = GenerateInput()
+    generate_input.run()

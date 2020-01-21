@@ -14,9 +14,9 @@ DATABASE_PATH = "data/map_of_events.db"
 
 
 def create_connection() -> sqlite3.Connection:
-    """ Creates an SQLite3 Connection to the database.
+    """ Creates the SQLite3 Connection to the database.
 
-    :return: SQLite3 Connection
+    :return: the SQLite3 Connection
     """
 
     try:
@@ -28,7 +28,7 @@ def create_connection() -> sqlite3.Connection:
 
 
 def get_domain_name(url: str) -> str:
-    """ Parse a domain name from the specified url address.
+    """ Parses a domain name from the specified url address.
 
     Example:
         "http://www.belec-kreptov.cz/ap" -> "belec_kreptov_cz"
@@ -46,7 +46,7 @@ def get_domain_name(url: str) -> str:
 def load_base() -> list:
     """ Loads a base file with input websites' basic information.
 
-    :return: a list of dictionaries with input websites' info
+    :return: a list of dictionaries with input website's info
     """
 
     with open(INPUT_SITES_BASE_FILE_PATH, 'r') as base_file:
@@ -56,10 +56,10 @@ def load_base() -> list:
 
 
 def get_xpaths(parser: str) -> dict:
-    """ Gets information from a template file for the parser and creates dictionary for it.
+    """ Gets information from a template file of the parser and creates a dictionary for it.
 
-    :param parser: a string specifying a template file with xpaths to use
-    :return: a dictionary with info from the template
+    :param parser: a string specifying a template file with defined xpaths
+    :return: a dictionary with xpaths from the template
     """
 
     xpath_file_path = os.path.join(TEMPLATES_DIR_PATH, parser)
@@ -76,7 +76,9 @@ def get_xpaths(parser: str) -> dict:
 def download_html_content(url: str, html_file_dir: str) -> (str, str):
     """ Tries to download an HTML content from the specified URL.
 
-    :param url: a URL address from where an HTML will be downloaded
+    A file name used for an HTML file is datetime of the download.
+
+    :param url: an URL address from where an HTML will be downloaded
     :param html_file_dir: a directory to where an HTML file will be saved
     :return: information to be stored in a DB (url, html_file_path)
     """
@@ -107,3 +109,13 @@ def download_html_content(url: str, html_file_dir: str) -> (str, str):
         traceback.print_exc()
 
     return info_to_insert
+
+
+def store_to_json_file(output, file_path: str) -> None:
+    """ Saves the output into a json file at the specified file path.
+
+    :param output: an output to be saved (type not specified, but must be valid for json.dumps)
+    :param file_path: a file path of an output json file
+    """
+    with open(file_path, 'w') as output_file:
+        output_file.write(json.dumps(output, indent=4))

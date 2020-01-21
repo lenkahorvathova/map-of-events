@@ -2,7 +2,7 @@ from lib.utils import create_connection
 
 
 class SetupDB:
-    """ Sets up a database according to a specified schema. """
+    """ Sets up a database according to the specified schema. """
 
     SCHEMA_PATH = "resources/schema.sql"
 
