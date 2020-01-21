@@ -33,13 +33,13 @@ class DownloadCalendars:
     def store_to_database(self, websites_to_insert: list) -> None:
         with self.connection:
             for website_info in websites_to_insert:
-                url, html_file_path = website_info
+                url, html_file_path, downloaded_at = website_info
 
                 sql_command = '''
-                    INSERT INTO websites(url, html_file_path)
-                    VALUES (?, ?)
+                    INSERT INTO website(url, html_file_path, downloaded_at)
+                    VALUES (?, ?, ?)
                 '''
-                values = (url, html_file_path)
+                values = (url, html_file_path, downloaded_at)
 
                 self.connection.execute(sql_command, values)
 

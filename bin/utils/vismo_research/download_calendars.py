@@ -47,7 +47,7 @@ class DownloadCalendars:
         domain = utils.get_domain_name(url)
         info = {
             "url": url,
-            "downloaded_at": str(datetime.now())
+            "downloaded_at": "{0:%Y-%m-%d %H:%M:%S}".format(datetime.now())
         }
 
         print("Downloading URL", url, "... ", end="")

@@ -995,6 +995,11 @@
         "parser": "vismo"
     },
     {
+        "domain": "obec_domasov_net",
+        "url": "http://obec.domasov.net/ap",
+        "parser": "vismo"
+    },
+    {
         "domain": "obec_hovorany_cz",
         "url": "http://www.obec-hovorany.cz/ap",
         "parser": "vismo"
