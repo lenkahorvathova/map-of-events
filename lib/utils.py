@@ -2,9 +2,8 @@ import json
 import os
 import sqlite3
 import traceback
+import urllib.parse as urllib
 from datetime import datetime
-from sqlite3 import Error
-from urllib.parse import urlparse
 
 import requests
 
@@ -23,7 +22,7 @@ def create_connection() -> sqlite3.Connection:
         connection = sqlite3.connect(DATABASE_PATH)
         return connection
 
-    except Error as error:
+    except sqlite3.Error as error:
         print(error)
 
 
@@ -37,7 +36,7 @@ def get_domain_name(url: str) -> str:
     :return: a domain name
     """
 
-    domain = urlparse(url).hostname
+    domain = urllib.urlparse(url).hostname
     domain = domain.replace("www.", "").replace(".", "_").replace("-", "_")
 
     return domain

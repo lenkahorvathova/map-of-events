@@ -1,10 +1,10 @@
 import os
-from urllib.parse import urljoin
+import urllib.parse as urllib
 
 from lxml import etree
 
+from lib import utils
 from lib.constants import DATA_DIR_PATH
-from lib.utils import create_connection, load_base, get_xpaths, download_html_content, store_to_json_file
 
 
 class DownloadEvents:
@@ -18,14 +18,14 @@ class DownloadEvents:
     EVENTS_FOLDER_NAME = "events"
 
     def __init__(self) -> None:
-        self.connection = create_connection()
-        self.base_dict = load_base()
+        self.connection = utils.create_connection()
+        self.base_dict = utils.load_base()
 
     def run(self) -> None:
         input_urls = self.load_input_urls()
         events_to_insert, log_info = self.download_events(input_urls)
         self.store_to_database(events_to_insert)
-        store_to_json_file(log_info, DownloadEvents.OUTPUT_FILE_PATH)
+        utils.store_to_json_file(log_info, DownloadEvents.OUTPUT_FILE_PATH)
 
     def load_input_urls(self) -> list:
         with self.connection:
@@ -54,7 +54,7 @@ class DownloadEvents:
             "files": []
         }
 
-        xpaths = get_xpaths(base["parser"])
+        xpaths = utils.get_xpaths(base["parser"])
         current_dir = os.path.join(DATA_DIR_PATH, domain)
 
         for filename in os.listdir(current_dir):
@@ -69,10 +69,10 @@ class DownloadEvents:
             root = dom.xpath(xpaths["root"])[0]
 
             for el in root.xpath(xpaths["url"]):
-                event_url = urljoin(url, el)
+                event_url = urllib.urljoin(url, el)
 
                 html_file_dir = os.path.join(DATA_DIR_PATH, domain, DownloadEvents.EVENTS_FOLDER_NAME)
-                info_to_insert = download_html_content(event_url, html_file_dir)
+                info_to_insert = utils.download_html_content(event_url, html_file_dir)
 
                 if info_to_insert:
                     events_to_insert.append(info_to_insert)

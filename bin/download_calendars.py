@@ -1,7 +1,7 @@
 import os
 
+from lib import utils
 from lib.constants import DATA_DIR_PATH
-from lib.utils import create_connection, load_base, download_html_content
 
 
 class DownloadCalendars:
@@ -11,8 +11,8 @@ class DownloadCalendars:
     """
 
     def __init__(self) -> None:
-        self.connection = create_connection()
-        self.base_dict = load_base()
+        self.connection = utils.create_connection()
+        self.base_dict = utils.load_base()
 
     def run(self) -> None:
         websites_to_insert = self.download_calendars()
@@ -23,7 +23,7 @@ class DownloadCalendars:
 
         for input_website in self.base_dict:
             html_file_dir = os.path.join(DATA_DIR_PATH, input_website["domain"])
-            info_to_insert = download_html_content(input_website["url"], html_file_dir)
+            info_to_insert = utils.download_html_content(input_website["url"], html_file_dir)
 
             if info_to_insert:
                 websites_to_insert.append(info_to_insert)

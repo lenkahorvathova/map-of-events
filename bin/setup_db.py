@@ -1,4 +1,4 @@
-from lib.utils import create_connection
+from lib import utils
 
 
 class SetupDB:
@@ -7,7 +7,7 @@ class SetupDB:
     SCHEMA_PATH = "resources/schema.sql"
 
     def __init__(self):
-        self.connection = create_connection()
+        self.connection = utils.create_connection()
 
     def run(self) -> None:
         with self.connection:

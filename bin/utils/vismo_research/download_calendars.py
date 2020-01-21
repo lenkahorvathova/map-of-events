@@ -1,11 +1,11 @@
+import multiprocessing
 import os
 from datetime import datetime
-from multiprocessing import Pool
 
 import requests
 
+from lib import utils
 from lib.constants import VISMO_RESEARCH_DATA_DIR_PATH
-from lib.utils import get_domain_name, store_to_json_file
 
 
 class DownloadCalendars:
@@ -22,7 +22,7 @@ class DownloadCalendars:
     def run(self) -> None:
         input_urls = self.load_input_urls()
         download_info = self.download_calendars(input_urls)
-        store_to_json_file(download_info, DownloadCalendars.OUTPUT_FILE_PATH)
+        utils.store_to_json_file(download_info, DownloadCalendars.OUTPUT_FILE_PATH)
 
     @staticmethod
     def load_input_urls() -> list:
@@ -33,7 +33,7 @@ class DownloadCalendars:
     def download_calendars(input_urls: list) -> list:
         os.makedirs(DownloadCalendars.HTML_CONTENT_DIR_PATH, exist_ok=True)
 
-        with Pool(5) as p:
+        with multiprocessing.Pool(5) as p:
             return p.map(DownloadCalendars.download_html_content, input_urls)
 
     @staticmethod
@@ -44,7 +44,7 @@ class DownloadCalendars:
         :return: results from a downloading process (url, downloaded_at, response_code, -/html_file_path/exception)
         """
 
-        domain = get_domain_name(url)
+        domain = utils.get_domain_name(url)
         info = {
             "url": url,
             "downloaded_at": str(datetime.now())

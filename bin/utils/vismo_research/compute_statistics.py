@@ -4,8 +4,8 @@ import os
 from bs4 import BeautifulSoup
 
 from bin.utils.vismo_research.download_calendars import DownloadCalendars
+from lib import utils
 from lib.constants import VISMO_RESEARCH_DATA_DIR_PATH
-from lib.utils import get_domain_name, store_to_json_file
 
 
 class ComputeStatistics:
@@ -20,7 +20,7 @@ class ComputeStatistics:
 
     def run(self) -> None:
         statistics_results = self.compute_statistics()
-        store_to_json_file(self.prepare_output(statistics_results), ComputeStatistics.OUTPUT_FILE_PATH)
+        utils.store_to_json_file(self.prepare_output(statistics_results), ComputeStatistics.OUTPUT_FILE_PATH)
 
     @staticmethod
     def compute_statistics() -> list:
@@ -105,7 +105,7 @@ class ComputeStatistics:
     @staticmethod
     def prepare_statistic(statistic_tuple: (str, int, list)) -> dict:
         description, sites_count, sites_list = statistic_tuple
-        sites_list.sort(key=get_domain_name)
+        sites_list.sort(key=utils.get_domain_name)
 
         return {
             description: {

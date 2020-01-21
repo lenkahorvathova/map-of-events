@@ -1,8 +1,8 @@
 import json
 
 from bin.utils.vismo_research.compute_statistics import ComputeStatistics
+from lib import utils
 from lib.constants import INPUT_SITES_BASE_FILE_PATH
-from lib.utils import get_domain_name, store_to_json_file
 
 
 class GenerateInput:
@@ -10,8 +10,8 @@ class GenerateInput:
 
     def run(self) -> None:
         usable_urls = self.get_usable_urls()
-        store_to_json_file(self.prepare_output(usable_urls),
-                           INPUT_SITES_BASE_FILE_PATH)  # Note: this function overwrites the original base file
+        utils.store_to_json_file(self.prepare_output(usable_urls),
+                                 INPUT_SITES_BASE_FILE_PATH)  # Note: this function overwrites the original base file
 
     @staticmethod
     def get_usable_urls() -> list:
@@ -26,7 +26,7 @@ class GenerateInput:
 
         for url in usable_urls:
             output.append({
-                "domain": get_domain_name(url),
+                "domain": utils.get_domain_name(url),
                 "url": url,
                 "parser": "vismo"
             })
