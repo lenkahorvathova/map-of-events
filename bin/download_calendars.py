@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 from lib import utils
 from lib.constants import DATA_DIR_PATH
@@ -20,13 +21,26 @@ class DownloadCalendars:
 
     def download_calendars(self) -> list:
         websites_to_insert = []
+        timestamp = datetime.now()
 
+        index = 1
+        all_count = len(self.base_dict)
         for input_website in self.base_dict:
-            html_file_dir = os.path.join(DATA_DIR_PATH, input_website["domain"])
-            info_to_insert = utils.download_html_content(input_website["url"], html_file_dir)
+            print("{}/{} | ".format(index, all_count), end="")
+            index += 1
 
-            if info_to_insert:
-                websites_to_insert.append(info_to_insert)
+            url = input_website["url"]
+            html_file_dir = os.path.join(DATA_DIR_PATH, input_website["domain"])
+            html_file_name = timestamp.strftime("%Y-%m-%d_%H-%M-%S")
+            html_file_path = os.path.join(html_file_dir, html_file_name + ".html")
+
+            try:
+                utils.download_html_content(url, html_file_path)
+                os.makedirs(html_file_dir, exist_ok=True)
+                websites_to_insert.append((url, html_file_path, timestamp))
+
+            except Exception:
+                print("Something went wrong when downloading {}.".format(url))
 
         return websites_to_insert
 

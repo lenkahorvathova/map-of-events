@@ -3,7 +3,6 @@ import os
 import sqlite3
 import traceback
 import urllib.parse as urllib
-from datetime import datetime
 
 import requests
 
@@ -72,42 +71,27 @@ def get_xpaths(parser: str) -> dict:
     return xpath_dict
 
 
-def download_html_content(url: str, html_file_dir: str) -> (str, str, str):
+def download_html_content(url: str, html_file_path: str) -> None:
     """ Tries to download an HTML content from the specified URL.
 
-    A file name used for an HTML file is datetime of the download.
-
     :param url: an URL address from where an HTML will be downloaded
-    :param html_file_dir: a directory to where an HTML file will be saved
-    :return: information to be stored in a DB (url, html_file_path, timestamp)
+    :param html_file_path: a path for a file to be created
     """
-
-    info_to_insert = None
 
     print("Downloading URL", url, "... ", end="")
 
     try:
-        os.makedirs(html_file_dir, exist_ok=True)
-
         r = requests.get(url, timeout=30)
 
         if r.status_code == 200:
-            timestamp = datetime.now()
-            file_name = timestamp.strftime("%Y-%m-%d_%H-%M-%S")
-            html_file_path = os.path.join(html_file_dir, file_name + ".html")
-
             with open(html_file_path, 'w') as f:
                 f.write(str(r.text))
-
-            info_to_insert = (url, html_file_path, "{0:%Y-%m-%d %H:%M:%S}".format(timestamp))
 
         print(r.status_code)
 
     except Exception:
         print("Exception:")
         traceback.print_exc()
-
-    return info_to_insert
 
 
 def store_to_json_file(output, file_path: str) -> None:

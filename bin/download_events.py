@@ -1,5 +1,7 @@
+import argparse
 import os
 import urllib.parse as urllib
+from datetime import datetime
 
 from lxml import etree
 
@@ -18,58 +20,77 @@ class DownloadEvents:
     EVENTS_FOLDER_NAME = "events"
 
     def __init__(self) -> None:
+        self.args = self._parse_arguments()
         self.connection = utils.create_connection()
         self.base_dict = utils.load_base()
 
+    @staticmethod
+    def _parse_arguments():
+        parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+        parser.add_argument('--dry-run', action='store_true', default=False,
+                            help="don't store any output and print to stdout")
+        parser.add_argument('--domain', type=str, default=None,
+                            help="download events only for the specified domain")  # TODO
+
+        return parser.parse_args()
+
     def run(self) -> None:
-        input_websites = self.load_input_websites()
-        events_to_insert, log_info = self.download_events(input_websites)
-        self.store_to_database(events_to_insert)
+        input_ids, input_urls = self.load_input_websites()
+        events_to_insert, log_info = self.download_events(input_urls)
         utils.store_to_json_file(log_info, DownloadEvents.OUTPUT_FILE_PATH)
 
-    def load_input_websites(self) -> list:
+        if not self.args.dry_run:
+            self.store_to_database(events_to_insert)
+            self.update_database(input_ids)
+
+    def load_input_websites(self) -> (list, list):
         with self.connection:
             cursor = self.connection.execute('''SELECT id, url FROM website WHERE is_parsed == 0''')
-            return cursor.fetchall()
+            websites_tuples = cursor.fetchall()
 
-    def download_events(self, input_websites: list) -> (list, list):
-        input_ids = [tuple[0] for tuple in input_websites]
-        input_urls = [tuple[1] for tuple in input_websites]
+        return [tuple[0] for tuple in websites_tuples], [tuple[1] for tuple in websites_tuples]
 
-        already_downloaded_events = self.load_already_downloaded_events()
+    def download_events(self, input_urls: list) -> (list, dict):
+        timestamp = datetime.now()
 
         events_to_insert = []
-        log_info = []
+        log_info = {
+            "events_count": 0,
+            "websites_count": len(input_urls),
+            "websites_info": []
+        }
 
+        index = 1
         for website in input_urls:
-            website_events_to_insert, website_log_obj = self.process_website(website, already_downloaded_events)
+            # Note: if input websites get bigger, formatting for leading zeros need to be changed accordingly
+            print("{:03d}/{} | ".format(index, len(input_urls)), end="")
+            index += 1
 
+            already_downloaded_events = self.load_website_events(website)
+            website_events_to_insert, website_log_obj = self.process_website(website, timestamp,
+                                                                             already_downloaded_events)
             events_to_insert.extend(website_events_to_insert)
-            log_info.append(website_log_obj)
-
-        query = '''
-            UPDATE website
-            SET is_parsed = 1
-            WHERE id IN ({})
-        '''.format(",".join(['"{}"'.format(id) for id in input_ids]))
-
-        with self.connection:
-            self.connection.execute(query)
+            log_info["events_count"] += website_log_obj["events_count"]
+            log_info["websites_info"].append(website_log_obj)
 
         return events_to_insert, log_info
 
-    def load_already_downloaded_events(self):
+    def load_website_events(self, url: str):
         with self.connection:
-            cursor = self.connection.execute('''SELECT url FROM event_raw''')
+            query = '''SELECT url FROM event_raw WHERE url LIKE "{}%"'''.format(url[:-3])  # TODO
+            cursor = self.connection.execute(query)
             return [url[0] for url in cursor.fetchall()]
 
-    def process_website(self, url: str, already_downloaded_events: list) -> (list, dict):
-        base = self.get_website_base(url)
+    def process_website(self, url: str, timestamp: datetime, already_downloaded_events: list) -> (list, dict):
+        base = self.get_website_base_by("url", url)
         domain = base["domain"]
+        print("{}".format(domain))
 
         events_to_insert = []
         website_log_obj = {
             "domain": domain,
+            "events_count": 0,
             "files": []
         }
 
@@ -77,38 +98,55 @@ class DownloadEvents:
         current_dir = os.path.join(DATA_DIR_PATH, domain)
 
         files = sorted([file for file in os.listdir(current_dir) if file.endswith('.html')], key=str.lower)
-        for filename in files:
+        for calendar_file_name in files:
             file_log_obj = {
-                "name": filename,
+                "name": calendar_file_name,
+                "events_count": 0,
                 "events_list": []
             }
 
-            with open(os.path.join(current_dir, filename)) as html_file:
+            with open(os.path.join(current_dir, calendar_file_name)) as html_file:
                 dom = etree.parse(html_file, etree.HTMLParser())
 
             root = dom.xpath(xpaths["root"])[0]
+            index = 1
 
             for el in root.xpath(xpaths["url"]):
                 event_url = urllib.urljoin(url, el)
 
                 if event_url not in already_downloaded_events:
-                    html_file_dir = os.path.join(DATA_DIR_PATH, domain, DownloadEvents.EVENTS_FOLDER_NAME)
-                    info_to_insert = utils.download_html_content(event_url, html_file_dir)
+                    event_file_dir = os.path.join(DATA_DIR_PATH, domain, DownloadEvents.EVENTS_FOLDER_NAME)
+                    event_file_name = calendar_file_name + "_" + str(index)
+                    html_file_path = os.path.join(event_file_dir, event_file_name + ".html")
 
-                    if info_to_insert:
-                        events_to_insert.append(info_to_insert)
+                    try:
+                        os.makedirs(event_file_dir, exist_ok=True)
+
+                        print("\t", end="")
+
+                        if not self.args.dry_run:
+                            utils.download_html_content(event_url, html_file_path)
+                        else:
+                            print("Would download URL ", event_url)
+
+                        events_to_insert.append((event_url, html_file_path, timestamp))
                         already_downloaded_events.append(event_url)
+                        file_log_obj["events_list"].append(event_url)
 
-                    file_log_obj["events_list"].append(event_url)
+                        index += 1
+
+                    except Exception:
+                        print("Something went wrong when downloading {}.".format(event_url))
 
             file_log_obj["events_count"] = len(file_log_obj["events_list"])
+            website_log_obj["events_count"] += len(file_log_obj["events_list"])
             website_log_obj["files"].append(file_log_obj)
 
         return events_to_insert, website_log_obj
 
-    def get_website_base(self, url: str) -> dict:
+    def get_website_base_by(self, attr: str, value: str) -> dict:
         for obj in self.base_dict:
-            if obj['url'] == url:
+            if obj[attr] == value:
                 return obj
 
     def store_to_database(self, events_to_insert: list) -> None:
@@ -122,9 +160,23 @@ class DownloadEvents:
                     '''
                 values = (url, html_file_path, downloaded_at)
 
-                self.connection.execute(sql_command, values)
+                import sqlite3
+                try:
+                    self.connection.execute(sql_command, values)
+                except sqlite3.IntegrityError:
+                    print(values)
 
             self.connection.commit()
+
+    def update_database(self, input_ids: list) -> None:
+        query = '''
+            UPDATE website
+            SET is_parsed = 1
+            WHERE id IN ({})
+        '''.format(",".join(['"{}"'.format(id) for id in input_ids]))
+
+        with self.connection:
+            self.connection.execute(query)
 
 
 if __name__ == '__main__':
