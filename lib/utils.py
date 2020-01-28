@@ -1,18 +1,15 @@
 import json
 import os
 import sqlite3
-import traceback
 import urllib.parse as urllib
 
 import requests
 
-from lib.constants import INPUT_SITES_BASE_FILE_PATH, TEMPLATES_DIR_PATH
-
-DATABASE_PATH = "data/map_of_events.db"
+from lib.constants import DATABASE_PATH, INPUT_SITES_BASE_FILE_PATH, TEMPLATES_DIR_PATH
 
 
 def create_connection() -> sqlite3.Connection:
-    """ Creates the SQLite3 Connection to the database.
+    """ Creates SQLite3 Connection to the database.
 
     :return: the SQLite3 Connection
     """
@@ -21,8 +18,8 @@ def create_connection() -> sqlite3.Connection:
         connection = sqlite3.connect(DATABASE_PATH)
         return connection
 
-    except sqlite3.Error as error:
-        print(error)
+    except sqlite3.Error as e:
+        print("Error occurred while creating a connection to the DB: {}".format(str(e)))
 
 
 def get_domain_name(url: str) -> str:
@@ -53,6 +50,19 @@ def load_base() -> list:
     return base
 
 
+def get_base_by(attr: str, value: str) -> dict:
+    """ Gets a base information for the specified value of the specified attribute.
+
+    :param attr: a key to search by
+    :param value: a value for the key
+    :return: a dictionary with the base
+    """
+
+    for obj in load_base():
+        if obj[attr] == value:
+            return obj
+
+
 def get_xpaths(parser: str) -> dict:
     """ Gets information from a template file of the parser and creates a dictionary for it.
 
@@ -71,27 +81,28 @@ def get_xpaths(parser: str) -> dict:
     return xpath_dict
 
 
-def download_html_content(url: str, html_file_path: str) -> None:
-    """ Tries to download an HTML content from the specified URL.
+def download_html_content(url: str, html_file_path: str, dry_run: bool = False) -> str:
+    """ Downloads an HTML content from the specified URL to the specified file path.
 
     :param url: an URL address from where an HTML will be downloaded
     :param html_file_path: a path for a file to be created
+    :param dry_run: a flag that determines whether to download a file
+    :return: a result of the download process
     """
-
-    print("Downloading URL", url, "... ", end="")
 
     try:
         r = requests.get(url, timeout=30)
 
-        if r.status_code == 200:
+        if not dry_run and r.status_code == 200:
             with open(html_file_path, 'w') as f:
                 f.write(str(r.text))
 
-        print(r.status_code)
+        result = str(r.status_code)
 
-    except Exception:
-        print("Exception:")
-        traceback.print_exc()
+    except Exception as e:
+        result = "Exception: {}".format(str(e))
+
+    return result
 
 
 def store_to_json_file(output, file_path: str) -> None:

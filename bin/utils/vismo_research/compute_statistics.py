@@ -16,11 +16,12 @@ class ComputeStatistics:
     Outputs a json file with counts and lists for these statistics.
     """
 
-    OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "compute_statistics_output.json")
+    OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "compute_statistics_output2.json")
 
     def run(self) -> None:
         statistics_results = self.compute_statistics()
-        utils.store_to_json_file(self.prepare_output(statistics_results), ComputeStatistics.OUTPUT_FILE_PATH)
+        output_dict = self.prepare_output(statistics_results)
+        utils.store_to_json_file(output_dict, ComputeStatistics.OUTPUT_FILE_PATH)
 
     @staticmethod
     def compute_statistics() -> list:
@@ -38,7 +39,8 @@ class ComputeStatistics:
             download_info = json.load(json_file)
 
         for website in download_info:
-            print("Checking URL", website["url"], "... ", end="")
+            domain = utils.get_domain_name(website["url"])
+            print("Checking domain:", domain, end="")
 
             result = "NOK"
 
@@ -61,7 +63,7 @@ class ComputeStatistics:
                 without_ap_page_sites_count += 1
                 without_ap_page_sites_list.append(website["url"])
 
-            print(result)
+            print(" ({})".format(result))
 
         statistics_results = [
             ("sites_with_error", error_sites_count, error_sites_list),
@@ -90,28 +92,26 @@ class ComputeStatistics:
 
     @staticmethod
     def prepare_output(statistics_results: list) -> dict:
-        output = {}
         all_sites_count = 0
+        output = {}
 
         for statistic_tuple in statistics_results:
-            output.update(ComputeStatistics.prepare_statistic(statistic_tuple))
-            all_sites_count += statistic_tuple[1]
+            description, sites_count, sites_list = statistic_tuple
+
+            sites_list.sort(key=utils.get_domain_name)
+            statistic_dict = {
+                description: {
+                    "count": sites_count,
+                    "list": sites_list
+                }
+            }
+
+            all_sites_count += sites_count
+            output.update(statistic_dict)
 
         return {
             "count_all": all_sites_count,
             "statistics": output
-        }
-
-    @staticmethod
-    def prepare_statistic(statistic_tuple: (str, int, list)) -> dict:
-        description, sites_count, sites_list = statistic_tuple
-        sites_list.sort(key=utils.get_domain_name)
-
-        return {
-            description: {
-                "count": sites_count,
-                "list": sites_list
-            }
         }
 
 

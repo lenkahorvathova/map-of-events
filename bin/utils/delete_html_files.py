@@ -13,10 +13,10 @@ class DeleteHTMLFiles:
 
     def __init__(self):
         self.args = self._parse_args()
-        self.base_dict = utils.load_base()
+        self.base = utils.load_base()
 
     @staticmethod
-    def _parse_args():
+    def _parse_args() -> argparse.Namespace:
         parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
         parser.add_argument('--type', required=True, type=str, choices=DeleteHTMLFiles.FILE_TYPES,
@@ -31,22 +31,23 @@ class DeleteHTMLFiles:
 
         return parser.parse_args()
 
-    def run(self):
+    def run(self) -> None:
         all_removed_files = []
 
         if self.args.domain:
             all_removed_files = self.delete_html_file(self.args.domain)
         else:
-            for website in self.base_dict:
+            for website in self.base:
                 removed_files = self.delete_html_file(website["domain"])
                 all_removed_files.extend(removed_files)
 
-        if not self.args.dry_run:
-            print("{} files deleted: ".format(len(all_removed_files)), *all_removed_files, sep='\n- ')
-        else:
-            print("{} files would be deleted: ".format(len(all_removed_files)), *all_removed_files, sep='\n- ')
+        debug_output = "{} files deleted"
+        if self.args.dry_run:
+            debug_output = "{} files would be deleted"
+        # print(debug_output.format(len(all_removed_files)), *all_removed_files, sep='\n- ')
+        print(debug_output.format(len(all_removed_files)))
 
-    def delete_html_file(self, domain):
+    def delete_html_file(self, domain: str) -> list:
         removed_files = []
 
         if self.args.type == "calendars":

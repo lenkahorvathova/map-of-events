@@ -1,3 +1,5 @@
+DATABASE_PATH = "data/map_of_events.db"
+
 DATA_DIR_PATH = "data/html_content"
 TEMPLATES_DIR_PATH = "resources/xpaths"
 

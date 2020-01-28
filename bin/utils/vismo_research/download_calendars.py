@@ -11,7 +11,6 @@ from lib.constants import VISMO_RESEARCH_DATA_DIR_PATH
 class DownloadCalendars:
     """ Downloads an HTML content of a calendar page of input Vismo websites.
 
-    Uses multiprocessing to speed up the process.
     Outputs a json file with information from a downloading process about each website.
     """
 
@@ -33,12 +32,12 @@ class DownloadCalendars:
     def download_calendars(input_urls: list) -> list:
         os.makedirs(DownloadCalendars.HTML_CONTENT_DIR_PATH, exist_ok=True)
 
-        with multiprocessing.Pool(5) as p:
+        with multiprocessing.Pool(32) as p:
             return p.map(DownloadCalendars.download_html_content, input_urls)
 
     @staticmethod
     def download_html_content(url: str) -> dict:
-        """ Tries to download an HTML content from the specified URL.
+        """ Downloads an HTML content from the specified URL.
 
         :param url: a website's URL address with a calendar (e.g. http://dolnibezdekov.cz/ap)
         :return: results from a downloading process (url, downloaded_at, response_code, -/html_file_path/exception)
@@ -50,7 +49,7 @@ class DownloadCalendars:
             "downloaded_at": "{0:%Y-%m-%d %H:%M:%S}".format(datetime.now())
         }
 
-        print("Downloading URL", url, "... ", end="")
+        debug_output = "Downloading URL: " + str(url)
 
         try:
             r = requests.get(url, timeout=30)
@@ -63,13 +62,15 @@ class DownloadCalendars:
                 with open(html_file_path, 'w') as html_file:
                     html_file.write(str(r.text))
 
-            print(r.status_code)
+            debug_output += " ({})".format(r.status_code)
 
         except Exception as e:
             info["response_code"] = None
             info["exception"] = str(e)
 
-            print("Exception")
+            debug_output += " (Exception)"
+
+        print(debug_output)
 
         return info
 

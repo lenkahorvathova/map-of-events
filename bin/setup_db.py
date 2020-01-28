@@ -2,22 +2,24 @@ from lib import utils
 
 
 class SetupDB:
-    """ Sets up a database according to the specified schema. """
+    """ Sets up a database according to the schema. """
 
     SCHEMA_PATH = "resources/schema.sql"
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.connection = utils.create_connection()
 
     def run(self) -> None:
-        with self.connection:
-            self.connection.execute("PRAGMA foreign_keys = ON")
+        self.connection.execute("PRAGMA foreign_keys = ON")
 
-            with open(self.SCHEMA_PATH, 'r') as schema_file:
-                for command in schema_file.read().split(";"):
-                    self.connection.execute(command)
+        with open(self.SCHEMA_PATH, 'r') as schema_file:
+            schema = schema_file.read().split(";")
 
-            self.connection.commit()
+            for command in schema:
+                self.connection.execute(command)
+
+        self.connection.commit()
+        self.connection.close()
 
 
 if __name__ == '__main__':

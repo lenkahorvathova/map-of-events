@@ -6,12 +6,12 @@ from lib.constants import INPUT_SITES_BASE_FILE_PATH
 
 
 class GenerateInput:
-    """ Generates a base file of input websites from usable Vismo URLs for main scripts. """
+    """ Generates the first base file of input websites from usable Vismo URLs for main scripts. """
 
     def run(self) -> None:
         usable_urls = self.get_usable_urls()
-        utils.store_to_json_file(self.prepare_output(usable_urls),
-                                 INPUT_SITES_BASE_FILE_PATH)  # Note: this function overwrites the original base file
+        output_list = self.prepare_output(usable_urls)
+        utils.store_to_json_file(output_list, INPUT_SITES_BASE_FILE_PATH)  # This overwrites the original base file!
 
     @staticmethod
     def get_usable_urls() -> list:
@@ -25,11 +25,13 @@ class GenerateInput:
         output = []
 
         for url in usable_urls:
-            output.append({
-                "domain": utils.get_domain_name(url),
+            domain = utils.get_domain_name(url)
+            website_dict = {
+                "domain": domain,
                 "url": url,
                 "parser": "vismo"
-            })
+            }
+            output.append(website_dict)
 
         return output
 
