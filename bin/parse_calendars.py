@@ -151,6 +151,7 @@ class ParseCalendars:
                    WHERE id IN ({})'''.format(",".join(['"{}"'.format(id) for id in input_ids]))
 
         self.connection.execute(query)
+        self.connection.commit()
 
 
 if __name__ == '__main__':
