@@ -2,6 +2,7 @@ import argparse
 import multiprocessing
 import os
 import sqlite3
+import sys
 from datetime import datetime
 
 from lib import utils
@@ -27,15 +28,17 @@ class DownloadEvents:
         parser.add_argument('--dry-run', action='store_true', default=False,
                             help="don't store any output and print to stdout")
         parser.add_argument('--domain', type=str, default=None,
-                            help="download events only for the specified domain")
+                            help="download events only for the specified domain")  # TODO: Fix!
 
         return parser.parse_args()
 
     def run(self) -> None:
         calendar_url = None
         if self.args.domain:
-            base = utils.get_base_by("domain", self.args.domain)
-            calendar_url = base["url"]
+            website_base = utils.get_base_by("domain", self.args.domain)
+            if website_base is None:
+                sys.exit("Unknown domain '{}'!".format(self.args.domain))
+            calendar_url = website_base["url"]
 
         input_events = self.load_input_events(calendar_url)
         events_to_insert = self.download_events(input_events)
@@ -51,8 +54,8 @@ class DownloadEvents:
                    WHERE eh.event_url_id IS NULL'''
         if calendar_url:
             cursor = self.connection.execute('''SELECT id FROM calendar WHERE url == "{}"'''.format(calendar_url))
-            calendar_id = cursor.fetchone()[0]
-            query += " AND eu.calendar_id == {}".format(calendar_id)
+            calendar_ids = [id[0] for id in cursor.fetchall()]
+            query += " AND eu.calendar_id IN ({})".format(",".join(['"{}"'.format(id) for id in calendar_ids]))
 
         cursor = self.connection.execute(query)
 

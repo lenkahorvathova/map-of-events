@@ -2,6 +2,7 @@ import argparse
 import multiprocessing
 import os
 import sqlite3
+import sys
 import urllib.parse as urllib
 from datetime import datetime
 
@@ -38,8 +39,10 @@ class ParseCalendars:
     def run(self) -> None:
         calendar_url = None
         if self.args.domain:
-            base = utils.get_base_by("domain", self.args.domain)
-            calendar_url = base["url"]
+            website_base = utils.get_base_by("domain", self.args.domain)
+            if website_base is None:
+                sys.exit("Unknown domain '{}'!".format(self.args.domain))
+            calendar_url = website_base["url"]
 
         input_calendars = self.load_input_calendars(calendar_url)
         events_to_insert = self.parse_calendars(input_calendars)

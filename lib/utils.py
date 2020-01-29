@@ -2,6 +2,7 @@ import json
 import os
 import sqlite3
 import urllib.parse as urllib
+from typing import Optional, Union
 
 import requests
 
@@ -50,17 +51,19 @@ def load_base() -> list:
     return base
 
 
-def get_base_by(attr: str, value: str) -> dict:
+def get_base_by(attr: str, value: str) -> Optional[dict]:
     """ Gets a base information for the specified value of the specified attribute.
 
     :param attr: a key to search by
     :param value: a value for the key
-    :return: a dictionary with the base
+    :return: a dictionary with the base; None if such a base doesn't exist
     """
 
     for obj in load_base():
         if obj[attr] == value:
             return obj
+
+    return None
 
 
 def get_xpaths(parser: str) -> dict:
@@ -105,10 +108,10 @@ def download_html_content(url: str, html_file_path: str, dry_run: bool = False) 
     return result
 
 
-def store_to_json_file(output, file_path: str) -> None:
+def store_to_json_file(output: Union[list, dict], file_path: str) -> None:
     """ Saves the output into a json file at the specified file path.
 
-    :param output: an output to be saved (type not specified, but must be valid for json.dumps)
+    :param output: an output to be saved, either a dict or a list
     :param file_path: a file path of an output json file
     """
     with open(file_path, 'w') as output_file:
