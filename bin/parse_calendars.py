@@ -99,7 +99,7 @@ class ParseCalendars:
 
         events_to_insert = []
 
-        with open(calendar_html_file_path) as html_file:
+        with open(calendar_html_file_path, encoding="utf-8") as html_file:
             dom = etree.parse(html_file, etree.HTMLParser())
 
         root_list = dom.xpath(xpaths["root"])

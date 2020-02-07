@@ -25,7 +25,7 @@ class DownloadCalendars:
 
     @staticmethod
     def load_input_urls() -> list:
-        with open(DownloadCalendars.INPUT_URLS_FILE_PATH, 'r') as vismo_urls:
+        with open(DownloadCalendars.INPUT_URLS_FILE_PATH, 'r', encoding="utf-8") as vismo_urls:
             return [line.strip() for line in vismo_urls]
 
     @staticmethod
@@ -59,8 +59,8 @@ class DownloadCalendars:
                 html_file_path = os.path.join(DownloadCalendars.HTML_CONTENT_DIR_PATH, domain + ".html")
                 info["html_file_path"] = html_file_path
 
-                with open(html_file_path, 'w') as html_file:
-                    html_file.write(str(r.text))
+                with open(html_file_path, 'w', encoding="utf-8") as html_file:
+                    html_file.write(r.text)
 
             debug_output += " ({})".format(r.status_code)
 

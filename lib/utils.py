@@ -97,8 +97,8 @@ def download_html_content(url: str, html_file_path: str, dry_run: bool = False) 
         r = requests.get(url, timeout=30)
 
         if not dry_run and r.status_code == 200:
-            with open(html_file_path, 'w') as f:
-                f.write(str(r.text))
+            with open(html_file_path, 'w', encoding="utf-8") as f:
+                f.write(r.text)
 
         result = str(r.status_code)
 

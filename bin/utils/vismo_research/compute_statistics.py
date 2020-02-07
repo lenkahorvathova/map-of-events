@@ -35,7 +35,7 @@ class ComputeStatistics:
         without_calendar_sites_count, without_calendar_sites_list = 0, []
         with_calendar_sites_count, with_calendar_sites_list = 0, []
 
-        with open(DownloadCalendars.OUTPUT_FILE_PATH, 'r') as json_file:
+        with open(DownloadCalendars.OUTPUT_FILE_PATH, 'r', encoding="utf-8") as json_file:
             download_info = json.load(json_file)
 
         for website in download_info:
@@ -76,7 +76,7 @@ class ComputeStatistics:
 
     @staticmethod
     def has_calendar(html_file_path: str) -> bool:
-        with open(html_file_path, 'r') as content:
+        with open(html_file_path, 'r', encoding="utf-8") as content:
             document = BeautifulSoup(content, 'html.parser')
 
         calendar = document.find('div', {'id': 'kalendarAkci'})

@@ -15,7 +15,7 @@ class GenerateInput:
 
     @staticmethod
     def get_usable_urls() -> list:
-        with open(ComputeStatistics.OUTPUT_FILE_PATH, 'r') as statistics_file:
+        with open(ComputeStatistics.OUTPUT_FILE_PATH, 'r', encoding="utf-8") as statistics_file:
             statistics_dict = json.load(statistics_file)
 
         return statistics_dict["statistics"]["sites_with_calendar"]["list"]
