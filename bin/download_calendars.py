@@ -39,8 +39,7 @@ class DownloadCalendars:
             base_list = [website_base]
 
         calendars_to_insert = self.download_calendars(base_list)
-        if not self.args.dry_run:
-            self.store_to_database(calendars_to_insert)
+        self.store_to_database(calendars_to_insert, self.args.dry_run)
 
         self.connection.close()
 
@@ -77,24 +76,25 @@ class DownloadCalendars:
 
         return url, html_file_path, timestamp
 
-    def store_to_database(self, calendars_to_insert: list) -> None:
+    def store_to_database(self, calendars_to_insert: list, dry_run: str) -> None:
         failed_calendars = []
 
         for calendar_info in calendars_to_insert:
             url, html_file_path, downloaded_at = calendar_info
 
             if html_file_path is None:
-                domain = utils.get_domain_name(url)
-                failed_calendars.append(domain)
+                failed_calendars.append(url)
                 continue
 
-            sql_command = '''INSERT INTO calendar(url, html_file_path, downloaded_at)
-                             VALUES (?, ?, ?)'''
-            values = (url, html_file_path, downloaded_at)
+            if not dry_run:
+                sql_command = '''INSERT INTO calendar(url, html_file_path, downloaded_at)
+                                 VALUES (?, ?, ?)'''
+                values = (url, html_file_path, downloaded_at)
 
-            self.connection.execute(sql_command, values)
+                self.connection.execute(sql_command, values)
 
-        self.connection.commit()
+        if not dry_run:
+            self.connection.commit()
 
         print("Number of failed calendars: {}/{}".format(len(failed_calendars), len(calendars_to_insert)))
         print("Failed calendars: {}".format(failed_calendars))

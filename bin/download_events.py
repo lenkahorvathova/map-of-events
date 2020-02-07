@@ -43,9 +43,7 @@ class DownloadEvents:
         input_events = self.load_input_events(calendar_url)
         events_to_insert = self.download_events(input_events)
 
-        if not self.args.dry_run:
-            self.store_to_database(events_to_insert)
-
+        self.store_to_database(events_to_insert, self.args.dry_run)
         self.connection.close()
 
     def load_input_events(self, calendar_url: str = None) -> list:
@@ -98,7 +96,7 @@ class DownloadEvents:
 
         return event_id, html_file_path, timestamp
 
-    def store_to_database(self, events_to_insert: list) -> None:
+    def store_to_database(self, events_to_insert: list, dry_run: str) -> None:
         failed_url_ids = []
         event_url_ids = []
 
@@ -106,26 +104,26 @@ class DownloadEvents:
             event_url_id, html_file_path, downloaded_at = event_info
             event_url_ids.append(event_url_id)
 
-            query = '''INSERT INTO event_html(html_file_path, downloaded_at, event_url_id)
-                       VALUES(?, ?, ?)'''
-            values = (html_file_path, downloaded_at, event_url_id)
-
-            try:
-                self.connection.execute(query, values)
-            except sqlite3.Error as e:
+            if html_file_path is None:
                 failed_url_ids.append(event_url_id)
-                print("Error occurred when storing {} into 'event_url' table: {}".format(values, str(e)))
+                continue
 
-        self.connection.commit()
+            if not dry_run:
+                query = '''INSERT INTO event_html(html_file_path, downloaded_at, event_url_id)
+                           VALUES(?, ?, ?)'''
+                values = (html_file_path, downloaded_at, event_url_id)
 
-        query = '''SELECT event_url_id FROM event_html
-                   WHERE event_url_id IN ({})
-                   AND html_file_path IS NULL'''.format(",".join(['"{}"'.format(id) for id in event_url_ids]))
-        cursor = self.connection.execute(query)
-        failed_url_ids.extend([url[0] for url in cursor.fetchall()])
+                try:
+                    self.connection.execute(query, values)
+                except sqlite3.Error as e:
+                    failed_url_ids.append(event_url_id)
+                    print("Error occurred when storing {} into 'event_url' table: {}".format(values, str(e)))
+
+        if not dry_run:
+            self.connection.commit()
 
         print("Number of failed events: {}/{}".format(len(failed_url_ids), len(event_url_ids)))
-        # print("Failed events' IDs: {}".format(faulty_url_ids))
+        print("Failed events' IDs: {}".format(failed_url_ids))
 
 
 if __name__ == '__main__':
