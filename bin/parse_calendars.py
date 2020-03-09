@@ -37,14 +37,7 @@ class ParseCalendars:
         return parser.parse_args()
 
     def run(self) -> None:
-        calendar_url = None
-        if self.args.domain:
-            website_base = utils.get_base_by("domain", self.args.domain)
-            if website_base is None:
-                sys.exit("Unknown domain '{}'!".format(self.args.domain))
-            calendar_url = website_base["url"]
-
-        input_calendars = self.load_input_calendars(calendar_url)
+        input_calendars = self.load_input_calendars()
         events_to_insert = self.parse_calendars(input_calendars)
 
         if not self.args.dry_run:
@@ -53,10 +46,16 @@ class ParseCalendars:
 
         self.connection.close()
 
-    def load_input_calendars(self, calendar_url: str = None) -> list:
+    def load_input_calendars(self) -> list:
         query = '''SELECT id, url, html_file_path FROM calendar WHERE 1==1'''
 
-        if calendar_url:
+        if self.args.domain:
+            website_base = utils.get_base_by("domain", self.args.domain)
+
+            if website_base is None:
+                sys.exit("Unknown domain '{}'!".format(self.args.domain))
+            calendar_url = website_base["url"]
+
             query += ''' AND url == "{}"'''.format(calendar_url)
         if not self.args.parse_all:
             query += ''' AND is_parsed == 0'''
@@ -69,10 +68,10 @@ class ParseCalendars:
         timestamp = datetime.now()
         input_tuples = []
 
-        for index, calendar in enumerate(input_calendars):
-            _, calendar_url, _ = calendar
+        for index, calendar_tuple in enumerate(input_calendars):
+            _, calendar_url, _ = calendar_tuple
             website_base = utils.get_base_by("url", calendar_url)
-            input_tuples.append((index + 1, len(input_calendars), calendar, timestamp, website_base))
+            input_tuples.append((index + 1, len(input_calendars), calendar_tuple, timestamp, website_base))
 
         with multiprocessing.Pool(32) as p:
             events_lists = p.map(ParseCalendars.process_calendar, input_tuples)
@@ -84,10 +83,10 @@ class ParseCalendars:
 
     @staticmethod
     def process_calendar(input_tuple: tuple) -> list:
-        input_index, total_length, calendar, timestamp, website_base = input_tuple
-        """ (input_index: int, total_length: int, calendar: (int, str, str), timestamp: datetime, 
+        input_index, total_length, calendar_tuple, timestamp, website_base = input_tuple
+        """ (input_index: int, total_length: int, calendar_tuple: (int, str, str), timestamp: datetime, 
             website_base: dict) """
-        calendar_id, calendar_url, calendar_html_file_path = calendar
+        calendar_id, calendar_url, calendar_html_file_path = calendar_tuple
 
         domain = website_base["domain"]
         xpaths = utils.get_xpaths(website_base["parser"])
