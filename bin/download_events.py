@@ -33,24 +33,21 @@ class DownloadEvents:
         return parser.parse_args()
 
     def run(self) -> None:
-        calendar_url = None
+        input_events = self.load_input_events()
+        events_to_insert = self.download_events(input_events)
+        self.store_to_database(events_to_insert, self.args.dry_run)
+        self.connection.close()
+
+    def load_input_events(self) -> list:
+        query = '''SELECT eu.id, eu.url FROM event_url eu
+                   LEFT OUTER JOIN event_html eh ON eu.id = eh.event_url_id
+                   WHERE eh.event_url_id IS NULL'''
         if self.args.domain:
             website_base = utils.get_base_by("domain", self.args.domain)
             if website_base is None:
                 sys.exit("Unknown domain '{}'!".format(self.args.domain))
             calendar_url = website_base["url"]
 
-        input_events = self.load_input_events(calendar_url)
-        events_to_insert = self.download_events(input_events)
-
-        self.store_to_database(events_to_insert, self.args.dry_run)
-        self.connection.close()
-
-    def load_input_events(self, calendar_url: str = None) -> list:
-        query = '''SELECT eu.id, eu.url FROM event_url eu
-                   LEFT OUTER JOIN event_html eh ON eu.id = eh.event_url_id
-                   WHERE eh.event_url_id IS NULL'''
-        if calendar_url:
             cursor = self.connection.execute('''SELECT id FROM calendar WHERE url == "{}"'''.format(calendar_url))
             calendar_ids = [id[0] for id in cursor.fetchall()]
             query += " AND eu.calendar_id IN ({})".format(",".join(['"{}"'.format(id) for id in calendar_ids]))

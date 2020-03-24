@@ -31,17 +31,19 @@ class DownloadCalendars:
         return parser.parse_args()
 
     def run(self) -> None:
-        base_list = self.base
+        base_list = self.get_input_domains()
+        calendars_to_insert = self.download_calendars(base_list)
+        self.store_to_database(calendars_to_insert, self.args.dry_run)
+        self.connection.close()
+
+    def get_input_domains(self) -> list:
         if self.args.domain:
             website_base = utils.get_base_by("domain", self.args.domain)
             if website_base is None:
                 sys.exit("Unknown domain '{}'!".format(self.args.domain))
-            base_list = [website_base]
+            return [website_base]
 
-        calendars_to_insert = self.download_calendars(base_list)
-        self.store_to_database(calendars_to_insert, self.args.dry_run)
-
-        self.connection.close()
+        return self.base
 
     def download_calendars(self, base_list: list) -> list:
         timestamp = datetime.now()
