@@ -2,197 +2,236 @@
     {
         "domain": "bacovice_cz",
         "url": "http://www.bacovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b028'37.230\"N, 15\u00b010'2.647\"E"
     },
     {
         "domain": "barchovice_cz",
         "url": "http://www.barchovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b056'39.352\"N, 14\u00b058'8.270\"E"
     },
     {
         "domain": "batelov_eu",
         "url": "http://www.batelov.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b018'52.647\"N, 15\u00b023'38.181\"E"
     },
     {
         "domain": "belaobec_cz",
         "url": "http://www.belaobec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b045'7.480\"N, 15\u00b014'14.717\"E"
     },
     {
         "domain": "belec_kreptov_cz",
         "url": "http://www.belec-kreptov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b026'3.614\"N, 16\u00b022'56.977\"E"
     },
     {
         "domain": "benesov_city_cz",
         "url": "http://www.benesov-city.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b046'58.753\"N, 14\u00b041'24.278\"E"
     },
     {
         "domain": "bilovec_cz",
         "url": "http://www.bilovec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b045'22.633\"N, 18\u00b00'56.857\"E"
     },
     {
         "domain": "bily_kamen_cz",
         "url": "http://www.bily-kamen.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b026'11.450\"N, 15\u00b030'27.857\"E"
     },
     {
         "domain": "blazovice_eu",
         "url": "http://www.blazovice.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b09'51.835\"N, 16\u00b047'25.082\"E"
     },
     {
         "domain": "bohunovice_cz",
         "url": "http://www.bohunovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b039'48.196\"N, 17\u00b017'14.005\"E"
     },
     {
         "domain": "brandysek_cz",
         "url": "http://www.brandysek.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b011'19.453\"N, 14\u00b09'23.885\"E"
     },
     {
         "domain": "branisovice_cz",
         "url": "http://www.branisovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b057'45.379\"N, 16\u00b025'54.760\"E"
     },
     {
         "domain": "brezany_obec_cz",
         "url": "http://www.brezany-obec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b020'46.790\"N, 13\u00b037'8.922\"E"
     },
     {
         "domain": "brno_jih_cz",
         "url": "http://www.brno-jih.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b010'28.339\"N, 16\u00b037'22.396\"E"
     },
     {
         "domain": "brodce_cz",
         "url": "http://www.brodce.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b019'50.805\"N, 14\u00b052'5.172\"E"
     },
     {
         "domain": "broumov_mesto_cz",
         "url": "http://www.broumov-mesto.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b035'16.007\"N, 16\u00b019'48.773\"E"
     },
     {
         "domain": "brtnice_cz",
         "url": "http://www.brtnice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b018'14.435\"N, 15\u00b040'41.272\"E"
     },
     {
         "domain": "brzkov_cz",
         "url": "http://www.brzkov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b031'34.288\"N, 15\u00b043'38.519\"E"
     },
     {
         "domain": "bubovice_cz",
         "url": "http://www.bubovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b058'14.627\"N, 14\u00b010'6.650\"E"
     },
     {
         "domain": "bucovice_cz",
         "url": "http://www.bucovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b09'0.371\"N, 17\u00b00'11.564\"E"
     },
     {
         "domain": "bysice_eu",
         "url": "http://www.bysice.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b018'37.549\"N, 14\u00b036'45.229\"E"
     },
     {
         "domain": "bystriceph_cz",
         "url": "http://www.bystriceph.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b023'59.966\"N, 17\u00b040'19.335\"E"
     },
     {
         "domain": "ceperka_cz",
         "url": "http://www.ceperka.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b07'58.478\"N, 15\u00b046'30.273\"E"
     },
     {
         "domain": "cercany_cz",
         "url": "http://www.cercany.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b050'56.531\"N, 14\u00b042'15.965\"E"
     },
     {
         "domain": "cervenarecice_info",
         "url": "http://www.cervenarecice.info/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b030'40.856\"N, 15\u00b010'49.206\"E"
     },
     {
         "domain": "ceska_kamenice_cz",
         "url": "http://www.ceska-kamenice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b048'0.036\"N, 14\u00b025'1.329\"E"
     },
     {
         "domain": "ceskyrudolec_cz",
         "url": "http://www.ceskyrudolec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b04'3.031\"N, 15\u00b019'24.146\"E"
     },
     {
         "domain": "chlistov_info",
         "url": "http://www.chlistov.info/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b048'0.858\"N, 14\u00b039'19.117\"E"
     },
     {
         "domain": "chocen_mesto_cz",
         "url": "http://www.chocen-mesto.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b00'3.274\"N, 16\u00b013'27.829\"E"
     },
     {
         "domain": "chotetov_cz",
         "url": "http://www.chotetov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b020'14.832\"N, 14\u00b048'5.847\"E"
     },
     {
         "domain": "chrlice_brno_cz",
         "url": "http://www.chrlice.brno.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b08'9.952\"N, 16\u00b039'10.697\"E"
     },
     {
         "domain": "chvateruby_cz",
         "url": "http://www.chvateruby.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b013'56.499\"N, 14\u00b020'37.099\"E"
     },
     {
         "domain": "chynov_cz",
         "url": "http://www.chynov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b024'22.327\"N, 14\u00b048'39.747\"E"
     },
     {
         "domain": "cimelice_cz",
         "url": "http://www.cimelice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b027'48.911\"N, 14\u00b04'8.054\"E"
     },
     {
         "domain": "cizkov_eu",
         "url": "http://www.cizkov.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b026'20.267\"N, 15\u00b07'3.056\"E"
     },
     {
         "domain": "cvrcovice_eu",
         "url": "http://www.cvrcovice.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b010'45.551\"N, 14\u00b09'25.325\"E"
     },
     {
         "domain": "dobronin_cz",
         "url": "http://www.dobronin.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b028'40.651\"N, 15\u00b039'8.544\"E"
     },
     {
         "domain": "dobrovice_cz",
         "url": "http://www.dobrovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b022'10.018\"N, 14\u00b057'44.063\"E"
     },
     {
         "domain": "dolany_ol_cz",
         "url": "http://www.dolany-ol.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b038'59.664\"N, 17\u00b019'29.499\"E"
     },
     {
         "domain": "dolni_dunajovice_cz",
@@ -202,32 +241,38 @@
     {
         "domain": "dolnibezdekov_cz",
         "url": "http://dolnibezdekov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b057'26.600\"N, 15\u00b052'54.443\"E"
     },
     {
         "domain": "dolnikounice_cz",
         "url": "http://www.dolnikounice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b04'11.221\"N, 16\u00b027'56.023\"E"
     },
     {
         "domain": "dolninivy_cz",
         "url": "http://www.dolninivy.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b014'35.899\"N, 12\u00b038'10.582\"E"
     },
     {
         "domain": "domanin_eu",
         "url": "http://www.domanin.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b00'8.233\"N, 17\u00b017'7.010\"E"
     },
     {
         "domain": "domasovusternberka_cz",
         "url": "http://www.domasovusternberka.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b042'18.382\"N, 17\u00b020'20.417\"E"
     },
     {
         "domain": "drahelcice_obec_cz",
         "url": "http://www.drahelcice-obec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b01'53.541\"N, 14\u00b012'12.740\"E"
     },
     {
         "domain": "drasov_cz",
@@ -237,12 +282,14 @@
     {
         "domain": "dudin_cz",
         "url": "http://www.dudin.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b026'58.629\"N, 15\u00b023'57.390\"E"
     },
     {
         "domain": "frydlantno_cz",
         "url": "http://www.frydlantno.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b035'34.022\"N, 18\u00b021'34.337\"E"
     },
     {
         "domain": "fulnek_cz",
@@ -252,52 +299,62 @@
     {
         "domain": "habruvka_cz",
         "url": "http://www.habruvka.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b018'14.589\"N, 16\u00b043'23.060\"E"
     },
     {
         "domain": "habry_cz",
         "url": "http://www.habry.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b045'22.541\"N, 15\u00b029'4.015\"E"
     },
     {
         "domain": "halze_cz",
         "url": "http://www.halze.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b049'47.934\"N, 12\u00b034'41.844\"E"
     },
     {
         "domain": "hbenesov_cz",
         "url": "http://www.hbenesov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b058'0.457\"N, 17\u00b036'10.414\"E"
     },
     {
         "domain": "heralec_cz",
         "url": "http://www.heralec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b031'54.275\"N, 15\u00b027'21.805\"E"
     },
     {
         "domain": "hermanicky_cz",
         "url": "http://hermanicky.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b036'7.938\"N, 14\u00b034'56.046\"E"
     },
     {
         "domain": "hlubocky_cz",
         "url": "http://www.hlubocky.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b037'48.532\"N, 17\u00b024'12.628\"E"
     },
     {
         "domain": "hnevkovice_cz",
         "url": "http://www.hnevkovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b041'12.188\"N, 15\u00b012'12.624\"E"
     },
     {
         "domain": "hodonin_eu",
         "url": "http://www.hodonin.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b051'5.649\"N, 17\u00b07'34.558\"E"
     },
     {
         "domain": "holstejn_eu",
         "url": "http://www.holstejn.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b024'24.271\"N, 16\u00b046'41.425\"E"
     },
     {
         "domain": "horice_org",
@@ -307,17 +364,20 @@
     {
         "domain": "horni_stropnice_cz",
         "url": "http://www.horni-stropnice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b045'42.238\"N, 14\u00b044'10.029\"E"
     },
     {
         "domain": "hornilapac_cz",
         "url": "http://www.hornilapac.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b018'4.087\"N, 17\u00b037'0.571\"E"
     },
     {
         "domain": "horosedly_cz",
         "url": "http://www.horosedly.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b030'44.566\"N, 14\u00b03'11.162\"E"
     },
     {
         "domain": "hostoun_cz",
@@ -327,47 +387,56 @@
     {
         "domain": "hradcanyutisnova_cz",
         "url": "http://www.hradcanyutisnova.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b019'39.663\"N, 16\u00b026'35.273\"E"
     },
     {
         "domain": "hrubavrbka_cz",
         "url": "http://www.hrubavrbka.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b052'18.465\"N, 17\u00b028'37.283\"E"
     },
     {
         "domain": "hury_cz",
         "url": "http://www.hury.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b00'22.132\"N, 14\u00b032'21.308\"E"
     },
     {
         "domain": "hybralec_cz",
         "url": "http://www.hybralec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b025'41.118\"N, 15\u00b033'31.413\"E"
     },
     {
         "domain": "jablonneno_cz",
         "url": "http://www.jablonneno.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b01'47.215\"N, 16\u00b035'58.834\"E"
     },
     {
         "domain": "jablonnevp_cz",
         "url": "http://www.jablonnevp.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b045'54.928\"N, 14\u00b045'39.013\"E"
     },
     {
         "domain": "jamneujihlavy_cz",
         "url": "http://www.jamneujihlavy.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b025'45.983\"N, 15\u00b043'15.065\"E"
     },
     {
         "domain": "janovuhrenska_cz",
         "url": "http://www.janovuhrenska.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b051'34.097\"N, 14\u00b016'11.707\"E"
     },
     {
         "domain": "jaromericenr_cz",
         "url": "http://www.jaromericenr.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b05'38.176\"N, 15\u00b053'35.914\"E"
     },
     {
         "domain": "jenisov_cz",
@@ -377,37 +446,44 @@
     {
         "domain": "jerisno_cz",
         "url": "http://www.jerisno.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b047'29.414\"N, 15\u00b038'28.638\"E"
     },
     {
         "domain": "jevisovka_cz",
         "url": "http://www.jevisovka.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b049'42.870\"N, 16\u00b027'58.100\"E"
     },
     {
         "domain": "jihlava_cz",
         "url": "http://www.jihlava.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b023'45.862\"N, 15\u00b035'28.272\"E"
     },
     {
         "domain": "jiretin_cz",
         "url": "http://www.jiretin.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b052'26.324\"N, 14\u00b034'25.004\"E"
     },
     {
         "domain": "jirikovice_cz",
         "url": "http://www.jirikovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b09'59.700\"N, 16\u00b045'32.918\"E"
     },
     {
         "domain": "jundrov_info",
         "url": "http://www.jundrov.info/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b012'27.054\"N, 16\u00b033'18.511\"E"
     },
     {
         "domain": "kadlin_cz",
         "url": "http://www.kadlin.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b023'57.017\"N, 14\u00b041'53.180\"E"
     },
     {
         "domain": "kamenicenl_cz",
@@ -417,12 +493,14 @@
     {
         "domain": "kameniceujihlavy_cz",
         "url": "http://www.kameniceujihlavy.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b022'6.362\"N, 15\u00b046'54.158\"E"
     },
     {
         "domain": "kejzlice_cz",
         "url": "http://www.kejzlice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b035'22.569\"N, 15\u00b023'30.461\"E"
     },
     {
         "domain": "kliny_eu",
@@ -437,72 +515,86 @@
     {
         "domain": "knezice_com",
         "url": "http://www.knezice.com/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b015'58.738\"N, 15\u00b040'17.889\"E"
     },
     {
         "domain": "knoviz_cz",
         "url": "http://www.knoviz.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b012'44.126\"N, 14\u00b08'11.248\"E"
     },
     {
         "domain": "kohoutovice_brno_cz",
         "url": "http://www.kohoutovice.brno.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b011'35.830\"N, 16\u00b032'7.684\"E"
     },
     {
         "domain": "kojetice_cz",
         "url": "http://www.kojetice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b014'15.223\"N, 14\u00b029'54.736\"E"
     },
     {
         "domain": "kolaje_cz",
         "url": "http://www.kolaje.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b09'25.908\"N, 15\u00b014'1.626\"E"
     },
     {
         "domain": "kolodeje_cz",
         "url": "http://www.kolodeje.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b03'43.780\"N, 14\u00b038'17.560\"E"
     },
     {
         "domain": "kolovraty_cz",
         "url": "http://www.kolovraty.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b00'45.753\"N, 14\u00b037'22.841\"E"
     },
     {
         "domain": "kosicky_cz",
         "url": "http://www.kosicky.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b010'46.152\"N, 15\u00b033'20.044\"E"
     },
     {
         "domain": "kosik_obec_cz",
         "url": "http://www.kosik-obec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b018'58.993\"N, 15\u00b08'9.876\"E"
     },
     {
         "domain": "kosovahora_cz",
         "url": "http://www.kosovahora.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b039'15.403\"N, 14\u00b028'18.502\"E"
     },
     {
         "domain": "kostelecncl_cz",
         "url": "http://www.kostelecncl.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b059'41.764\"N, 14\u00b051'39.106\"E"
     },
     {
         "domain": "kostelecno_cz",
         "url": "http://www.kostelecno.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b07'22.868\"N, 16\u00b012'39.179\"E"
     },
     {
         "domain": "kozlov_jihlava_cz",
         "url": "http://www.kozlov-jihlava.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b024'44.540\"N, 15\u00b041'58.955\"E"
     },
     {
         "domain": "kralovice_cz",
         "url": "http://www.kralovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b058'47.263\"N, 13\u00b029'8.011\"E"
     },
     {
         "domain": "kralovopole_brno_cz",
@@ -512,112 +604,134 @@
     {
         "domain": "kraluv_dvur_cz",
         "url": "http://www.kraluv-dvur.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b056'39.344\"N, 14\u00b02'22.808\"E"
     },
     {
         "domain": "krasikovice_cz",
         "url": "http://www.krasikovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b027'41.347\"N, 15\u00b013'46.863\"E"
     },
     {
         "domain": "krasnahora_cz",
         "url": "http://www.krasnahora.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b036'8.109\"N, 15\u00b028'19.581\"E"
     },
     {
         "domain": "krasova_cz",
         "url": "http://www.krasova.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b021'39.668\"N, 16\u00b046'3.024\"E"
     },
     {
         "domain": "krchleby_eu",
         "url": "http://www.krchleby.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b014'15.766\"N, 15\u00b01'28.185\"E"
     },
     {
         "domain": "krelovice_cz",
         "url": "http://www.krelovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b032'11.104\"N, 15\u00b09'53.925\"E"
     },
     {
         "domain": "kresice_cz",
         "url": "http://www.kresice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b031'32.082\"N, 14\u00b012'57.367\"E"
     },
     {
         "domain": "kreslice_cz",
         "url": "http://www.kreslice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b01'23.860\"N, 14\u00b033'54.399\"E"
     },
     {
         "domain": "krinec_cz",
         "url": "http://www.krinec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b015'51.685\"N, 15\u00b08'21.841\"E"
     },
     {
         "domain": "krnov_cz",
         "url": "http://www.krnov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b05'23.148\"N, 17\u00b042'12.362\"E"
     },
     {
         "domain": "kropacovavrutice_cz",
         "url": "http://www.kropacovavrutice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b019'25.086\"N, 14\u00b042'9.559\"E"
     },
     {
         "domain": "krupka_mesto_cz",
         "url": "http://www.krupka-mesto.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b040'55.001\"N, 13\u00b052'26.157\"E"
     },
     {
         "domain": "kuzelov_com",
         "url": "http://www.kuzelov.com/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b051'38.957\"N, 17\u00b029'4.298\"E"
     },
     {
         "domain": "kvetinov_cz",
         "url": "http://www.kvetinov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b033'54.699\"N, 15\u00b030'25.927\"E"
     },
     {
         "domain": "labskechrcice_eu",
         "url": "http://www.labskechrcice.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b02'53.758\"N, 15\u00b024'37.960\"E"
     },
     {
         "domain": "leskovicehb_cz",
         "url": "http://www.leskovicehb.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b045'49.024\"N, 15\u00b031'59.020\"E"
     },
     {
         "domain": "libesice_cz",
         "url": "http://www.libesice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b034'7.839\"N, 14\u00b017'24.070\"E"
     },
     {
         "domain": "libhost_cz",
         "url": "http://www.libhost.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b037'40.022\"N, 18\u00b04'33.717\"E"
     },
     {
         "domain": "libisany_cz",
         "url": "http://www.libisany.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b09'11.063\"N, 15\u00b045'26.676\"E"
     },
     {
         "domain": "libkova_voda_cz",
         "url": "http://www.libkova-voda.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b022'33.456\"N, 15\u00b011'21.360\"E"
     },
     {
         "domain": "lipnicens_cz",
         "url": "http://www.lipnicens.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b036'46.342\"N, 15\u00b024'45.583\"E"
     },
     {
         "domain": "litohost_cz",
         "url": "http://www.litohost.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b026'57.533\"N, 15\u00b05'26.225\"E"
     },
     {
         "domain": "lodenice_cz",
@@ -627,52 +741,62 @@
     {
         "domain": "lomnice_cz",
         "url": "http://www.lomnice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b024'15.353\"N, 16\u00b024'50.019\"E"
     },
     {
         "domain": "loucen_cz",
         "url": "http://www.loucen.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b017'7.035\"N, 15\u00b01'14.112\"E"
     },
     {
         "domain": "lovcice_eu",
         "url": "http://www.lovcice.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b010'3.562\"N, 15\u00b023'1.210\"E"
     },
     {
         "domain": "lubenec_cz",
         "url": "http://www.lubenec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b07'56.575\"N, 13\u00b018'53.322\"E"
     },
     {
         "domain": "lukanadjihlavou_cz",
         "url": "http://www.lukanadjihlavou.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b022'24.358\"N, 15\u00b042'20.773\"E"
     },
     {
         "domain": "lukavec_cz",
         "url": "http://www.lukavec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b033'56.278\"N, 14\u00b059'25.145\"E"
     },
     {
         "domain": "malomerice_cz",
         "url": "http://www.malomerice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b013'6.699\"N, 16\u00b038'36.965\"E"
     },
     {
         "domain": "malsovice_cz",
         "url": "http://www.malsovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b044'5.928\"N, 14\u00b010'9.740\"E"
     },
     {
         "domain": "maly_bor_cz",
         "url": "http://www.maly-bor.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b019'51.736\"N, 13\u00b039'2.477\"E"
     },
     {
         "domain": "meceriz_cz",
         "url": "http://www.meceriz.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b017'24.525\"N, 14\u00b044'8.141\"E"
     },
     {
         "domain": "mecholupyublovic_cz",
@@ -687,7 +811,8 @@
     {
         "domain": "mesin_cz",
         "url": "http://www.mesin.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b026'15.023\"N, 15\u00b039'23.731\"E"
     },
     {
         "domain": "mesto_chlumec_cz",
@@ -697,7 +822,8 @@
     {
         "domain": "mesto_doksy_cz",
         "url": "http://www.mesto-doksy.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b033'48.969\"N, 14\u00b039'18.928\"E"
     },
     {
         "domain": "mesto_humpolec_cz",
@@ -707,7 +833,8 @@
     {
         "domain": "mesto_miroslav_cz",
         "url": "http://www.mesto-miroslav.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b056'44.781\"N, 16\u00b018'43.975\"E"
     },
     {
         "domain": "mesto_most_cz",
@@ -717,7 +844,8 @@
     {
         "domain": "mesto_polna_cz",
         "url": "http://mesto-polna.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b029'10.950\"N, 15\u00b043'14.551\"E"
     },
     {
         "domain": "mesto_ustek_cz",
@@ -727,17 +855,20 @@
     {
         "domain": "mesto_zubri_cz",
         "url": "http://www.mesto-zubri.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b028'21.913\"N, 18\u00b05'27.480\"E"
     },
     {
         "domain": "mestochrast_cz",
         "url": "http://www.mestochrast.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b054'3.513\"N, 15\u00b056'13.716\"E"
     },
     {
         "domain": "mestohabartov_cz",
         "url": "http://www.mestohabartov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b010'56.560\"N, 12\u00b032'59.749\"E"
     },
     {
         "domain": "mestohradek_ro_cz",
@@ -747,7 +878,8 @@
     {
         "domain": "mestojachymov_cz",
         "url": "http://www.mestojachymov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b022'17.089\"N, 12\u00b054'48.870\"E"
     },
     {
         "domain": "mestokladno_cz",
@@ -757,37 +889,44 @@
     {
         "domain": "mestokourim_cz",
         "url": "http://www.mestokourim.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b00'7.881\"N, 14\u00b058'39.822\"E"
     },
     {
         "domain": "mestokyjov_cz",
         "url": "http://www.mestokyjov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b00'36.571\"N, 17\u00b07'20.106\"E"
     },
     {
         "domain": "mestopacov_cz",
         "url": "https://www.mestopacov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b028'24.959\"N, 15\u00b00'9.831\"E"
     },
     {
         "domain": "mestopelhrimov_cz",
         "url": "http://www.mestopelhrimov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b025'53.154\"N, 15\u00b013'23.589\"E"
     },
     {
         "domain": "mestoplumlov_cz",
         "url": "http://www.mestoplumlov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b027'58.091\"N, 17\u00b00'54.057\"E"
     },
     {
         "domain": "mestorudna_cz",
         "url": "http://www.mestorudna.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b02'1.678\"N, 14\u00b013'55.899\"E"
     },
     {
         "domain": "mestosazava_cz",
         "url": "http://www.mestosazava.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b052'32.649\"N, 14\u00b054'7.729\"E"
     },
     {
         "domain": "mestosec_cz",
@@ -797,32 +936,38 @@
     {
         "domain": "mestosmirice_cz",
         "url": "http://www.mestosmirice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b018'0.025\"N, 15\u00b052'8.762\"E"
     },
     {
         "domain": "mestoterezin_cz",
         "url": "http://www.mestoterezin.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b030'41.423\"N, 14\u00b08'57.352\"E"
     },
     {
         "domain": "mestysliten_cz",
         "url": "http://www.mestysliten.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b054'13.176\"N, 14\u00b08'49.940\"E"
     },
     {
         "domain": "mestysmarsovice_cz",
         "url": "http://www.mestysmarsovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b042'51.147\"N, 14\u00b033'51.627\"E"
     },
     {
         "domain": "mestysmladebuky_cz",
         "url": "http://www.mestysmladebuky.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b036'16.817\"N, 15\u00b050'6.466\"E"
     },
     {
         "domain": "meucaslav_cz",
         "url": "http://www.meucaslav.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b054'39.450\"N, 15\u00b023'26.033\"E"
     },
     {
         "domain": "meulovo_cz",
@@ -832,77 +977,92 @@
     {
         "domain": "mezibori_cz",
         "url": "http://www.mezibori.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b037'12.566\"N, 13\u00b036'23.858\"E"
     },
     {
         "domain": "mezimesti_cz",
         "url": "http://www.mezimesti.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b037'31.383\"N, 16\u00b014'24.998\"E"
     },
     {
         "domain": "mezna_cz",
         "url": "http://www.mezna.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b020'47.174\"N, 15\u00b012'37.961\"E"
     },
     {
         "domain": "misovice_cz",
         "url": "http://www.misovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b029'45.526\"N, 14\u00b00'23.112\"E"
     },
     {
         "domain": "mlekosrby_cz",
         "url": "http://www.mlekosrby.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b011'29.810\"N, 15\u00b030'4.775\"E"
     },
     {
         "domain": "mnetes_cz",
         "url": "http://www.mnetes.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b021'56.178\"N, 14\u00b016'53.117\"E"
     },
     {
         "domain": "mnichovice_info",
         "url": "http://www.mnichovice.info/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b056'8.103\"N, 14\u00b042'36.746\"E"
     },
     {
         "domain": "mokra_horakov_cz",
         "url": "http://www.mokra-horakov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b013'22.146\"N, 16\u00b045'7.668\"E"
     },
     {
         "domain": "moravanyubrna_cz",
         "url": "http://www.moravanyubrna.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b08'41.716\"N, 16\u00b034'38.487\"E"
     },
     {
         "domain": "moravskypisek_cz",
         "url": "http://www.moravskypisek.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b059'24.545\"N, 17\u00b019'55.702\"E"
     },
     {
         "domain": "morberoun_cz",
         "url": "http://www.morberoun.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b047'36.448\"N, 17\u00b026'31.572\"E"
     },
     {
         "domain": "morinka_eu",
         "url": "https://www.morinka.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b056'18.668\"N, 14\u00b014'4.282\"E"
     },
     {
         "domain": "mostyujablunkova_cz",
         "url": "http://www.mostyujablunkova.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b031'32.643\"N, 18\u00b045'9.797\"E"
     },
     {
         "domain": "mratin_cz",
         "url": "http://www.mratin.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b012'15.916\"N, 14\u00b033'15.123\"E"
     },
     {
         "domain": "muas_cz",
         "url": "http://www.muas.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b013'20.245\"N, 12\u00b011'24.950\"E"
     },
     {
         "domain": "muhb_cz",
@@ -912,7 +1072,8 @@
     {
         "domain": "mulitvinov_cz",
         "url": "http://www.mulitvinov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b035'55.813\"N, 13\u00b036'42.212\"E"
     },
     {
         "domain": "munovapaka_cz",
@@ -922,92 +1083,110 @@
     {
         "domain": "muunhost_cz",
         "url": "http://www.muunhost.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b05'2.909\"N, 14\u00b07'55.444\"E"
     },
     {
         "domain": "muzdanice_cz",
         "url": "http://www.muzdanice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b04'2.557\"N, 17\u00b01'41.607\"E"
     },
     {
         "domain": "nasavrky_cz",
         "url": "http://www.nasavrky.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b050'41.206\"N, 15\u00b048'9.667\"E"
     },
     {
         "domain": "neratovice_cz",
         "url": "http://www.neratovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b015'19.745\"N, 14\u00b031'14.111\"E"
     },
     {
         "domain": "neustupov_cz",
         "url": "http://www.neustupov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b036'56.696\"N, 14\u00b041'56.214\"E"
     },
     {
         "domain": "nosislav_info",
         "url": "http://www.nosislav.info/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b00'43.286\"N, 16\u00b039'16.235\"E"
     },
     {
         "domain": "novabukova_cz",
         "url": "http://www.novabukova.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b020'43.416\"N, 15\u00b017'45.524\"E"
     },
     {
         "domain": "novabystrice_cz",
         "url": "http://www.novabystrice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b01'10.599\"N, 15\u00b06'11.644\"E"
     },
     {
         "domain": "novalhota_cz",
         "url": "http://www.novalhota.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b051'39.010\"N, 17\u00b035'35.603\"E"
     },
     {
         "domain": "novaves_bv_cz",
         "url": "http://novaves-bv.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b06'22.632\"N, 16\u00b018'53.891\"E"
     },
     {
         "domain": "novehamry_eu",
         "url": "http://www.novehamry.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b021'45.203\"N, 12\u00b043'18.967\"E"
     },
     {
         "domain": "novy_bor_cz",
         "url": "http://www.novy-bor.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b045'35.991\"N, 14\u00b033'24.120\"E"
     },
     {
         "domain": "novy_liskovec_cz",
         "url": "http://www.novy-liskovec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b010'34.467\"N, 16\u00b033'11.378\"E"
     },
     {
         "domain": "novybydzov_cz",
         "url": "http://www.novybydzov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b014'28.409\"N, 15\u00b029'23.343\"E"
     },
     {
         "domain": "ob_vis_net",
         "url": "http://www.ob-vis.net/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b057'59.874\"N, 15\u00b01'21.729\"E"
     },
     {
         "domain": "obec_cebin_cz",
         "url": "http://www.obec-cebin.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b018'45.977\"N, 16\u00b028'44.552\"E"
     },
     {
         "domain": "obec_dobra_voda_cz",
         "url": "http://www.obec-dobra-voda.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b021'26.557\"N, 15\u00b016'12.746\"E"
     },
     {
         "domain": "obec_dobsice_cz",
         "url": "http://www.obec-dobsice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b08'3.143\"N, 15\u00b016'6.444\"E"
     },
     {
         "domain": "obec_domasov_net",
@@ -1017,12 +1196,14 @@
     {
         "domain": "obec_hovorany_cz",
         "url": "http://www.obec-hovorany.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b057'17.636\"N, 16\u00b059'30.244\"E"
     },
     {
         "domain": "obec_jirice_cz",
         "url": "http://www.obec-jirice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b033'13.096\"N, 15\u00b019'7.324\"E"
     },
     {
         "domain": "obec_krasov_eu",
@@ -1032,27 +1213,32 @@
     {
         "domain": "obec_kyselovice_cz",
         "url": "http://www.obec-kyselovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b022'36.329\"N, 17\u00b024'16.898\"E"
     },
     {
         "domain": "obec_kytlice_cz",
         "url": "http://www.obec-kytlice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b048'45.318\"N, 14\u00b032'6.944\"E"
     },
     {
         "domain": "obec_lochenice_cz",
         "url": "http://www.obec-lochenice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b016'21.860\"N, 15\u00b049'12.001\"E"
     },
     {
         "domain": "obec_lodenice_cz",
         "url": "http://www.obec-lodenice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b00'40.924\"N, 16\u00b027'48.494\"E"
     },
     {
         "domain": "obec_ondrejov_cz",
         "url": "http://www.obec-ondrejov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b023'32.783\"N, 15\u00b010'40.070\"E"
     },
     {
         "domain": "obec_vilemovice_cz",
@@ -1062,227 +1248,272 @@
     {
         "domain": "obecarnolec_cz",
         "url": "http://www.obecarnolec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b026'6.360\"N, 15\u00b049'19.921\"E"
     },
     {
         "domain": "obecberovice_cz",
         "url": "http://www.obecberovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b016'8.633\"N, 14\u00b07'22.203\"E"
     },
     {
         "domain": "obecbrehy_cz",
         "url": "http://www.obecbrehy.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b03'8.021\"N, 15\u00b034'38.416\"E"
     },
     {
         "domain": "obecbrezovice_cz",
         "url": "http://www.obecbrezovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b028'14.058\"N, 14\u00b043'56.779\"E"
     },
     {
         "domain": "obecbudikov_cz",
         "url": "http://www.obecbudikov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b034'42.033\"N, 15\u00b021'46.754\"E"
     },
     {
         "domain": "obeccholina_cz",
         "url": "http://www.obeccholina.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b039'26.292\"N, 17\u00b03'6.570\"E"
     },
     {
         "domain": "obecdobev_cz",
         "url": "http://www.obecdobev.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b017'42.039\"N, 14\u00b02'57.060\"E"
     },
     {
         "domain": "obecholcovice_cz",
         "url": "http://www.obecholcovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b09'23.522\"N, 17\u00b029'16.040\"E"
     },
     {
         "domain": "obecjanovice_cz",
         "url": "http://www.obecjanovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b037'26.474\"N, 18\u00b024'31.201\"E"
     },
     {
         "domain": "obecjivova_cz",
         "url": "http://www.obecjivova.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b042'29.411\"N, 17\u00b023'33.811\"E"
     },
     {
         "domain": "obeckaliste_cz",
         "url": "http://www.obeckaliste.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b035'33.702\"N, 15\u00b018'7.134\"E"
     },
     {
         "domain": "obecknyk_cz",
         "url": "http://www.obecknyk.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b038'41.909\"N, 15\u00b034'36.590\"E"
     },
     {
         "domain": "obeckolec_eu",
         "url": "http://www.obeckolec.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b011'51.018\"N, 14\u00b013'28.278\"E"
     },
     {
         "domain": "obeckrizany_cz",
         "url": "http://www.obeckrizany.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b044'18.670\"N, 14\u00b054'21.450\"E"
     },
     {
         "domain": "obeclibomerice_cz",
         "url": "http://www.obeclibomerice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b052'14.366\"N, 15\u00b044'32.825\"E"
     },
     {
         "domain": "obeclipov_cz",
         "url": "http://www.obeclipov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b054'17.329\"N, 17\u00b027'42.872\"E"
     },
     {
         "domain": "obeclobendava_cz",
         "url": "http://www.obeclobendava.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "51\u00b01'4.785\"N, 14\u00b018'43.358\"E"
     },
     {
         "domain": "obecmedonosy_cz",
         "url": "http://www.obecmedonosy.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b029'37.177\"N, 14\u00b029'7.241\"E"
     },
     {
         "domain": "obecmokosin_cz",
         "url": "http://www.obecmokosin.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b00'53.305\"N, 15\u00b034'18.344\"E"
     },
     {
         "domain": "obecpisek_cz",
         "url": "http://www.obecpisek.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b033'32.401\"N, 18\u00b048'9.537\"E"
     },
     {
         "domain": "obecpozden_cz",
         "url": "http://www.obecpozden.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b014'31.364\"N, 13\u00b056'37.018\"E"
     },
     {
         "domain": "obecptice_cz",
         "url": "http://www.obecptice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b03'8.214\"N, 14\u00b010'0.714\"E"
     },
     {
         "domain": "obecpuklice_cz",
         "url": "http://www.obecpuklice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b021'34.848\"N, 15\u00b039'9.161\"E"
     },
     {
         "domain": "obecradslavice_com",
         "url": "http://www.obecradslavice.com/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b019'27.029\"N, 17\u00b00'1.171\"E"
     },
     {
         "domain": "obecslavetin_cz",
         "url": "http://www.obecslavetin.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b040'22.964\"N, 16\u00b057'54.682\"E"
     },
     {
         "domain": "obecsopotnice_cz",
         "url": "http://www.obecsopotnice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b03'24.142\"N, 16\u00b020'42.726\"E"
     },
     {
         "domain": "obecstaremesto_cz",
         "url": "http://www.obecstaremesto.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b00'12.588\"N, 17\u00b025'55.033\"E"
     },
     {
         "domain": "obecsucha_cz",
         "url": "http://www.obecsucha.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b018'4.393\"N, 15\u00b034'39.713\"E"
     },
     {
         "domain": "obecveseli_cz",
         "url": "http://www.obecveseli.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b00'40.324\"N, 15\u00b037'7.308\"E"
     },
     {
         "domain": "obecvez_cz",
         "url": "http://www.obecvez.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b033'49.153\"N, 15\u00b027'28.796\"E"
     },
     {
         "domain": "obecveznice_eu",
         "url": "http://www.obecveznice.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b024'27.085\"N, 15\u00b045'36.361\"E"
     },
     {
         "domain": "obecvokov_cz",
         "url": "http://www.obecvokov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b023'44.791\"N, 15\u00b013'7.697\"E"
     },
     {
         "domain": "obecvysoka_cz",
         "url": "http://www.obecvysoka.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b024'45.013\"N, 14\u00b032'19.663\"E"
     },
     {
         "domain": "obeczdirec_cz",
         "url": "http://www.obeczdirec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b027'16.826\"N, 15\u00b040'43.982\"E"
     },
     {
         "domain": "obeczeliv_cz",
         "url": "http://www.obeczeliv.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b031'47.564\"N, 15\u00b013'9.538\"E"
     },
     {
         "domain": "ochozubrna_cz",
         "url": "http://www.ochozubrna.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b015'14.834\"N, 16\u00b044'13.902\"E"
     },
     {
         "domain": "odry_cz",
         "url": "http://www.odry.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b039'42.920\"N, 17\u00b049'50.541\"E"
     },
     {
         "domain": "olesna_cz",
         "url": "http://www.olesna.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b026'43.974\"N, 15\u00b015'41.568\"E"
     },
     {
         "domain": "olsany_obec_eu",
         "url": "http://www.olsany-obec.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b024'1.555\"N, 13\u00b037'28.646\"E"
     },
     {
         "domain": "omice_cz",
         "url": "http://www.omice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b010'6.496\"N, 16\u00b026'59.521\"E"
     },
     {
         "domain": "opatovice_eu",
         "url": "http://www.opatovice.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b04'29.645\"N, 16\u00b038'35.458\"E"
     },
     {
         "domain": "osek_eu",
         "url": "http://www.osek.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b026'33.495\"N, 14\u00b018'1.992\"E"
     },
     {
         "domain": "ostrov_cz",
         "url": "http://www.ostrov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b018'11.149\"N, 12\u00b056'25.796\"E"
     },
     {
         "domain": "ostrovacice_eu",
         "url": "http://www.ostrovacice.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b012'40.982\"N, 16\u00b024'29.800\"E"
     },
     {
         "domain": "pavlov_pe_cz",
         "url": "http://www.pavlov-pe.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b023'52.421\"N, 15\u00b014'43.678\"E"
     },
     {
         "domain": "peruc_cz",
@@ -1292,47 +1523,56 @@
     {
         "domain": "petihosty_cz",
         "url": "http://www.petihosty.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b053'9.439\"N, 14\u00b042'20.850\"E"
     },
     {
         "domain": "pletenyujezd_cz",
         "url": "http://www.pletenyujezd.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b06'25.599\"N, 14\u00b06'56.832\"E"
     },
     {
         "domain": "pocatky_cz",
         "url": "http://www.pocatky.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b015'37.447\"N, 15\u00b014'23.872\"E"
     },
     {
         "domain": "postoloprty_cz",
         "url": "http://www.postoloprty.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b021'38.521\"N, 13\u00b042'1.795\"E"
     },
     {
         "domain": "potec_cz",
         "url": "http://www.potec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b09'17.885\"N, 18\u00b02'6.960\"E"
     },
     {
         "domain": "pouzdrany_cz",
         "url": "http://www.pouzdrany.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b056'6.773\"N, 16\u00b037'30.134\"E"
     },
     {
         "domain": "pozorice_cz",
         "url": "http://www.pozorice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b012'30.557\"N, 16\u00b047'18.458\"E"
     },
     {
         "domain": "praha18_cz",
         "url": "http://praha18.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b08'13.753\"N, 14\u00b030'54.512\"E"
     },
     {
         "domain": "praha_dubec_cz",
         "url": "http://www.praha-dubec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b03'34.347\"N, 14\u00b035'9.997\"E"
     },
     {
         "domain": "pravcice_cz",
@@ -1342,17 +1582,20 @@
     {
         "domain": "prestavlkyuprerova_cz",
         "url": "http://www.prestavlkyuprerova.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b023'22.535\"N, 17\u00b028'51.892\"E"
     },
     {
         "domain": "pribyslav_cz",
         "url": "http://www.pribyslav.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b034'37.986\"N, 15\u00b044'17.061\"E"
     },
     {
         "domain": "prisnotice_cz",
         "url": "http://www.prisnotice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b00'9.084\"N, 16\u00b036'47.243\"E"
     },
     {
         "domain": "prosecpodkremesnikem_cz",
@@ -1362,42 +1605,50 @@
     {
         "domain": "provodov_cz",
         "url": "http://www.provodov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b09'39.423\"N, 17\u00b044'13.168\"E"
     },
     {
         "domain": "pruhonice_obec_cz",
         "url": "http://www.pruhonice-obec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b00'6.869\"N, 14\u00b033'39.852\"E"
     },
     {
         "domain": "putimov_cz",
         "url": "http://www.putimov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b024'57.135\"N, 15\u00b015'55.879\"E"
     },
     {
         "domain": "repin_cz",
         "url": "http://www.repin.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b022'2.681\"N, 14\u00b038'10.220\"E"
     },
     {
         "domain": "ridelov_cz",
         "url": "http://www.ridelov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b014'8.210\"N, 15\u00b024'21.342\"E"
     },
     {
         "domain": "ripec_cz",
         "url": "http://www.ripec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b012'51.438\"N, 14\u00b044'12.221\"E"
     },
     {
         "domain": "rokycany_cz",
         "url": "http://www.rokycany.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b044'31.917\"N, 13\u00b035'43.990\"E"
     },
     {
         "domain": "rybne_cz",
         "url": "http://www.rybne.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b025'22.318\"N, 15\u00b044'18.313\"E"
     },
     {
         "domain": "rychnov_city_cz",
@@ -1407,32 +1658,38 @@
     {
         "domain": "rynarec_cz",
         "url": "http://www.rynarec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b023'21.031\"N, 15\u00b014'2.148\"E"
     },
     {
         "domain": "salacovalhota_cz",
         "url": "http://www.salacovalhota.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b031'26.636\"N, 14\u00b058'48.117\"E"
     },
     {
         "domain": "samotisky_cz",
         "url": "http://www.samotisky.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b037'54.691\"N, 17\u00b019'43.656\"E"
     },
     {
         "domain": "sedlec_prcice_cz",
         "url": "http://www.sedlec-prcice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b034'21.138\"N, 14\u00b031'56.045\"E"
     },
     {
         "domain": "seminuprelouce_cz",
         "url": "http://www.seminuprelouce.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b03'13.790\"N, 15\u00b031'12.062\"E"
     },
     {
         "domain": "senozaty_cz",
         "url": "http://www.senozaty.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b034'3.375\"N, 15\u00b011'46.527\"E"
     },
     {
         "domain": "sezemice_cz",
@@ -1442,92 +1699,110 @@
     {
         "domain": "skalsko_cz",
         "url": "http://skalsko.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b025'40.114\"N, 14\u00b045'41.216\"E"
     },
     {
         "domain": "skripel_cz",
         "url": "http://www.skripel.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b050'28.044\"N, 14\u00b03'59.827\"E"
     },
     {
         "domain": "slavikov_cz",
         "url": "http://www.slavikov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b044'38.648\"N, 15\u00b046'48.680\"E"
     },
     {
         "domain": "slavonice_mesto_cz",
         "url": "http://www.slavonice-mesto.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b059'51.581\"N, 15\u00b021'8.448\"E"
     },
     {
         "domain": "smecno_mesto_cz",
         "url": "http://www.smecno-mesto.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b011'20.578\"N, 14\u00b02'21.631\"E"
     },
     {
         "domain": "smetanovalhota_cz",
         "url": "http://www.smetanovalhota.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b026'38.113\"N, 14\u00b04'56.949\"E"
     },
     {
         "domain": "smilovyhory_cz",
         "url": "http://www.smilovyhory.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b032'15.285\"N, 14\u00b052'43.019\"E"
     },
     {
         "domain": "smrzovka_cz",
         "url": "http://www.smrzovka.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b044'23.112\"N, 15\u00b014'42.386\"E"
     },
     {
         "domain": "sobetuchy_cz",
         "url": "http://www.sobetuchy.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b056'5.837\"N, 15\u00b045'48.196\"E"
     },
     {
         "domain": "spaleneporici_cz",
         "url": "http://www.spaleneporici.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b036'53.200\"N, 13\u00b036'14.571\"E"
     },
     {
         "domain": "srbska_kamenice_cz",
         "url": "http://www.srbska-kamenice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b049'21.390\"N, 14\u00b021'19.267\"E"
     },
     {
         "domain": "stare_herminovy_eu",
         "url": "http://www.stare-herminovy.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b055'58.444\"N, 17\u00b037'33.994\"E"
     },
     {
         "domain": "steblova_cz",
         "url": "http://www.steblova.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b05'34.121\"N, 15\u00b044'58.375\"E"
     },
     {
         "domain": "stitna_popov_cz",
         "url": "http://www.stitna-popov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b04'9.269\"N, 17\u00b058'36.964\"E"
     },
     {
         "domain": "stoky_cz",
         "url": "http://www.stoky.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b030'7.392\"N, 15\u00b035'18.567\"E"
     },
     {
         "domain": "stonarov_cz",
         "url": "http://www.stonarov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b016'55.049\"N, 15\u00b035'9.700\"E"
     },
     {
         "domain": "strancice_cz",
         "url": "http://www.strancice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b056'56.946\"N, 14\u00b040'41.458\"E"
     },
     {
         "domain": "straznice_mesto_cz",
         "url": "http://www.straznice-mesto.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b054'6.117\"N, 17\u00b018'49.644\"E"
     },
     {
         "domain": "streliceubrna_cz",
@@ -1537,7 +1812,8 @@
     {
         "domain": "stremy_cz",
         "url": "http://www.stremy.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b023'1.975\"N, 14\u00b033'50.198\"E"
     },
     {
         "domain": "sulejovice_cz",
@@ -1547,27 +1823,32 @@
     {
         "domain": "svabov_cz",
         "url": "http://www.svabov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b018'30.780\"N, 15\u00b021'30.564\"E"
     },
     {
         "domain": "svepravice_cz",
         "url": "http://www.svepravice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b029'49.900\"N, 15\u00b014'2.126\"E"
     },
     {
         "domain": "sviadnov_cz",
         "url": "http://sviadnov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b041'17.708\"N, 18\u00b019'34.425\"E"
     },
     {
         "domain": "syrovice_cz",
         "url": "http://www.syrovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b04'43.652\"N, 16\u00b032'51.039\"E"
     },
     {
         "domain": "terlicko_cz",
         "url": "http://www.terlicko.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b045'8.104\"N, 18\u00b028'57.456\"E"
     },
     {
         "domain": "trebechovice_cz",
@@ -1577,32 +1858,38 @@
     {
         "domain": "trebovle_obec_cz",
         "url": "http://www.trebovle-obec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b01'43.174\"N, 14\u00b057'42.061\"E"
     },
     {
         "domain": "trest_cz",
         "url": "http://www.trest.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b017'25.103\"N, 15\u00b029'0.798\"E"
     },
     {
         "domain": "tsviny_cz",
         "url": "http://www.tsviny.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b050'24.653\"N, 14\u00b038'15.333\"E"
     },
     {
         "domain": "tucapy_cz",
         "url": "http://www.tucapy.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b017'28.019\"N, 14\u00b048'12.740\"E"
     },
     {
         "domain": "tvarozna_lhota_cz",
         "url": "http://www.tvarozna-lhota.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b052'45.150\"N, 17\u00b021'23.720\"E"
     },
     {
         "domain": "tynecnadlabem_cz",
         "url": "http://www.tynecnadlabem.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b02'28.850\"N, 15\u00b021'28.793\"E"
     },
     {
         "domain": "uhelna_cz",
@@ -1612,37 +1899,44 @@
     {
         "domain": "uhlirskejanovice_cz",
         "url": "http://www.uhlirskejanovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b052'50.159\"N, 15\u00b03'54.780\"E"
     },
     {
         "domain": "unicov_cz",
         "url": "http://www.unicov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b046'14.785\"N, 17\u00b07'17.500\"E"
     },
     {
         "domain": "usobi_cz",
         "url": "http://www.usobi.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b030'52.055\"N, 15\u00b030'6.194\"E"
     },
     {
         "domain": "utechovicky_cz",
         "url": "http://www.utechovicky.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b027'37.913\"N, 15\u00b05'53.769\"E"
     },
     {
         "domain": "valasskeklobouky_cz",
         "url": "http://www.valasskeklobouky.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b08'23.848\"N, 18\u00b00'29.941\"E"
     },
     {
         "domain": "vapennypodol_cz",
         "url": "http://vapennypodol.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b053'11.434\"N, 15\u00b039'58.522\"E"
     },
     {
         "domain": "velke_zernoseky_cz",
         "url": "http://www.velke-zernoseky.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b032'21.744\"N, 14\u00b03'51.230\"E"
     },
     {
         "domain": "velkepopovice_cz",
@@ -1652,32 +1946,38 @@
     {
         "domain": "velkeporici_cz",
         "url": "http://www.velkeporici.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b027'41.897\"N, 16\u00b011'18.392\"E"
     },
     {
         "domain": "velkyberanov_cz",
         "url": "http://www.velkyberanov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b024'17.532\"N, 15\u00b040'1.192\"E"
     },
     {
         "domain": "velkyrybnik_cz",
         "url": "http://www.velkyrybnik.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b029'23.348\"N, 15\u00b018'28.552\"E"
     },
     {
         "domain": "velkytynec_cz",
         "url": "http://www.velkytynec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b032'59.144\"N, 17\u00b019'57.758\"E"
     },
     {
         "domain": "veprikov_cz",
         "url": "http://www.veprikov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b044'35.543\"N, 15\u00b034'14.422\"E"
     },
     {
         "domain": "vernerice_cz",
         "url": "http://www.vernerice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b039'41.936\"N, 14\u00b018'4.847\"E"
     },
     {
         "domain": "veseli_nad_moravou_cz",
@@ -1687,101 +1987,121 @@
     {
         "domain": "vetrnyjenikov_eu",
         "url": "http://www.vetrnyjenikov.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b028'32.477\"N, 15\u00b028'42.395\"E"
     },
     {
         "domain": "vilemov_cz",
         "url": "http://www.vilemov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b059'31.895\"N, 14\u00b019'50.549\"E"
     },
     {
         "domain": "vilemov_ol_cz",
         "url": "http://www.vilemov-ol.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b038'9.460\"N, 16\u00b059'45.698\"E"
     },
     {
         "domain": "vilemovice_cz",
         "url": "http://www.vilemovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b021'43.779\"N, 16\u00b044'50.955\"E"
     },
     {
         "domain": "vlastec_cz",
         "url": "http://www.vlastec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b021'55.628\"N, 14\u00b012'42.232\"E"
     },
     {
         "domain": "vlkos_cz",
         "url": "http://www.vlkos.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "48\u00b059'27.824\"N, 17\u00b09'54.882\"E"
     },
     {
         "domain": "vrcovice_cz",
         "url": "http://www.vrcovice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b020'39.017\"N, 14\u00b010'26.192\"E"
     },
     {
         "domain": "vyskov_mesto_cz",
         "url": "http://www.vyskov-mesto.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b016'38.163\"N, 16\u00b059'56.354\"E"
     },
     {
         "domain": "vysokestudnice_eu",
         "url": "http://www.vysokestudnice.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b023'38.504\"N, 15\u00b043'49.053\"E"
     },
     {
         "domain": "vysoky_ujezd_urad_cz",
         "url": "http://www.vysoky-ujezd-urad.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b059'34.448\"N, 14\u00b012'25.775\"E"
     },
     {
         "domain": "zabreh_cz",
         "url": "http://www.zabreh.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b052'55.681\"N, 16\u00b052'20.252\"E"
     },
     {
         "domain": "zachrastany_cz",
         "url": "http://www.zachrastany.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b012'40.559\"N, 15\u00b029'7.751\"E"
     },
     {
         "domain": "zajickov_cz",
         "url": "http://www.zajickov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b022'43.771\"N, 15\u00b015'27.930\"E"
     },
     {
         "domain": "zebetin_cz",
         "url": "http://www.zebetin.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b012'27.938\"N, 16\u00b029'13.128\"E"
     },
     {
         "domain": "zilina_obec_cz",
         "url": "http://www.zilina-obec.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b05'58.682\"N, 14\u00b00'7.755\"E"
     },
     {
         "domain": "zirov_cz",
         "url": "http://www.zirov.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b027'55.722\"N, 15\u00b019'13.422\"E"
     },
     {
         "domain": "zirovnice_cz",
         "url": "http://www.zirovnice.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b015'15.075\"N, 15\u00b011'24.647\"E"
     },
     {
         "domain": "zitenice_eu",
         "url": "http://www.zitenice.eu/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b033'21.310\"N, 14\u00b09'29.067\"E"
     },
     {
         "domain": "zlatehory_cz",
         "url": "http://www.zlatehory.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "50\u00b015'50.650\"N, 17\u00b023'44.439\"E"
     },
     {
         "domain": "zliv_cz",
         "url": "http://www.zliv.cz/ap",
-        "parser": "vismo"
+        "parser": "vismo",
+        "default_gps": "49\u00b03'51.413\"N, 14\u00b022'5.067\"E"
     }
 ]

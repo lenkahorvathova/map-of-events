@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <title>api4.mapy.cz - geokódování</title>
+        <script type="text/javascript" src="https://api.mapy.cz/loader.js"></script>
+        <script type="text/javascript">Loader.load();</script>
+    </head>
+    <body id="advanced-geocoding">
+        <div id="m" style="height:360px"></div>
+        <form id="form">
+            <p>
+                <label>Hledaná oblast: <input type="text" id="query" value="Radlická 2"/></label>
+                <input type="submit" value="Hledat"/>
+            </p>
+            <p>
+                <label>Hledat v omezené oblasti dané bounding boxem: <input type="text" id="queryAdv" value="Brno"/></label>
+                <input type="button" class="search-adv" value="Hledat"/>
+            </p>
+        </form>
+
+        <script>
+            var m = new SMap(JAK.gel("m"));
+            m.addControl(new SMap.Control.Sync());
+            m.addDefaultLayer(SMap.DEF_BASE).enable();
+            m.addDefaultControls();
+
+            function geokoduj(obec, address) {
+                return new Promise(resolve => {
+                    new SMap.Geocoder(address, (geocoder) => {
+                        if (!geocoder.getResults()[0].results.length) {
+                            console.log(obec + " -> UNKNOWN ADDRESS");
+                            resolve(null);
+                            return;
+                        }
+                        console.log(obec);
+
+                        var vysledky = geocoder.getResults()[0].results;
+                        var data = [];
+                        while (vysledky.length) {
+                            var item = vysledky.shift()
+                            data.push(item.label + " (" + item.coords.toWGS84(2).reverse().join(", ") + ")");
+                        }
+                        resolve(data);
+                    });
+                });
+            }
+
+            const dataset = JSON.parse(`<<address_dataset>>`);
+
+            function sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+
+            async function get_gps() {
+                output = {};
+
+                for (const obec in dataset) {
+                    // console.log(obec);
+                    const address = await geokoduj(obec, dataset[obec]);
+                    output[obec] = address
+                    await sleep(100);
+                    // console.log('done');
+                }
+
+                console.log(JSON.stringify(output, null, 4));
+            }
+
+            get_gps();
+        </script>
+    </body>
+</html>
