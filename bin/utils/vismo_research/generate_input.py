@@ -25,7 +25,7 @@ class GenerateInput:
         output = []
 
         for url in usable_urls:
-            domain = utils.get_domain_name(url)
+            domain = utils.generate_domain_name(url)
             website_dict = {
                 "domain": domain,
                 "url": url,

@@ -5,15 +5,14 @@ PYTHON_ENV="venv/bin/activate"
   echo ">>> ${PROJECT_DIR} doesn't exist!"
   exit
 )
-cd "$PROJECT_DIR"
+cd "$PROJECT_DIR" || exit
 export PYTHONPATH=$PROJECT_DIR
 
 (ls "$PYTHON_ENV" >>/dev/null 2>&1) || (
   echo ">>> ${PROJECT_DIR}/${PYTHON_ENV} doesn't exist!"
   exit
 )
-source "$PYTHON_ENV"
-
+source "$PYTHON_ENV" || exit
 current_time=$(date "+%Y-%m-%d_%H-%M-%S")
 mkdir -p data/log/
 
@@ -35,4 +34,3 @@ mkdir -p data/log/
   echo "============================================================"
   python3 -u bin/download_events.py
 } 2>&1 | tee -a data/log/cron_process_"$current_time".txt
-

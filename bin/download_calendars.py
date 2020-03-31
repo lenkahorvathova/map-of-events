@@ -37,6 +37,7 @@ class DownloadCalendars:
         self.connection.close()
 
     def get_input_domains(self) -> list:
+        print("Loading input calendars...")
         if self.args.domain:
             website_base = utils.get_base_by("domain", self.args.domain)
             if website_base is None:

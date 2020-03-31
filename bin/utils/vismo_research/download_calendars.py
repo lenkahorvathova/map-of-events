@@ -43,7 +43,7 @@ class DownloadCalendars:
         :return: results from a downloading process (url, downloaded_at, response_code, -/html_file_path/exception)
         """
 
-        domain = utils.get_domain_name(url)
+        domain = utils.generate_domain_name(url)
         info = {
             "url": url,
             "downloaded_at": "{0:%Y-%m-%d %H:%M:%S}".format(datetime.now())

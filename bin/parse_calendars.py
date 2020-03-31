@@ -47,6 +47,7 @@ class ParseCalendars:
         self.connection.close()
 
     def load_input_calendars(self) -> list:
+        print("Loading input calendars...")
         query = '''SELECT id, url, html_file_path FROM calendar WHERE 1==1'''
 
         if self.args.domain:

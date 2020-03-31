@@ -1095,7 +1095,8 @@
         "domain": "mulitvinov_cz",
         "url": "http://www.mulitvinov.cz/ap",
         "parser": "vismo",
-        "default_gps": "50\u00b035'55.813\"N, 13\u00b036'42.212\"E"
+        "default_gps": "50\u00b035'55.813\"N, 13\u00b036'42.212\"E",
+        "note": "Different xpath for location."
     },
     {
         "domain": "munovapaka_cz",

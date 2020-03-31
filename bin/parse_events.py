@@ -20,6 +20,7 @@ class ParseEvents:
     def __init__(self) -> None:
         self.args = self._parse_arguments()
         self.connection = utils.create_connection()
+        self.base = utils.load_base()
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -48,6 +49,7 @@ class ParseEvents:
         self.connection.close()
 
     def load_input_events(self) -> list:
+        print("Loading input events...")
         query = '''SELECT eh.id, eh.html_file_path, eu.url, c.url FROM event_html eh 
                    INNER JOIN event_url eu ON eh.event_url_id = eu.id 
                    INNER JOIN calendar c ON eu.calendar_id = c.id WHERE 1==1'''
@@ -79,9 +81,7 @@ class ParseEvents:
             input_tuples.append((index + 1, len(input_events), event_tuple, timestamp, website_base))
 
         with multiprocessing.Pool(32) as p:
-            events_lists = p.map(ParseEvents.process_event, input_tuples)
-
-        return events_lists
+            return p.map(ParseEvents.process_event, input_tuples)
 
     @staticmethod
     def process_event(input_tuple: tuple) -> (dict, str, int):
@@ -202,26 +202,28 @@ class ParseEvents:
             prepared_data = self.prepare_event_data(data_dict)
 
             if prepared_data["status"] == "error":
-                debug_output += "{} | NOK - {}\n".format(event_html_id, prepared_data["message"])
-                # debug_output += "\t> {}\n".format(data_tuple)
+                debug_output += "{} | NOK - {} > {}\n".format(event_html_id, prepared_data["message"], data_dict)
                 nok += 1
                 continue
 
-            # debug_output += "{} | OK - {}\n".format(event_html_id, prepared_data)
+            # debug_output += "{} | OK > {}\n".format(event_html_id, json.dumps(prepared_data, indent=4))
             ok += 1
 
             if not dry_run:
                 query = '''INSERT OR IGNORE INTO event_data(title, perex, organizer, types, keywords,
                                                             location, gps_latitude, gps_longitude, start, end)
                            VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)'''
-                values = prepared_data["data"]
+
+                data = prepared_data["data"]
+                values = (data["title"], data["perex"], data["organizer"], data["types"], data["keywords"],
+                          data["location"], data["gps_latitude"], data["gps_longitude"], data["start"], data["end"])
 
                 try:
                     self.connection.execute(query, values)
                 except sqlite3.Error as e:
                     print("Error occurred when storing {} into 'event_data' table: {}".format(values, str(e)))
 
-        self.connection.commit()
+            self.connection.commit()
 
         debug_output += ">> Result: {} OKs + {} NOKs / {}\n".format(ok, nok, ok + nok)
         print(debug_output, end="")
@@ -229,7 +231,6 @@ class ParseEvents:
     @staticmethod
     def prepare_event_data(data_dict: dict) -> dict:
         title = data_dict["title"][0] if "title" in data_dict else None
-
         if title is None:
             return {
                 "status": "error",
@@ -238,7 +239,9 @@ class ParseEvents:
 
         perex = '\n'.join(filter(None, data_dict["perex"])) if "perex" in data_dict else None
         organizer = data_dict["organizer"][0] if "organizer" in data_dict else None
-        types = ','.join(filter(None, data_dict["types"])) if "types" in data_dict else None
+
+        types = ','.join(filter(None, data_dict["types"])) \
+            if "types" in data_dict else None  # TODO: figure out categorizing
 
         keywords = None  # TODO: figure out parsing of keywords
 
@@ -249,7 +252,7 @@ class ParseEvents:
         else:
             location = None
 
-        gps_latitude = data_dict["gps_latitude"] if "gps_latitude" in data_dict else None  # TODO: add default GPS
+        gps_latitude = data_dict["gps_latitude"] if "gps_latitude" in data_dict else None
         gps_longitude = data_dict["gps_longitude"] if "gps_longitude" in data_dict else None
 
         date_string = data_dict["date"][0] if "date" in data_dict else None
@@ -270,7 +273,18 @@ class ParseEvents:
 
         return {
             "status": "ok",
-            "data": (title, perex, organizer, types, keywords, location, gps_latitude, gps_longitude, start, end)
+            "data": {
+                "title": title,
+                "perex": perex,
+                "organizer": organizer,
+                "types": types,
+                "keywords": keywords,
+                "location": location,
+                "gps_latitude": gps_latitude,
+                "gps_longitude": gps_longitude,
+                "start": start,
+                "end": end
+            }
         }
 
     @staticmethod

@@ -39,9 +39,11 @@ class DownloadEvents:
         self.connection.close()
 
     def load_input_events(self) -> list:
+        print("Loading input events...")
         query = '''SELECT eu.id, eu.url FROM event_url eu
                    LEFT OUTER JOIN event_html eh ON eu.id = eh.event_url_id
                    WHERE eh.event_url_id IS NULL'''
+
         if self.args.domain:
             website_base = utils.get_base_by("domain", self.args.domain)
             if website_base is None:
@@ -62,7 +64,7 @@ class DownloadEvents:
 
         for index, event in enumerate(input_events):
             _, event_url = event
-            domain = utils.get_domain_name(event_url)
+            domain = utils.generate_domain_name(event_url)
             input_tuples.append((index + 1, len(input_events), event, timestamp, domain, self.args.dry_run))
 
         with multiprocessing.Pool(32) as p:

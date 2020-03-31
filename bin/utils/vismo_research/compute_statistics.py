@@ -39,7 +39,7 @@ class ComputeStatistics:
             download_info = json.load(json_file)
 
         for website in download_info:
-            domain = utils.get_domain_name(website["url"])
+            domain = utils.generate_domain_name(website["url"])
             print("Checking domain:", domain, end="")
 
             result = "NOK"
@@ -98,7 +98,7 @@ class ComputeStatistics:
         for statistic_tuple in statistics_results:
             description, sites_count, sites_list = statistic_tuple
 
-            sites_list.sort(key=utils.get_domain_name)
+            sites_list.sort(key=utils.generate_domain_name)
             statistic_dict = {
                 description: {
                     "count": sites_count,

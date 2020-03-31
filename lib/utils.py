@@ -23,7 +23,7 @@ def create_connection() -> sqlite3.Connection:
         print("Error occurred while creating a connection to the DB: {}".format(str(e)))
 
 
-def get_domain_name(url: str) -> str:
+def generate_domain_name(url: str) -> str:
     """ Parses a domain name from the specified url address.
 
     Example:
