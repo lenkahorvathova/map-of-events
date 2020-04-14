@@ -28,7 +28,7 @@ class DownloadEvents:
         parser.add_argument('--dry-run', action='store_true', default=False,
                             help="don't store any output and print to stdout")
         parser.add_argument('--domain', type=str, default=None,
-                            help="download events only for the specified domain")  # TODO: Fix!
+                            help="download events only for the specified domain")
 
         return parser.parse_args()
 
@@ -40,8 +40,9 @@ class DownloadEvents:
 
     def load_input_events(self) -> list:
         print("Loading input events...")
-        query = '''SELECT eu.id, eu.url FROM event_url eu
+        query = '''SELECT eu.id, eu.url, c.url FROM event_url eu
                    LEFT OUTER JOIN event_html eh ON eu.id = eh.event_url_id
+                   INNER JOIN calendar c ON eu.calendar_id = c.id
                    WHERE eh.event_url_id IS NULL'''
 
         if self.args.domain:
@@ -50,9 +51,7 @@ class DownloadEvents:
                 sys.exit("Unknown domain '{}'!".format(self.args.domain))
             calendar_url = website_base["url"]
 
-            cursor = self.connection.execute('''SELECT id FROM calendar WHERE url == "{}"'''.format(calendar_url))
-            calendar_ids = [id[0] for id in cursor.fetchall()]
-            query += " AND eu.calendar_id IN ({})".format(",".join(['"{}"'.format(id) for id in calendar_ids]))
+            query += ''' AND c.url = "{}"'''.format(calendar_url)
 
         cursor = self.connection.execute(query)
 
@@ -63,8 +62,14 @@ class DownloadEvents:
         input_tuples = []
 
         for index, event in enumerate(input_events):
-            _, event_url = event
-            domain = utils.generate_domain_name(event_url)
+            _, _, calendar_url = event
+            calendar_base = utils.get_base_by("url", calendar_url)
+            if calendar_base is None:
+                sys.exit("Unknown calendar URL '{}'!".format(calendar_url))
+            domain = calendar_base.get("domain", None)
+            if domain is None:
+                sys.exit("Unknown domain for calendar URL '{}'!".format(calendar_url))
+
             input_tuples.append((index + 1, len(input_events), event, timestamp, domain, self.args.dry_run))
 
         with multiprocessing.Pool(32) as p:
@@ -73,9 +78,9 @@ class DownloadEvents:
     @staticmethod
     def process_event_url(input_tuple: tuple) -> (int, str, str):
         input_index, total_length, event, timestamp, domain, dry_run = input_tuple
-        """ (input_index: int, total_length: int, event: (int, str), timestamp: datetime, domain: str, 
+        """ (input_index: int, total_length: int, event: (int, str, str), timestamp: datetime, domain: str,
             dry_run: bool) """
-        event_id, event_url = event
+        event_id, event_url, _ = event
 
         current_dir = os.path.join(DATA_DIR_PATH, domain)
         event_file_dir = os.path.join(current_dir, DownloadEvents.EVENTS_FOLDER_NAME)
