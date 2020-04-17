@@ -1,9 +1,8 @@
-base //table[contains(@class, "search_results")]
-element .//tr/td[1]
-title .//a[contains(@class, "akce")]/span[contains(@class, "akce_title")]/text()
-text .//a[contains(@class, "akce")]/span[last()]/text()
-url .//a[contains(@class, "akce")]/@href
-date .//a[contains(@class, "akce")]/span[contains(@class, "start")]/text()
-types .//a[contains(@class, "akce")]/span[contains(@class, "start")]/following-sibling::span/following-sibling::span/text()
-keywords .//a[contains(@class, "akce")]/span[last()]/text()
-location .//a[contains(@class, "akce")]/span[contains(@class, "start")]/following-sibling::span/text()
+root //table[contains(@class, "search_results")]
+url .//tr/td[1]/a[contains(@class, "akce")]/@href
+title //div[@class="content"]/div/h1/text()
+date //*[@id="panel_informace"]/table//th[text()="Datum a čas konání"]/following-sibling::td/text()
+date //*[@id="panel_informace"]/table//th[text()="Datum a čas konání"]/following-sibling::td/*[@id="budouci"]/li/text()
+location //*[@id="panel_informace"]/table//th[text()="Místo konání"]/following-sibling::td/descendant-or-self::*/text()
+organizer //*[@id="panel_informace"]/table//th[text()="Pořadatel"]/following-sibling::td/text()
+types //*[@id="panel_informace"]/table//th[text()="Typ"]/following-sibling::td/text()

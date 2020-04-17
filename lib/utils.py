@@ -79,7 +79,10 @@ def get_xpaths(parser: str) -> dict:
     with open(xpath_file_path) as xpath_file:
         for line in xpath_file:
             key, xpath = line.split(' ', 1)
-            xpath_dict[key] = xpath.strip()
+            if key in xpath_dict:
+                xpath_dict[key].append(xpath.strip())
+            else:
+                xpath_dict[key] = [xpath.strip()]
 
     return xpath_dict
 

@@ -2141,5 +2141,16 @@
         "url": "http://www.zliv.cz/ap",
         "parser": "vismo",
         "default_gps": "49\u00b03'51.413\"N, 14\u00b022'5.067\"E"
+    },
+    {
+        "domain": "ceskainspirace_cz",
+        "url": "https://www.ceskainspirace.cz/kalendar-akci/",
+        "parser": "ceska_inspirace",
+        "note": "Perex is only in the list on the calendar page. GPS data can be matched only by RegEx in JS Script of HTML."
+    },
+    {
+        "domain": "kudyznudy_cz",
+        "url": "https://www.kudyznudy.cz/kalendar-akci",
+        "parser": "kudy_z_nudy"
     }
 ]

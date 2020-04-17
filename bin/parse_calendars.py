@@ -90,11 +90,11 @@ class ParseCalendars:
         calendar_id, calendar_url, calendar_html_file_path = calendar_tuple
 
         domain = website_base["domain"]
-        xpaths = utils.get_xpaths(website_base["parser"])
+        file = os.path.basename(calendar_html_file_path)
 
         if not os.path.isfile(calendar_html_file_path):
-            print("{}/{} | {} | file '{}' does not exist!".format(input_index, total_length, domain,
-                                                                  calendar_html_file_path))
+            print("{}/{} | {}/{} | file '{}' does not exist!".format(input_index, total_length, domain, file,
+                                                                     calendar_html_file_path))
             return []
 
         events_to_insert = []
@@ -102,20 +102,27 @@ class ParseCalendars:
         with open(calendar_html_file_path, encoding="utf-8") as html_file:
             dom = etree.parse(html_file, etree.HTMLParser())
 
-        root_list = dom.xpath(xpaths["root"])
+        xpaths = utils.get_xpaths(website_base["parser"])
+        root_list = []
+        for root_xpath in xpaths["root"]:
+            root_list.extend(dom.xpath(root_xpath))
         if len(root_list) == 0:
-            print("{}/{} | {} | element '{}' doesn't exist!".format(input_index, total_length, domain,
-                                                                    xpaths["root"]))
+            print("{}/{} | {}/{} | element '{}' doesn't exist!".format(input_index, total_length, domain, file,
+                                                                       xpaths["root"]))
             return []
+        else:
+            root = root_list[0]
 
-        root = root_list[0]
-        url_elements = root.xpath(xpaths["url"])
+        url_elements = []
+        for url_xpath in xpaths["url"]:
+            url_elements.extend(root.xpath(url_xpath))
 
         for index, el in enumerate(url_elements):
             event_url = urllib.urljoin(calendar_url, el)
             events_to_insert.append((event_url, timestamp, calendar_id))
 
-        debug_output = "{}/{} | {} | {} events\n".format(input_index, total_length, domain, len(events_to_insert))
+        debug_output = "{}/{} | {}/{} | {} events\n".format(input_index, total_length, domain, file,
+                                                            len(events_to_insert))
         # for event_url, _, _ in events_to_insert:
         #   debug_output += "\t Found URL: {}\n".format(event_url)
         print(debug_output, end="")

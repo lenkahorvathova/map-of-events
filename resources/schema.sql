@@ -28,13 +28,10 @@ CREATE TABLE IF NOT EXISTS event_data (
   title TEXT NOT NULL,
   perex TEXT,
   organizer TEXT,
-  types TEXT,
-  keywords TEXT,
+  types_data TEXT,
   location TEXT,
-  gps_latitude TEXT NOT NULL,
-  gps_longitude TEXT NOT NULL,
-  start datetime NOT NULL,
-  end datetime,
+  gps_data TEXT,
+  date_data TEXT NOT NULL,
   parsed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   event_html_id INTEGER, FOREIGN KEY (event_html_id) REFERENCES event_html(id)
 );
