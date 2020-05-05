@@ -61,8 +61,14 @@ class GetDefaultGPS:
             self.geocode_address(found_info, self.args.dry_run)
 
         if self.args.part == "2":
-            print("Open '{}' in your browser and from the console manually copy the result into '{}'.".format(
-                GetDefaultGPS.GEOCODING_TEMPLATE_HTML_FILE, GetDefaultGPS.GEOCODING_OUTPUT_JSON_FILE))
+            print("Manually perform following steps:\n"
+                  "\t1. open '{}' in your browser;\n"
+                  "\t2. right-click on the loaded site;\n"
+                  "\t3. choose 'Inspect' option;\n"
+                  "\t4. go to 'Console' tab;\n"
+                  "\t5. wait until geocoding of addresses ends and json appears;\n"
+                  "\t6. copy the resulting json into '{}'.".format(GetDefaultGPS.GEOCODING_RESULT_HTML_FILE,
+                                                                   GetDefaultGPS.GEOCODING_OUTPUT_JSON_FILE))
 
         if self.args.part == "3":
             input_domains = self.load_domains()
@@ -127,7 +133,7 @@ class GetDefaultGPS:
                                 matched_obj = re.search(r'@([^,]+),([^,]+)', path)
 
                                 if matched_obj:
-                                    redirected_value = {'x': matched_obj.group(1), 'y': matched_obj.group(2)}
+                                    redirected_value = {'lat': matched_obj.group(1), 'lon': matched_obj.group(2)}
                                     result["google_maps_redirected"] = True
                                     result["google_maps_redirected_value"] = redirected_value
 
@@ -140,6 +146,9 @@ class GetDefaultGPS:
                         mapy_cz_value = {key: result_dict[key] for key in keys if key in result_dict}
 
                         if mapy_cz_value:
+                            mapy_cz_value['lat'] = mapy_cz_value.pop('y')
+                            mapy_cz_value['lon'] = mapy_cz_value.pop('x')
+
                             result["mapy_cz"] = True
                             result["mapy_cz_value"] = mapy_cz_value
 
@@ -225,21 +234,21 @@ class GetDefaultGPS:
     def update_base(input_domains: list, dry_run: bool) -> None:
         with open(GetDefaultGPS.GEOCODING_OUTPUT_JSON_FILE) as json_file:
             dataset = json.load(json_file)
-            output = {}
+            found_gps = {}
 
             regex = re.compile(r'\(([^)]+)\)')
             for domain, address_array in dataset.items():
                 if address_array:
                     address = address_array[0]
-                    output[domain] = regex.search(address).group(1)
+                    found_gps[domain] = regex.search(address).group(1)
 
         gps_count = 0
         without_gps = []
         for website in input_domains:
-            gps = output.get(website["domain"], None)
+            gps = found_gps.get(website["domain"], None)
             if gps is not None:
                 gps_count += 1
-                website["default_gps"] = gps
+                website["default_gps"] = GetDefaultGPS.convert_gps_to_dec(gps)
             else:
                 without_gps.append(website["domain"])
 
@@ -261,6 +270,24 @@ class GetDefaultGPS:
             }
 
             utils.store_to_json_file(stat_data, GetDefaultGPS.OUTPUT_FILE_PATH)
+
+    @staticmethod
+    def convert_gps_to_dec(gps: str) -> str:
+        def convert_coord(dms_coord):
+            direction = {'N': 1, 'S': -1, 'E': 1, 'W': -1}
+
+            dec_coord = dms_coord.replace(u'°', ' ').replace('\'', ' ').replace('"', ' ')
+            dec_coord = dec_coord.split()
+            dec_coord_dir = dec_coord.pop()
+            dec_coord.extend([0, 0, 0])
+            dec_coord_num = int(dec_coord[0]) + int(dec_coord[1]) / 60.0 + float(dec_coord[2]) / 3600.0
+
+            return dec_coord_num * direction[dec_coord_dir]
+
+        lat_dms, lon_dms = gps.split(', ')
+        lat_dec, lon_dec = convert_coord(lat_dms), convert_coord(lon_dms)
+
+        return str(lat_dec) + ", " + str(lon_dec)
 
 
 if __name__ == '__main__':
