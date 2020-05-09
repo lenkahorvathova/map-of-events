@@ -1095,8 +1095,7 @@
         "domain": "mulitvinov_cz",
         "url": "http://www.mulitvinov.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.59883694444445, 13.611725555555555",
-        "note": "Different xpath for location."
+        "default_gps": "50.59883694444445, 13.611725555555555"
     },
     {
         "domain": "munovapaka_cz",
@@ -2146,11 +2145,18 @@
         "domain": "ceskainspirace_cz",
         "url": "https://www.ceskainspirace.cz/kalendar-akci/",
         "parser": "ceska_inspirace",
-        "note": "Perex is only in the list on the calendar page."
+        "note": "Perex is only on the calendar page."
     },
     {
         "domain": "kudyznudy_cz",
         "url": "https://www.kudyznudy.cz/kalendar-akci",
         "parser": "kudy_z_nudy"
+    },
+    {
+        "domain": "akcevcr_cz",
+        "url": "https://www.akcevcr.cz/",
+        "parser": "akce_v_cr",
+        "encoding": "utf-8",
+        "note": "Event's time is hard to get. Doesn't contain GPS."
     }
 ]

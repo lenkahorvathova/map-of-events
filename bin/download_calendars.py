@@ -1,6 +1,7 @@
 import argparse
 import multiprocessing
 import os
+import sqlite3
 import sys
 from datetime import datetime
 
@@ -9,7 +10,7 @@ from lib.constants import DATA_DIR_PATH
 
 
 class DownloadCalendars:
-    """ Downloads an HTML content of a calendar page of input websites specified in the base file.
+    """ Downloads an HTML content of a website's calendar page of input websites specified in the base file.
 
     Stores calendar's information into the database.
     """
@@ -17,7 +18,6 @@ class DownloadCalendars:
     def __init__(self) -> None:
         self.args = self._parse_arguments()
         self.connection = utils.create_connection()
-        self.base = utils.load_base()
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -31,20 +31,23 @@ class DownloadCalendars:
         return parser.parse_args()
 
     def run(self) -> None:
-        base_list = self.get_input_domains()
-        calendars_to_insert = self.download_calendars(base_list)
+        input_websites = self.get_input_websites()
+        calendars_to_insert = self.download_calendars(input_websites)
         self.store_to_database(calendars_to_insert, self.args.dry_run)
         self.connection.close()
 
-    def get_input_domains(self) -> list:
+    def get_input_websites(self) -> list:
         print("Loading input calendars...")
+
         if self.args.domain:
             website_base = utils.get_base_by("domain", self.args.domain)
             if website_base is None:
                 sys.exit("Unknown domain '{}'!".format(self.args.domain))
+
             return [website_base]
 
-        return self.base
+        base_list = utils.load_base()
+        return base_list
 
     def download_calendars(self, base_list: list) -> list:
         timestamp = datetime.now()
@@ -73,8 +76,8 @@ class DownloadCalendars:
         if result != "200":
             html_file_path = None
 
-        debug_output = "{}/{} | ".format(input_index, total_length)
-        debug_output += "Downloading URL: " + str(url) + " (" + str(result) + ")"
+        debug_output = "{}/{}".format(input_index, total_length)
+        debug_output += " | Downloading URL: {} ({})".format(str(url), str(result))
         print(debug_output)
 
         return url, html_file_path, timestamp
@@ -90,17 +93,19 @@ class DownloadCalendars:
                 continue
 
             if not dry_run:
-                sql_command = '''INSERT INTO calendar(url, html_file_path, downloaded_at)
-                                 VALUES (?, ?, ?)'''
+                query = '''INSERT INTO calendar(url, html_file_path, downloaded_at)
+                           VALUES (?, ?, ?)'''
                 values = (url, html_file_path, downloaded_at)
 
-                self.connection.execute(sql_command, values)
-
+                try:
+                    self.connection.execute(query, values)
+                except sqlite3.Error as e:
+                    print("Error occurred when storing {} into 'calendar' table: {}".format(values, str(e)))
         if not dry_run:
             self.connection.commit()
 
-        print("Number of failed calendars: {}/{}".format(len(failed_calendars), len(calendars_to_insert)))
-        print("Failed calendars: {}".format(failed_calendars))
+        print(">> Number of failed calendars: {}/{}".format(len(failed_calendars), len(calendars_to_insert)))
+        print(">> Failed calendars: {}".format(failed_calendars))
 
 
 if __name__ == '__main__':

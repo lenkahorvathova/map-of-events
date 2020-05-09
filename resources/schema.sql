@@ -27,11 +27,11 @@ CREATE TABLE IF NOT EXISTS event_data (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   title TEXT NOT NULL,
   perex TEXT,
-  organizer TEXT,
-  types_data TEXT,
+  datetime TEXT NOT NULL,
   location TEXT,
-  gps_data TEXT,
-  date_data TEXT NOT NULL,
+  gps TEXT,
+  organizer TEXT,
+  types TEXT,
   parsed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   event_html_id INTEGER, FOREIGN KEY (event_html_id) REFERENCES event_html(id)
 );

@@ -1,0 +1,100 @@
+{
+    "calendar": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//*[@id=\"event-calendar\"]/div/div[contains(@class, \"events-box\")]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "event_url": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"item\")]/a/@href"
+                ]
+            }
+        }
+    },
+    "event": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//*[@class=\"content\"]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "title": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"detail\")]/div/h1[contains(@class, \"title\")]/text()"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "perex": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"detail\")]/div/div[contains(@class, \"annotation\")]/text()"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "datetime": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"detail\")]/div/div/span[@class=\"date-info\"]//text()[normalize-space()]"
+                ],
+                "join_separator": " "
+            },
+            "formats": [
+                "Kdy %D. %MMMM %YYYY %H:%mm - %H:%mm",
+                "Kdy %D. %MMMM %YYYY - %D. %MMMM %YYYY",
+                "Kdy %D. %MMMM %YYYY %H:%mm - %D. %MMMM %YYYY",
+                "Kdy %D. %MMMM %YYYY %H:%mm - %D. %MMMM %YYYY %H:%mm"
+            ]
+        },
+        "location": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@class=\"information-cols\"]/div/div[@class=\"place-info\"]/div/dl/dd/span/a/text()"
+                ],
+                "join_separator": ", "
+            }
+        },
+        "gps": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@id=\"szn-map\"]/@*[name()=\"data-lat\" or name()=\"data-lon\"]"
+                ],
+                "join_separator": ","
+            },
+            "regex": {
+                "expressions": [
+                    "(\\-?\\d+.\\d+),(\\-?\\d+.\\d+)"
+                ],
+                "match": "FIRST",
+                "group": {
+                    "1": "Lat",
+                    "2": "Lon"
+                }
+            }
+        },
+        "organizer": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@class=\"information-cols\"]//h4/text()"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "types": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"detail\")]/div/div/span[contains(@class, \"type\")]/text()"
+                ]
+            }
+        }
+    }
+}

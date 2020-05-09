@@ -9,6 +9,7 @@ from datetime import datetime
 from lxml import etree
 
 from lib import utils
+from lib.parser import Parser
 
 
 class ParseEvents:
@@ -40,7 +41,6 @@ class ParseEvents:
     def run(self) -> None:
         input_events = self.load_input_events()
         events_to_insert = self.parse_events(input_events)
-
         self.store_to_database(events_to_insert, self.args.dry_run)
         if not self.args.dry_run:
             self.update_database(input_events)
@@ -91,158 +91,119 @@ class ParseEvents:
         debug_output = "{}/{} | Parsing event: {}".format(input_index, total_length, event_url)
 
         if not event_html_file_path:
-            debug_output += " | NOK - (file path is None!)"
+            debug_output += " | NOK - (File path for the event '{}' is None!)".format(event_url)
             print(debug_output)
-            return ()
+            return {"error": "Filepath is None!"}, timestamp, event_tuple
 
         elif not os.path.isfile(event_html_file_path):
-            debug_output += " | NOK - (file '{}' does not exist!)".format(event_html_file_path)
+            debug_output += " | NOK - (File '{}' does not exist!)".format(event_html_file_path)
             print(debug_output)
-            return ()
+            return {"error": "File does not exist!"}, timestamp, event_tuple
 
         with open(event_html_file_path, encoding="utf-8") as html_file:
-            dom = etree.parse(html_file, etree.HTMLParser())
+            dom = etree.parse(html_file, etree.HTMLParser(encoding="utf-8"))
 
-        xpaths = utils.get_xpaths(website_base["parser"])
-        data_dict = {}
-        for key, value_array in xpaths.items():
-            if key == "root" or key == "url":
-                continue
-            for key_xpath in value_array:
-                try:
-                    xpath_value = dom.xpath(key_xpath)
-                except Exception as e:
-                    print(e)
-                    xpath_value = None
-                if xpath_value:
-                    if key in data_dict:
-                        data_dict[key].extend(xpath_value)
-                    else:
-                        data_dict[key] = xpath_value
+        parser_name = website_base["parser"]
+        parser = Parser(parser_name, dom)
+
+        try:
+            parsed_event_data = parser.get_event_data()
+        except Exception as e:
+            debug_output += " | NOK"
+            if len(parser.error_messages) != 0:
+                debug_output += " - ({})".format(" & ".join(parser.error_messages))
+            debug_output += "\n\t Exception: {}".format(str(e))
+            print(debug_output)
+            return {"error": "Exception occurred during parsing!"}, timestamp, event_tuple
+
+        if len(parsed_event_data) == 0:
+            debug_output += " | NOK - ({})".format(" & ".join(parser.error_messages))
+            print(debug_output)
+            return {"error": "No data were parsed!"}, timestamp, event_tuple
 
         debug_output += " | OK".format(input_index, total_length, event_url)
+        if len(parser.error_messages) != 0:
+            debug_output += " - ({})".format(" & ".join(parser.error_messages))
         print(debug_output)
 
-        return data_dict, timestamp, event_tuple
+        return parsed_event_data, timestamp, event_tuple
 
     def store_to_database(self, events_to_insert: list, dry_run: bool) -> None:
-        debug_output = ">> Data to be stored in the DB:\n"
+        debug_output = ""
+        parsed_data = []
         nok = 0
         ok = 0
 
-        for event_data in filter(None, events_to_insert):
+        for event_data in events_to_insert:
             data_dict, parsed_at, event_tuple = event_data
-            event_html_id, event_html_file_path, _, _ = event_tuple
-            file_path_array = event_html_file_path.split('/')
-            prepared_data = self.prepare_event_data(data_dict)
+            event_html_id, event_html_file_path, event_url, _ = event_tuple
 
-            if prepared_data["status"] == "error":
-                debug_output += "{} | NOK - {} > {}\n".format("/".join(file_path_array[-3:]), prepared_data["message"],
-                                                              data_dict)
+            if "error" in data_dict:
                 nok += 1
+                parsed_data.append({
+                    "file": event_html_file_path if event_html_file_path else None,
+                    "url": event_url if event_url else None,
+                    "error": data_dict["error"]
+                })
                 continue
 
-            debug_output += "{} | OK > {}\n".format("/".join(file_path_array[-3:]), json.dumps(prepared_data, indent=4))
-            ok += 1
+            title = data_dict.get("title", None)
+            datetime = data_dict.get("datetime", None)
+
+            if not title or not datetime:
+                nok += 1
+                parsed_data.append({
+                    "file": event_html_file_path,
+                    "url": event_url,
+                    "error": "Doesn't contain title or datetime!",
+                    "data": data_dict
+                })
+                continue
 
             if not dry_run:
-                query = '''INSERT OR IGNORE INTO event_data(title, perex, organizer, types_data, location, gps_data, 
-                                                            date_data)
-                           VALUES(?, ?, ?, ?, ?, ?, ?)'''
-
-                data = prepared_data["data"]
-                values = (data["title"], data["perex"], data["organizer"], data["types_data"], data["location"],
-                          data["gps_data"], data["date_data"])
+                query = '''INSERT OR IGNORE INTO event_data(title, perex, datetime, location, gps, organizer, types, event_html_id)
+                           VALUES(?, ?, ?, ?, ?, ?, ?, ?)'''
+                values = (data_dict.get("title"), data_dict.get("perex", None), data_dict.get("datetime"),
+                          data_dict.get("location", None), data_dict.get("gps", None), data_dict.get("organizer", None),
+                          data_dict.get("types", None), event_html_id)
 
                 try:
                     self.connection.execute(query, values)
                 except sqlite3.Error as e:
                     nok += 1
-                    ok -= 1
                     print("Error occurred when storing {} into 'event_data' table: {}".format(values, str(e)))
+                    parsed_data.append({
+                        "file": event_html_file_path,
+                        "url": event_url,
+                        "error": "Error occurred during storing!",
+                        "data": data_dict
+                    })
+                    continue
+            ok += 1
+            # parsed_data.append({
+            #     "file": event_html_file_path,
+            #     "url": event_url,
+            #     "data": data_dict
+            # })
+        self.connection.commit()
 
-                self.connection.commit()
-
+        # debug_output += ">> Data:\n"
+        debug_output += ">> Failed data:\n"
+        debug_output += "{}\n".format(json.dumps(parsed_data, indent=4, ensure_ascii=False))
         debug_output += ">> Result: {} OKs + {} NOKs / {}\n".format(ok, nok, ok + nok)
         print(debug_output, end="")
-
-    @staticmethod
-    def prepare_event_data(data_dict: dict) -> dict:
-        parsed_dict = {}
-
-        # TITLE (required):
-        if "title" in data_dict and data_dict["title"] is not None:
-            parsed_dict["title"] = data_dict["title"][0]
-        else:
-            return {
-                "status": "error",
-                "message": "Title is missing!"
-            }
-
-        # PEREX:
-        parsed_dict["perex"] = None
-        if "perex" in data_dict:
-            parsed_dict["perex"] = '\n'.join(ParseEvents.sanitize_array(data_dict["perex"]))
-
-        # ORGANIZER:
-        parsed_dict["organizer"] = None
-        if "organizer" in data_dict and data_dict["organizer"][0] != '\n':
-            parsed_dict["organizer"] = ', '.join(ParseEvents.sanitize_array(data_dict["organizer"]))
-
-        # TYPES:
-        parsed_dict["types_data"] = None
-        if "types" in data_dict:
-            types_array = []
-            for type_group in data_dict["types"]:
-                type_split = type_group.split(',')
-                types_array.extend(type_split)
-            parsed_dict["types_data"] = str(ParseEvents.sanitize_array(types_array))
-
-        # LOCATION:
-        parsed_dict["location"] = None
-        if "location" in data_dict and data_dict["location"] is not None \
-                and data_dict["location"][0] != "místo není uvedeno" \
-                and data_dict["location"][0] != '\n':
-            parsed_dict["location"] = ', '.join(ParseEvents.sanitize_array(data_dict["location"]))
-
-        # GPS:
-        parsed_dict["gps_data"] = None
-        if "gps" in data_dict:
-            parsed_dict["gps_data"] = str(ParseEvents.sanitize_array(data_dict["gps"]))
-
-        # DATE (required):
-        if "date" in data_dict and data_dict["date"] is not None \
-                and data_dict["date"][0] != "akce není časově vymezena":
-            if isinstance(data_dict["date"], list):
-                parsed_dict["date_data"] = str(ParseEvents.sanitize_array(data_dict["date"]))
-            else:
-                parsed_dict["date_data"] = str([data_dict["date"].strip()])
-        else:
-            return {
-                "status": "error",
-                "message": "Date is missing!"
-            }
-
-        return {
-            "status": "ok",
-            "data": parsed_dict
-        }
-
-    @staticmethod
-    def sanitize_array(array: list) -> list:
-        array = [el.strip() for el in array]
-        array = filter(None, array)
-
-        return list(array)
 
     def update_database(self, input_events: list) -> None:
         input_ids = [event[0] for event in input_events]
 
         query = '''UPDATE event_html
                    SET is_parsed = 1
-                   WHERE id IN ({})'''.format(",".join(['"{}"'.format(id) for id in input_ids]))
+                   WHERE id IN ({})'''.format(",".join(['"{}"'.format(calendar_id) for calendar_id in input_ids]))
 
-        self.connection.execute(query)
+        try:
+            self.connection.execute(query)
+        except sqlite3.Error as e:
+            print("Error occurred when updating 'is_parsed' in 'event_html' table: {}".format(str(e)))
         self.connection.commit()
 
 

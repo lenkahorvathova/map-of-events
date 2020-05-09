@@ -1,0 +1,93 @@
+{
+    "calendar": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//table[@class=\"search_results\"]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "event_url": {
+            "xpath": {
+                "selectors": [
+                    ".//tr/td/a[@class=\"akce\"]/@href"
+                ]
+            }
+        }
+    },
+    "event": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//*[@id=\"container\"]/div[@class=\"content\"]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "title": {
+            "xpath": {
+                "selectors": [
+                    ".//div/h1/text()"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "datetime": {
+            "xpath": {
+                "selectors": [
+                    ".//*[@id=\"panel_informace\"]/table//th[text()=\"Datum a čas konání\"]/following-sibling::td/text()",
+                    ".//*[@id=\"panel_informace\"]/table//th[text()=\"Datum a čas konání\"]/following-sibling::td/ul[@id=\"budouci\"]/li/text()"
+                ]
+            },
+            "formats": [
+                "%d %D.%M.%YYYY",
+                "%d %D.%M.%YYYY %H:%mm",
+                "%d %D.%M.%YYYY %H:%mm - %HH:%mm",
+                "%d %D.%M.%YYYY - %d %D.%M.%YYYY"
+            ]
+        },
+        "location": {
+            "xpath": {
+                "selectors": [
+                    ".//*[@id=\"panel_informace\"]/table//th[text()=\"Místo konání\"]/following-sibling::td/descendant-or-self::*/text()"
+                ],
+                "join_separator": ", "
+            }
+        },
+        "gps": {
+            "xpath": {
+                "selectors": [
+                    "/html/head/script/text()"
+                ]
+            },
+            "regex": {
+                "expressions": [
+                    ".*SMap\\.Coords\\.fromWGS84\\((\\-?\\d+.\\d+),(\\-?\\d+.\\d+)\\);"
+                ],
+                "match": "FIRST",
+                "group": {
+                    "1": "Lon",
+                    "2": "Lat"
+                }
+            }
+        },
+        "organizer": {
+            "xpath": {
+                "selectors": [
+                    ".//*[@id=\"panel_informace\"]/table//th[text()=\"Pořadatel\"]/following-sibling::td/text()"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "types": {
+            "xpath": {
+                "selectors": [
+                    ".//*[@id=\"panel_informace\"]/table//th[text()=\"Typ\"]/following-sibling::td/text()"
+                ],
+                "match": "FIRST",
+                "split_separator": ","
+            }
+        }
+    }
+}

@@ -1,9 +1,0 @@
-root //div[@class="items-list events-box"]
-url .//div[@class="item one-fourth"]/a/@href
-title //*[@class="content"]/div/div[@class="section-in row detail"]/div/h1/text()
-perex //*[@class="content"]/div/div[@class="section-in row detail"]/div/div[contains(@class, "annotation")]/text()
-date normalize-space(//*[@class="content"]/div/div[@class="section-in row detail"]/div/div/span[@class="date-info" and text()])
-location //*[@class="content"]//div[@class="information-cols"]//div[@class="place-info"]/descendant-or-self::dd/span/a/text()
-gps //*[@class="content"]//div[@class="information-cols"]//dl/dt[text()="GPS:"]/following-sibling::dd/text()
-organizer //*[@class="content"]//div[@class="information-cols"]//h4/text()
-types //*[@class="content"]/div/div[@class="section-in row detail"]/div/div/span[contains(@class, "type")]/text()

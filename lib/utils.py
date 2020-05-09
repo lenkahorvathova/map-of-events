@@ -1,12 +1,11 @@
 import json
-import os
 import sqlite3
 import urllib.parse as urllib
 from typing import Optional, Union
 
 import requests
 
-from lib.constants import DATABASE_PATH, INPUT_SITES_BASE_FILE_PATH, TEMPLATES_DIR_PATH
+from lib.constants import DATABASE_PATH, INPUT_SITES_BASE_FILE_PATH
 
 
 def create_connection() -> sqlite3.Connection:
@@ -24,7 +23,7 @@ def create_connection() -> sqlite3.Connection:
 
 
 def generate_domain_name(url: str) -> str:
-    """ Parses a domain name from the specified url address.
+    """ Generates a domain name from the specified url address.
 
     Example:
         "http://www.belec-kreptov.cz/ap" -> "belec_kreptov_cz"
@@ -66,38 +65,21 @@ def get_base_by(attr: str, value: str) -> Optional[dict]:
     return None
 
 
-def get_xpaths(parser: str) -> dict:
-    """ Gets information from a template file of the parser and creates a dictionary for it.
-
-    :param parser: a string specifying a template file with defined xpaths
-    :return: a dictionary with xpaths from the template
-    """
-
-    xpath_file_path = os.path.join(TEMPLATES_DIR_PATH, parser)
-    xpath_dict = {}
-
-    with open(xpath_file_path) as xpath_file:
-        for line in xpath_file:
-            key, xpath = line.split(' ', 1)
-            if key in xpath_dict:
-                xpath_dict[key].append(xpath.strip())
-            else:
-                xpath_dict[key] = [xpath.strip()]
-
-    return xpath_dict
-
-
-def download_html_content(url: str, html_file_path: str, dry_run: bool = False) -> str:
+def download_html_content(url: str, html_file_path: str, encoding: str = None, dry_run: bool = False) -> str:
     """ Downloads an HTML content from the specified URL to the specified file path.
 
     :param url: an URL address from where an HTML will be downloaded
     :param html_file_path: a path for a file to be created
+    :param encoding: a desired encoding for the request specified in the base file
     :param dry_run: a flag that determines whether to download a file
     :return: a result of the download process
     """
 
     try:
         r = requests.get(url, timeout=30)
+
+        if encoding is not None:
+            r.encoding = encoding
 
         if not dry_run and r.status_code == 200:
             with open(html_file_path, 'w', encoding="utf-8") as f:

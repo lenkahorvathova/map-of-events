@@ -33,4 +33,9 @@ mkdir -p data/log/
   echo "DOWNLOAD EVENTS:"
   echo "============================================================"
   python3 -u bin/download_events.py
+
+  echo "============================================================"
+  echo "PARSE EVENTS:"
+  echo "============================================================"
+  python3 -u bin/parse_events.py
 } 2>&1 | tee -a data/log/cron_process_"$current_time".txt

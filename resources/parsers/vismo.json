@@ -1,0 +1,110 @@
+{
+    "calendar": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//div[@id=\"kalendarAkci\"]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "event_url": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@class=\"dok\"]/ul/li/strong/a/@href"
+                ]
+            }
+        }
+    },
+    "event": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//div[@id=\"telo\"]",
+                    "//div[@id=\"stred\"]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "title": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@id=\"zahlavi\"]/h2/text()"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "perex": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@id=\"akce\"]//div[contains(@class, \"perex\")]/text()"
+                ],
+                "join_separator": "\n"
+            }
+        },
+        "datetime": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@id=\"akce\"]//dl/dt[text()=\"Kdy:\"]/following-sibling::dd/text()"
+                ],
+                "match": "FIRST",
+                "ignore": [
+                    "akce není časově vymezena"
+                ]
+            },
+            "formats": [
+                "%D.%M.%YYYY",
+                "%D.%M.%YYYY %H:%mm",
+                "%D.%M.%YYYY %H:%mm - %H:%mm",
+                "%D.%M.%YYYY - %D.%M.%YYYY",
+                "%D.%M.%YYYY %H:%mm - %D.%M.%YYYY",
+                "%D.%M.%YYYY %H:%mm - %D.%M.%YYYY %H:%mm"
+            ]
+        },
+        "location": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@id=\"akce\"]//dl/dt[text()=\"Kde:\"]/following-sibling::dd/text()",
+                    ".//div[@id=\"akce\"]//dl/dt[text()=\"Kde:\"]/following-sibling::dd/ul/li/strong/a/text()"
+                ],
+                "match": "FIRST",
+                "ignore": [
+                    "místo není uvedeno"
+                ]
+            }
+        },
+        "gps": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@id=\"akce\"]//dl/dt[text()=\"Kde:\"]/following-sibling::dd/ul/li//div[@class=\"vol_mapa\"]/a/@href"
+                ],
+                "match": "FIRST"
+            },
+            "regex": {
+                "expressions": [
+                    ".*q=(\\-?\\d+.\\d+),(\\-?\\d+.\\d+)&.*"
+                ],
+                "match": "FIRST",
+                "group": {
+                    "1": "Lat",
+                    "2": "Lon"
+                }
+            }
+        },
+        "organizer": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@id=\"akce\"]//dl/dt[text()=\"Pořadatel akce:\"]/following-sibling::dd/text()"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "types": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@id=\"akce\"]//dl/dt[text()=\"Typ akce:\"]/following-sibling::dd/ul/li/text()"
+                ]
+            }
+        }
+    }
+}

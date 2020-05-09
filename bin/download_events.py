@@ -10,7 +10,7 @@ from lib.constants import DATA_DIR_PATH
 
 
 class DownloadEvents:
-    """ Downloads an HTML content of an event page.
+    """ Downloads an HTML content of an event's page.
 
     Stores event's information into the database.
     """
@@ -29,13 +29,25 @@ class DownloadEvents:
                             help="don't store any output and print to stdout")
         parser.add_argument('--domain', type=str, default=None,
                             help="download events only for the specified domain")
+        parser.add_argument('--event-url', type=str, default=None,
+                            help="download only event with the specified URL")
+        parser.add_argument('--redownload-file', action='store_true', default=False,
+                            help="redownload file for the specified URL in --event-url")  # not updating parsed_at
 
-        return parser.parse_args()
+        arguments = parser.parse_args()
+        if arguments.redownload_file and not arguments.event_url:
+            parser.error("--redownload-file requires --event-url")
+
+        return arguments
 
     def run(self) -> None:
         input_events = self.load_input_events()
         events_to_insert = self.download_events(input_events)
-        self.store_to_database(events_to_insert, self.args.dry_run)
+        if self.args.redownload_file:
+            _, html_file_path, _ = events_to_insert[0]
+            print("File was re-downloaded to: {}".format(html_file_path))
+        else:
+            self.store_to_database(events_to_insert, self.args.dry_run)
         self.connection.close()
 
     def load_input_events(self) -> list:
@@ -43,18 +55,22 @@ class DownloadEvents:
         query = '''SELECT eu.id, eu.url, c.url FROM event_url eu
                    LEFT OUTER JOIN event_html eh ON eu.id = eh.event_url_id
                    INNER JOIN calendar c ON eu.calendar_id = c.id
-                   WHERE eh.event_url_id IS NULL'''
+                   WHERE 1==1'''
 
         if self.args.domain:
             website_base = utils.get_base_by("domain", self.args.domain)
             if website_base is None:
                 sys.exit("Unknown domain '{}'!".format(self.args.domain))
             calendar_url = website_base["url"]
-
             query += ''' AND c.url = "{}"'''.format(calendar_url)
 
-        cursor = self.connection.execute(query)
+        if self.args.event_url:
+            query += ''' AND eu.url = "{}"'''.format(self.args.event_url)
 
+        if not self.args.redownload_file:
+            query += ''' AND eh.event_url_id IS NULL'''
+
+        cursor = self.connection.execute(query)
         return cursor.fetchall()
 
     def download_events(self, input_events: list) -> list:
@@ -63,26 +79,23 @@ class DownloadEvents:
 
         for index, event in enumerate(input_events):
             _, _, calendar_url = event
-            calendar_base = utils.get_base_by("url", calendar_url)
-            if calendar_base is None:
+            website_base = utils.get_base_by("url", calendar_url)
+            if website_base is None:
                 sys.exit("Unknown calendar URL '{}'!".format(calendar_url))
-            domain = calendar_base.get("domain", None)
-            if domain is None:
-                sys.exit("Unknown domain for calendar URL '{}'!".format(calendar_url))
 
-            input_tuples.append((index + 1, len(input_events), event, timestamp, domain, self.args.dry_run))
+            input_tuples.append((index + 1, len(input_events), event, timestamp, website_base, self.args.dry_run))
 
         with multiprocessing.Pool(32) as p:
             return p.map(DownloadEvents.process_event_url, input_tuples)
 
     @staticmethod
     def process_event_url(input_tuple: tuple) -> (int, str, str):
-        input_index, total_length, event, timestamp, domain, dry_run = input_tuple
-        """ (input_index: int, total_length: int, event: (int, str, str), timestamp: datetime, domain: str,
+        input_index, total_length, event, timestamp, website_base, dry_run = input_tuple
+        """ (input_index: int, total_length: int, event: (int, str, str), timestamp: datetime, website_base: dict,
             dry_run: bool) """
         event_id, event_url, _ = event
 
-        current_dir = os.path.join(DATA_DIR_PATH, domain)
+        current_dir = os.path.join(DATA_DIR_PATH, website_base["domain"])
         event_file_dir = os.path.join(current_dir, DownloadEvents.EVENTS_FOLDER_NAME)
         os.makedirs(event_file_dir, exist_ok=True)
 
@@ -90,17 +103,17 @@ class DownloadEvents:
         event_file_name = timestamp_str + "_" + str(event_id)
         html_file_path = os.path.join(event_file_dir, event_file_name + ".html")
 
-        result = utils.download_html_content(event_url, html_file_path, dry_run)
+        result = utils.download_html_content(event_url, html_file_path, website_base.get("encoding", None), dry_run)
         if result != "200":
             html_file_path = None
 
-        debug_output = "{}/{} | ".format(input_index, total_length)
-        debug_output += "Downloading URL: " + str(event_url) + " (" + str(result) + ")"
+        debug_output = "{}/{}".format(input_index, total_length)
+        debug_output += " | Downloading URL: {} ({})".format(str(event_url), str(result))
         print(debug_output)
 
         return event_id, html_file_path, timestamp
 
-    def store_to_database(self, events_to_insert: list, dry_run: str) -> None:
+    def store_to_database(self, events_to_insert: list, dry_run: bool) -> None:
         failed_url_ids = []
         event_url_ids = []
 
@@ -121,13 +134,12 @@ class DownloadEvents:
                     self.connection.execute(query, values)
                 except sqlite3.Error as e:
                     failed_url_ids.append(event_url_id)
-                    print("Error occurred when storing {} into 'event_url' table: {}".format(values, str(e)))
-
+                    print("Error occurred when storing {} into 'event_html' table: {}".format(values, str(e)))
         if not dry_run:
             self.connection.commit()
 
-        print("Number of failed events: {}/{}".format(len(failed_url_ids), len(event_url_ids)))
-        print("Failed events' IDs: {}".format(failed_url_ids))
+        print(">> Number of failed events: {}/{}".format(len(failed_url_ids), len(event_url_ids)))
+        print(">> Failed events' IDs: {}".format(failed_url_ids))
 
 
 if __name__ == '__main__':

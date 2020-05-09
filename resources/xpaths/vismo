@@ -1,9 +1,0 @@
-root //div[contains(@class, "obsah") and contains(@id, "kalendarAkci")]
-url .//div[contains(@class, "dok")]//ul/li//strong/a/@href
-title //div[@id="zahlavi"]/h2/text()
-perex //div[@id="akce"]//div[contains(@class, "perex")][1]/text()
-date //div[@id="akce"]//dl/dt[text()="Kdy:"]/following-sibling::dd/text()
-location //div[@id="akce"]//dl/dt[text()="Kde:"]/following-sibling::dd/text()
-location //div[@id="akce"]//dl/dt[text()="Kde:"]/following-sibling::dd/ul/li/strong/a/text()
-organizer //div[@id="akce"]//dl/dt[text()="Pořadatel akce:"]/following-sibling::dd/text()
-types //div[@id="akce"]//dl/dt[text()="Typ akce:"]/following-sibling::dd/ul/li/text()

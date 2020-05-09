@@ -1,0 +1,76 @@
+{
+    "calendar": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//*[@id=\"page\"]/div[@class=\"inzeratyIndex\"]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "event_url": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@class=\"indexActionName\"]/div/h2/a[@class=\"nazevAkce\"]/@href"
+                ]
+            }
+        }
+    },
+    "event": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//*[@id=\"nabidka\"]/div/div/div[contains(@class, \"text-center\")]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "title": {
+            "xpath": {
+                "selectors": [
+                    ".//h1[@class=\"title\"]/text()"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "perex": {
+            "xpath": {
+                "selectors": [
+                    ".//p/descendant-or-self::*/text()"
+                ],
+                "join_separator": "\n"
+            }
+        },
+        "datetime": {
+            "xpath": {
+                "selectors": [
+                    ".//h3[@class=\"bold\"]/text()"
+                ],
+                "match": "FIRST"
+            },
+            "formats": [
+                "%D.%M.%YYYY",
+                "%DD.%MM.%YYYY",
+                "%DD.%MM.%YYYY-%DD.%MM.%YYYY"
+            ]
+        },
+        "location": {
+            "xpath": {
+                "selectors": [
+                    ".//h3[@class=\"bold\"]/a/text()"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "types": {
+            "xpath": {
+                "selectors": [
+                    ".//a/strong/text()"
+                ],
+                "ignore": [
+                    "Úvod"
+                ]
+            }
+        }
+    }
+}
