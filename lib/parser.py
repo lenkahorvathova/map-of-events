@@ -7,6 +7,7 @@ from lxml import etree
 
 class Parser:
     PARSERS_DIR_PATH = "resources/parsers"
+    ORDINATION = ["title", "perex", "datetime", "location", "gps", "organizer", "types"]
 
     def __init__(self, parser_name: str, dom: etree.ElementTree) -> None:
         self.name = parser_name
@@ -58,17 +59,19 @@ class Parser:
 
         for key in event_data_keys:
             xpath_results = self._get_xpath_results("event", key)
-            sanitized_results = self._sanitize_xpath_event_data(key, xpath_results)
-            formatted_results = self._format_xpath_event_data(key, sanitized_results)
-            sanitized_results = self._sanitize_xpath_event_data(key, formatted_results)
-            regex_result = self._apply_regex(key, sanitized_results)
+            sanitized_xpath_results = self._sanitize_xpath_event_data(key, xpath_results)
+            formatted_results = self._format_xpath_event_data(key, sanitized_xpath_results)
+            sanitized_formatted_results = self._sanitize_xpath_event_data(key, formatted_results)
+            regex_result = self._apply_regex(key, sanitized_formatted_results)
 
             parsed_event_data[key] = None
             if regex_result:
-                finalized_result = self._get_correct_counts(key, regex_result)
-                parsed_event_data[key] = finalized_result
+                parsed_event_data[key] = regex_result
 
-        return parsed_event_data
+        finalized_event_data = self._finalize_data(parsed_event_data)
+        result_event_data = self._get_correct_counts(finalized_event_data)
+
+        return result_event_data
 
     def _get_xpath_results(self, page: str, data_key: str, error_message: str = None) -> list:
         page_roots = self._get_roots(page)
@@ -78,7 +81,6 @@ class Parser:
         page_metadata = self.metadata[page]
         data_key_xpath_data = page_metadata[data_key]["xpath"]
         data_key_selectors = data_key_xpath_data["selectors"]
-        data_key_match = data_key_xpath_data["match"] if "match" in data_key_xpath_data else "ALL"
 
         data_key_elements = []
         for root in page_roots:
@@ -98,9 +100,6 @@ class Parser:
                 #     error = "No xpath matching values for '{}' where found!".format(data_key)
                 #     if error not in self.error_messages:
                 #         self.error_messages.append(error)
-            else:
-                if data_key_match == "FIRST":
-                    data_key_elements = [data_key_elements[0]]
 
         return data_key_elements
 
@@ -125,6 +124,9 @@ class Parser:
             return []
 
         xpath_event_data = self.metadata["event"][data_key]["xpath"]
+
+        if "match" in xpath_event_data and xpath_event_data["match"] == "FIRST":
+            xpath_values = [xpath_values[0]]
 
         if "join_separator" in xpath_event_data:
             separator = xpath_event_data["join_separator"]
@@ -155,7 +157,7 @@ class Parser:
 
         regex_data = event_key_data["regex"]
         expressions = regex_data["expressions"]
-        groups = regex_data["group"]
+        groups = regex_data["group"] if "group" in regex_data else None
         match = regex_data["match"] if "match" in regex_data else "ALL"
 
         regexed_values = []
@@ -164,31 +166,61 @@ class Parser:
                 regex = re.compile(expression)
                 matched_value = regex.search(str(data))
                 if matched_value:
-                    result_gps = {}
-                    for group_num, gps_part in groups.items():
-                        result_gps[gps_part] = matched_value.group(int(group_num))
-
-                    if "Lat" in result_gps and "Lon" in result_gps:
-                        found_gps = "{},{}".format(str(result_gps["Lat"]), str(result_gps["Lon"]))
-                        regexed_values.append(found_gps)
+                    result = {}
+                    if groups:
+                        for group_num, group_name in groups.items():
+                            result[group_name] = matched_value.group(int(group_num))
+                            regexed_values.append(result)
+                    else:
+                        regexed_values.append(matched_value.group(0))
 
         if len(regexed_values) == 0:
             error = "No regex matching values for '{}' where found!".format(data_key)
-            if error not in self.error_messages:
-                self.error_messages.append(error)
+            # if error not in self.error_messages:
+            #     self.error_messages.append(error)
         else:
             if match == "FIRST":
                 regexed_values = [regexed_values[0]]
 
         return regexed_values
 
-    def _get_correct_counts(self, data_key: str, regex_result: list) -> str:
-        if data_key == "datetime":
-            return json.dumps(regex_result, ensure_ascii=False)
-        if data_key == "types":
-            return json.dumps(regex_result, ensure_ascii=False)
+    def _finalize_data(self, all_data: dict):
+        if "date" in all_data:
+            if all_data["date"]:
+                all_data["datetime"] = all_data["date"][0]
+            del all_data["date"]
 
-        if len(regex_result) > 1:
-            self.error_messages.append("Data key '{}' doesn't expect more than one result value!".format(data_key))
+            if "time" in all_data:
+                if all_data["time"]:
+                    all_data["datetime"] += " {}".format(all_data["time"][0])
+                del all_data["time"]
 
-        return regex_result[0]
+        if "gps" in all_data and all_data["gps"]:
+            result = []
+
+            for data in all_data["gps"]:
+                if "Lat" in data and "Lon" in data:
+                    found_gps = "{},{}".format(str(data["Lat"]), str(data["Lon"]))
+                    result.append(found_gps)
+
+            all_data["gps"] = result
+
+        all_data = dict([(key, all_data[key] if key in all_data else None) for key in self.ORDINATION])
+
+        return all_data
+
+    def _get_correct_counts(self, all_data: dict) -> dict:
+        for data_key, result_values in all_data.items():
+            if result_values is None:
+                continue
+
+            if data_key == "datetime" or data_key == "types":
+                result = json.dumps(result_values, ensure_ascii=False)
+                all_data[data_key] = result
+            else:
+                if len(result_values) > 1:
+                    self.error_messages.append(
+                        "Data key '{}' doesn't expect more than one result value!".format(data_key))
+                all_data[data_key] = result_values[0]
+
+        return all_data

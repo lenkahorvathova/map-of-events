@@ -36,12 +36,16 @@
         "perex": {
             "xpath": {
                 "selectors": [
-                    ".//p/descendant-or-self::*/text()"
+                    ".//p/descendant-or-self::*/text()",
+                    "text()"
                 ],
-                "join_separator": "\n"
+                "join_separator": "\n",
+                "ignore": [
+                    "->"
+                ]
             }
         },
-        "datetime": {
+        "date": {
             "xpath": {
                 "selectors": [
                     ".//h3[@class=\"bold\"]/text()"
@@ -53,6 +57,19 @@
                 "%DD.%MM.%YYYY",
                 "%DD.%MM.%YYYY-%DD.%MM.%YYYY"
             ]
+        },
+        "time": {
+            "xpath": {
+                "selectors": [
+                    "text()"
+                ]
+            },
+            "regex": {
+                "expressions": [
+                    "(\\d{1,2}:\\d{1,2})"
+                ],
+                "match": "FIRST"
+            }
         },
         "location": {
             "xpath": {
