@@ -48,7 +48,7 @@ class Parser:
         return root_elements
 
     def get_event_urls(self) -> list:
-        event_url_elements = self._get_xpath_results("calendar", "event_url", "No events where found!")
+        event_url_elements = self._get_xpath_results("calendar", "event_url")
         return event_url_elements
 
     def get_event_data(self) -> dict:
@@ -73,7 +73,7 @@ class Parser:
 
         return result_event_data
 
-    def _get_xpath_results(self, page: str, data_key: str, error_message: str = None) -> list:
+    def _get_xpath_results(self, page: str, data_key: str) -> list:
         page_roots = self._get_roots(page)
         if len(page_roots) == 0:
             return []
@@ -91,15 +91,10 @@ class Parser:
                 except etree.XPathEvalError:
                     pass
 
-            if len(data_key_elements) == 0:
-                if error_message:
-                    error = error_message
-                    if error not in self.error_messages:
-                        self.error_messages.append(error)
-                # else:
-                #     error = "No xpath matching values for '{}' where found!".format(data_key)
-                #     if error not in self.error_messages:
-                #         self.error_messages.append(error)
+            # if len(data_key_elements) == 0:
+            #     error = "No xpath matching values for '{}' where found!".format(data_key)
+            #     if error not in self.error_messages:
+            #         self.error_messages.append(error)
 
         return data_key_elements
 

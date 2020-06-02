@@ -108,7 +108,7 @@ class DownloadEvents:
             html_file_path = None
 
         debug_output = "{}/{}".format(input_index, total_length)
-        debug_output += " | Downloading URL: {} ({})".format(str(event_url), str(result))
+        debug_output += " | Downloading URL: {} | {}".format(str(event_url), str(result))
         print(debug_output)
 
         return event_id, html_file_path, timestamp

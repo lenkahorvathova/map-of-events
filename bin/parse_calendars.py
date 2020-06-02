@@ -105,17 +105,17 @@ class ParseCalendars:
         parser = Parser(parser_name, dom)
         event_urls = parser.get_event_urls()
 
-        if len(event_urls) == 0:
-            debug_output += " | {}".format(" & ".join(parser.error_messages))
-            print(debug_output)
-            return []
+        # if len(event_urls) == 0:
+        #     debug_output += " | {}".format(" & ".join(parser.error_messages))
+        #     print(debug_output)
+        #     return []
 
         events_to_insert = []
         for index, url_path in enumerate(event_urls):
             event_url = urllib.urljoin(calendar_url, url_path)
             events_to_insert.append((event_url, timestamp, calendar_id))
 
-        debug_output += "| {} events found.\n".format(len(events_to_insert))
+        debug_output += " | {}\n".format(len(events_to_insert))
         # for event_url, _, _ in events_to_insert:
         #     debug_output += "\t Found URL: {}\n".format(event_url)
         print(debug_output, end="")

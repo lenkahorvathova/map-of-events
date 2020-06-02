@@ -1,5 +1,4 @@
 import argparse
-import json
 import multiprocessing
 import os
 import sqlite3
@@ -180,16 +179,15 @@ class ParseEvents:
                     })
                     continue
             ok += 1
-            # parsed_data.append({
-            #     "file": event_html_file_path,
-            #     "url": event_url,
-            #     "data": data_dict
-            # })
+            parsed_data.append({
+                "file": event_html_file_path,
+                "url": event_url,
+                "data": data_dict
+            })
         self.connection.commit()
 
         # debug_output += ">> Data:\n"
-        debug_output += ">> Failed data:\n"
-        debug_output += "{}\n".format(json.dumps(parsed_data, indent=4, ensure_ascii=False))
+        # debug_output += "{}\n".format(json.dumps(parsed_data, indent=4, ensure_ascii=False))
         debug_output += ">> Result: {} OKs + {} NOKs / {}\n".format(ok, nok, ok + nok)
         print(debug_output, end="")
 

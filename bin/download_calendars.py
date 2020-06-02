@@ -77,7 +77,7 @@ class DownloadCalendars:
             html_file_path = None
 
         debug_output = "{}/{}".format(input_index, total_length)
-        debug_output += " | Downloading URL: {} ({})".format(str(url), str(result))
+        debug_output += " | Downloading URL: {} | {}".format(str(url), str(result))
         print(debug_output)
 
         return url, html_file_path, timestamp
