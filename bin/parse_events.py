@@ -81,7 +81,7 @@ class ParseEvents:
             return p.map(ParseEvents.process_event, input_tuples)
 
     @staticmethod
-    def process_event(input_tuple: tuple) -> (dict, str, int):
+    def process_event(input_tuple: tuple) -> (dict, str, tuple):
         input_index, total_length, event_tuple, timestamp, website_base = input_tuple
         """ (input_index: int, total_length: int, event_tuple: (int, str, str, str), timestamp: datetime, 
             website_base: dict) """
@@ -103,7 +103,8 @@ class ParseEvents:
             dom = etree.parse(html_file, etree.HTMLParser(encoding="utf-8"))
 
         parser_name = website_base["parser"]
-        parser = Parser(parser_name, dom)
+        parser = Parser(parser_name)
+        parser.set_dom(dom)
 
         try:
             parsed_event_data = parser.get_event_data()
@@ -111,7 +112,7 @@ class ParseEvents:
             debug_output += " | NOK"
             if len(parser.error_messages) != 0:
                 debug_output += " - ({})".format(" & ".join(parser.error_messages))
-            debug_output += "\n\t Exception: {}".format(str(e))
+            debug_output += "\n\t> Exception: {}".format(str(e))
             print(debug_output)
             return {"error": "Exception occurred during parsing!"}, timestamp, event_tuple
 
@@ -186,6 +187,7 @@ class ParseEvents:
             })
         self.connection.commit()
 
+        # import json
         # debug_output += ">> Data:\n"
         # debug_output += "{}\n".format(json.dumps(parsed_data, indent=4, ensure_ascii=False))
         debug_output += ">> Result: {} OKs + {} NOKs / {}\n".format(ok, nok, ok + nok)

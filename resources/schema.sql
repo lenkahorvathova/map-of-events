@@ -35,3 +35,12 @@ CREATE TABLE IF NOT EXISTS event_data (
   parsed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   event_html_id INTEGER, FOREIGN KEY (event_html_id) REFERENCES event_html(id)
 );
+
+CREATE TABLE IF NOT EXISTS event_data_datetime (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  start_date TEXT NOT NULL,
+  start_time TEXT,
+  end_date TEXT,
+  end_time TEXT,
+  event_data_id INTEGER, FOREIGN KEY (event_data_id) REFERENCES event_data(id)
+)

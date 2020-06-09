@@ -41,10 +41,10 @@
                 ]
             },
             "formats": [
-                "%d %D.%M.%YYYY",
-                "%d %D.%M.%YYYY %H:%mm",
-                "%d %D.%M.%YYYY %H:%mm - %HH:%mm",
-                "%d %D.%M.%YYYY - %d %D.%M.%YYYY"
+                "%a %d.%m.%Y",
+                "%a %d.%m.%Y %H:%M",
+                "%a %d.%m.%Y %H:%M %range{-} %H:%M",
+                "%a %d.%m.%Y %range{-} %a %d.%m.%Y"
             ]
         },
         "location": {

@@ -53,12 +53,12 @@
                 ]
             },
             "formats": [
-                "%D.%M.%YYYY",
-                "%D.%M.%YYYY %H:%mm",
-                "%D.%M.%YYYY %H:%mm - %H:%mm",
-                "%D.%M.%YYYY - %D.%M.%YYYY",
-                "%D.%M.%YYYY %H:%mm - %D.%M.%YYYY",
-                "%D.%M.%YYYY %H:%mm - %D.%M.%YYYY %H:%mm"
+                "%d.%m.%Y",
+                "%d.%m.%Y %H:%M",
+                "%d.%m.%Y %H:%M %range{-} %H:%M",
+                "%d.%m.%Y %range{-} %d.%m.%Y",
+                "%d.%m.%Y %H:%M %range{-} %d.%m.%Y",
+                "%d.%m.%Y %H:%M %range{-} %d.%m.%Y %H:%M"
             ]
         },
         "location": {

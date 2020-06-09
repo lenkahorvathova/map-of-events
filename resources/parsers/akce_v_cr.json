@@ -53,9 +53,8 @@
                 "match": "FIRST"
             },
             "formats": [
-                "%D.%M.%YYYY",
-                "%DD.%MM.%YYYY",
-                "%DD.%MM.%YYYY-%DD.%MM.%YYYY"
+                "%d.%m.%Y",
+                "%d.%m.%Y%range{-}%d.%m.%Y"
             ]
         },
         "time": {

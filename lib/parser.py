@@ -1,6 +1,8 @@
 import json
+import locale
 import os
 import re
+from datetime import datetime
 
 from lxml import etree
 
@@ -8,12 +10,39 @@ from lxml import etree
 class Parser:
     PARSERS_DIR_PATH = "resources/parsers"
     ORDINATION = ["title", "perex", "datetime", "location", "gps", "organizer", "types"]
+    DATE_TIME_DELIMITER = "%;"
 
-    def __init__(self, parser_name: str, dom: etree.ElementTree) -> None:
+    DEFAULT_DATETIME_FORMAT = "%d.%m.%Y %H:%M"
+    DEFAULT_DATE_FORMAT = "%d.%m.%Y"
+    DEFAULT_TIME_FORMAT = "%H:%M"
+
+    RANGE_MATCH_REGEX = r'(.*)%range{(.*)}(.*)'
+    CONTAINS_DATE_REGEX = r'%d|%b|%B|%m|%y|%Y|%x|%c'
+    CONTAINS_TIME_REGEX = r'%H|%I|%p|%M|%S|%f|%X|%c'
+
+    MONTHS_TO_REPLACE = {
+        "leden": "ledna",
+        "únor": "února",
+        "březen": "března",
+        "duben": "dubna",
+        "květen": "května",
+        "červen": "června",
+        "červenec": "července",
+        "srpen": "srpna",
+        "září": "září",
+        "říjen": "října",
+        "listopad": "listopadu",
+        "prosinec": "prosince"
+    }
+
+    def __init__(self, parser_name: str) -> None:
         self.name = parser_name
-        self.dom = dom
+        self.dom = None
         self.metadata = self._load_parser_file(parser_name)
         self.error_messages = []
+
+    def set_dom(self, dom: etree.ElementTree) -> None:
+        self.dom = dom
 
     def _load_parser_file(self, parser_name: str) -> dict:
         parser_file_path = os.path.join(self.PARSERS_DIR_PATH, parser_name + ".json")
@@ -25,7 +54,10 @@ class Parser:
 
     def _get_roots(self, page: str) -> list:
         if page not in self.metadata:
-            raise Exception("Page '{}' is not defined for '{}' parser.".format(page, self.name))
+            raise Exception("Page '{}' is not defined for '{}' parser!".format(page, self.name))
+
+        if self.dom is None:
+            raise Exception("You have to specify DOM to search (use function Parser.set_dom(etree.ElementTree))!")
 
         page_metadata = self.metadata[page]
         root_xpath_data = page_metadata["root"]["xpath"]
@@ -181,14 +213,17 @@ class Parser:
 
     def _finalize_data(self, all_data: dict):
         if "date" in all_data:
+            joined_datetime = None
             if all_data["date"]:
-                all_data["datetime"] = all_data["date"][0]
+                joined_datetime = all_data["date"][0]
             del all_data["date"]
 
             if "time" in all_data:
                 if all_data["time"]:
-                    all_data["datetime"] += " {}".format(all_data["time"][0])
+                    joined_datetime += "{}{}".format(self.DATE_TIME_DELIMITER, all_data["time"][0])
                 del all_data["time"]
+
+            all_data["datetime"] = [joined_datetime] if joined_datetime else None
 
         if "gps" in all_data and all_data["gps"]:
             result = []
@@ -219,3 +254,114 @@ class Parser:
                 all_data[data_key] = result_values[0]
 
         return all_data
+
+    def process_datetimes(self, db_datetimes: list) -> list:
+        formats = self._prepare_formats()
+        parsed_datetimes = []
+
+        locale.setlocale(locale.LC_TIME, "cs_CZ")
+        for db_datetime in db_datetimes:
+            db_datetime = self._replace_months(db_datetime)
+
+            dt_delimiter_match = re.search(self.DATE_TIME_DELIMITER, db_datetime)
+            if dt_delimiter_match:
+                db_datetime = self._reorder_date_time(db_datetime)
+
+            parsed_dt = self._process_datetime(db_datetime, formats)
+            if parsed_dt:
+                parsed_datetimes.append(parsed_dt)
+
+        return parsed_datetimes
+
+    def _prepare_formats(self) -> set:
+        datetime_metadata = self.metadata["event"].get("datetime", None)
+        datetime_formats = set()
+
+        if datetime_metadata:
+            datetime_formats.update(datetime_metadata.get("formats", []))
+            datetime_formats.add(self.DEFAULT_DATETIME_FORMAT)
+        else:
+            date_metadata = self.metadata["event"].get("date", {}).get("formats", [])
+            time_metadata = self.metadata["event"].get("time", {}).get("formats", [])
+
+            date_metadata.append(self.DEFAULT_DATE_FORMAT)
+            time_metadata.append(self.DEFAULT_TIME_FORMAT)
+
+            for date in date_metadata:
+                for time in time_metadata:
+                    dt_format = self._reorder_date_time("{}{}{}".format(date, self.DATE_TIME_DELIMITER, time))
+                    datetime_formats.add(dt_format)
+
+        return datetime_formats
+
+    def _reorder_date_time(self, datetime_str: str) -> str:
+        date_str, _, time_str = datetime_str.partition(self.DATE_TIME_DELIMITER)
+        date_range_match = re.search(self.RANGE_MATCH_REGEX, date_str)
+        time_range_match = re.search(self.RANGE_MATCH_REGEX, time_str)
+
+        result_datetime = ""
+
+        if date_range_match:
+            start_date = date_range_match.group(1).strip()
+            delimiter = date_range_match.group(2)
+            end_date = date_range_match.group(3).strip()
+
+            if time_range_match:
+                start_time = time_range_match.group(1).strip()
+                end_time = time_range_match.group(3).strip()
+                result_datetime = "{} {} %range{{{}}} {} {}".format(start_date, start_time, delimiter, end_date,
+                                                                    end_time)
+            else:
+                result_datetime = "{} {} %range{{{}}} {}".format(start_date, time_str, delimiter, end_date)
+        else:
+            if time_range_match:
+                time_str = re.sub(self.RANGE_MATCH_REGEX, '-', time_str)
+            result_datetime += "{} {}".format(date_str, time_str)
+
+        return result_datetime
+
+    def _replace_months(self, datetime_str: str) -> str:
+        for month, replacement in self.MONTHS_TO_REPLACE.items():
+            datetime_str = re.sub(month, replacement, datetime_str)
+        return datetime_str
+
+    def _process_datetime(self, datetime_str: str, formats: set) -> tuple:
+        start_date, start_time, end_date, end_time = None, None, None, None
+
+        for dt_format in formats:
+            range_match = re.search(self.RANGE_MATCH_REGEX, dt_format)
+
+            if range_match:
+                start_format = range_match.group(1).strip()
+                delimiter = range_match.group(2)
+                end_format = range_match.group(3).strip()
+
+                start_str, _, end_str = datetime_str.partition(delimiter)
+
+                try:
+                    start_datetime = datetime.strptime(start_str.strip(), start_format)
+                    start_date = self._get_date(start_datetime, start_format)
+                    start_time = self._get_time(start_datetime, start_format)
+
+                    end_datetime = datetime.strptime(end_str.strip(), end_format)
+                    end_date = self._get_date(end_datetime, end_format)
+                    end_time = self._get_time(end_datetime, end_format)
+                except ValueError:
+                    pass
+            else:
+                try:
+                    start_datetime = datetime.strptime(datetime_str.strip(), dt_format.strip())
+                    start_date = self._get_date(start_datetime, dt_format)
+                    start_time = self._get_time(start_datetime, dt_format)
+                except ValueError:
+                    pass
+
+        return start_date, start_time, end_date, end_time
+
+    def _get_date(self, input_datetime: datetime, used_format: str):
+        date_match = re.search(self.CONTAINS_DATE_REGEX, used_format)
+        return input_datetime.date().__str__() if date_match else None
+
+    def _get_time(self, input_datetime: datetime, used_format: str):
+        time_match = re.search(self.CONTAINS_TIME_REGEX, used_format)
+        return input_datetime.time().__str__() if time_match else None

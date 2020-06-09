@@ -49,10 +49,10 @@
                 "join_separator": " "
             },
             "formats": [
-                "Kdy %D. %MMMM %YYYY %H:%mm - %H:%mm",
-                "Kdy %D. %MMMM %YYYY - %D. %MMMM %YYYY",
-                "Kdy %D. %MMMM %YYYY %H:%mm - %D. %MMMM %YYYY",
-                "Kdy %D. %MMMM %YYYY %H:%mm - %D. %MMMM %YYYY %H:%mm"
+                "Kdy %d. %B %Y %H:%M %range{-} %H:%M",
+                "Kdy %d. %B %Y %range{-} %d. %B %Y",
+                "Kdy %d. %B %Y %H:%M %range{-} %d. %B %Y",
+                "Kdy %d. %B %Y %H:%M %range{-} %d. %B %Y %H:%M"
             ]
         },
         "location": {
