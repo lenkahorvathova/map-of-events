@@ -38,9 +38,10 @@ CREATE TABLE IF NOT EXISTS event_data (
 
 CREATE TABLE IF NOT EXISTS event_data_datetime (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  start_date TEXT NOT NULL,
+  start_date TEXT,
   start_time TEXT,
   end_date TEXT,
   end_time TEXT,
-  event_data_id INTEGER, FOREIGN KEY (event_data_id) REFERENCES event_data(id)
+  event_data_id INTEGER, FOREIGN KEY (event_data_id) REFERENCES event_data(id),
+  UNIQUE(start_date, start_time, end_date, end_time, event_data_id)
 )

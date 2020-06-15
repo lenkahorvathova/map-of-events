@@ -1,4 +1,5 @@
 import argparse
+import json
 import multiprocessing
 import os
 import sqlite3
@@ -161,8 +162,8 @@ class ParseEvents:
                 continue
 
             if not dry_run:
-                query = '''INSERT OR IGNORE INTO event_data(title, perex, datetime, location, gps, organizer, types, event_html_id)
-                           VALUES(?, ?, ?, ?, ?, ?, ?, ?)'''
+                query = '''INSERT INTO event_data(title, perex, datetime, location, gps, organizer, types, event_html_id)
+                           VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
                 values = (data_dict.get("title"), data_dict.get("perex", None), data_dict.get("datetime"),
                           data_dict.get("location", None), data_dict.get("gps", None), data_dict.get("organizer", None),
                           data_dict.get("types", None), event_html_id)
@@ -187,9 +188,10 @@ class ParseEvents:
             })
         self.connection.commit()
 
-        # import json
-        # debug_output += ">> Data:\n"
-        # debug_output += "{}\n".format(json.dumps(parsed_data, indent=4, ensure_ascii=False))
+        if dry_run:
+            debug_output += ">> Data:\n"
+            debug_output += "{}\n".format(json.dumps(parsed_data, indent=4, ensure_ascii=False))
+
         debug_output += ">> Result: {} OKs + {} NOKs / {}\n".format(ok, nok, ok + nok)
         print(debug_output, end="")
 

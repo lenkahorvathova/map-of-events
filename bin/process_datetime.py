@@ -1,6 +1,7 @@
 import argparse
 import json
 import multiprocessing
+import sqlite3
 import sys
 
 from lib import utils
@@ -28,13 +29,16 @@ class ProcessDatetime:
     def run(self) -> None:
         input_events = self.load_events()
         datetimes_to_insert = self.process_datetimes(input_events)
+        self.store_to_database(datetimes_to_insert, self.args.dry_run)
+        self.connection.close()
 
     def load_events(self) -> list:
         print("Loading input events...")
         query = '''SELECT ed.id, ed.datetime, eu.url, c.url FROM event_data ed
                    INNER JOIN event_html eh on ed.event_html_id = eh.id 
                    INNER JOIN event_url eu ON eh.event_url_id = eu.id 
-                   INNER JOIN calendar c ON eu.calendar_id = c.id WHERE 1==1'''
+                   INNER JOIN calendar c ON eu.calendar_id = c.id 
+                   WHERE ed.id NOT IN (SELECT DISTINCT event_data_id FROM event_data_datetime)'''
 
         if self.args.domain:
             website_base = utils.get_base_by("domain", self.args.domain)
@@ -71,7 +75,7 @@ class ProcessDatetime:
         if event_data_datetime is None:
             debug_output += " | NOK - (Event's datetime is None!)"
             print(debug_output)
-            return ()
+            return [], event_data_id
 
         parser_name = website_base["parser"]
         parser = Parser(parser_name)
@@ -85,18 +89,44 @@ class ProcessDatetime:
                 debug_output += " - ({})".format(" & ".join(parser.error_messages))
             debug_output += "\n\t> Exception: {}".format(str(e))
             print(debug_output)
-            return ()
+            return [], event_data_id
 
-        debug_output += " | OK"
-        orig_dates_str = "{}".format(db_datetimes)
-        debug_output += "\n\t> Original datetimes: {:1.200}".format(orig_dates_str)
-        if len(orig_dates_str) > 200:
-            debug_output += "..."
-        proc_dates_str = "{}".format(processed_datetimes)
-        debug_output += "\n\t> Processed datetimes: {:1.200}".format(proc_dates_str)
-        if len(proc_dates_str) > 200:
-            debug_output += "..."
+        debug_output += " | {}".format(len(processed_datetimes))
         print(debug_output)
+
+        return processed_datetimes, event_data_id
+
+    def store_to_database(self, datetimes_to_insert: list, dry_run: bool) -> None:
+        print("Inserting processed datetimes into DB...")
+        ok = 0
+        nok = 0
+
+        for dt_tuple in datetimes_to_insert:
+            processed_datetimes, event_data_id = dt_tuple
+
+            if not processed_datetimes:
+                nok += 1
+                processed_datetimes = [(None, None, None, None)]
+
+            tuples_to_insert = [tpl + (event_data_id,) for tpl in processed_datetimes]
+            tuples_to_insert = ", ".join([tpl.__str__().replace('None', 'null') for tpl in set(tuples_to_insert)])
+
+            if not dry_run:
+                query = '''INSERT INTO event_data_datetime(start_date, start_time, end_date, end_time, event_data_id)
+                           VALUES {}'''.format(tuples_to_insert)
+
+                try:
+                    self.connection.execute(query)
+                except sqlite3.Error as e:
+                    nok += 1
+                    print("Error occurred when storing {} into 'event_data_datetime' table: {}".format(
+                        tuples_to_insert, str(e)))
+                    continue
+
+            ok += 1
+            self.connection.commit()
+
+        print(">> Result: {} OKs + {} NOKs / {}".format(ok, nok, ok + nok))
 
 
 if __name__ == '__main__':

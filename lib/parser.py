@@ -268,7 +268,8 @@ class Parser:
                 db_datetime = self._reorder_date_time(db_datetime)
 
             parsed_dt = self._process_datetime(db_datetime, formats)
-            if parsed_dt:
+            start_date, _, _, _ = parsed_dt
+            if start_date:
                 parsed_datetimes.append(parsed_dt)
 
         return parsed_datetimes
