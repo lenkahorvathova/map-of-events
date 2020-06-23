@@ -100,4 +100,4 @@ def store_to_json_file(output: Union[list, dict], file_path: str) -> None:
     :param file_path: a file path of an output json file
     """
     with open(file_path, 'w') as output_file:
-        output_file.write(json.dumps(output, indent=4))
+        output_file.write(json.dumps(output, indent=4, ensure_ascii=False))

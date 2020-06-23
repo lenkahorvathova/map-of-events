@@ -102,7 +102,8 @@ class ParseCalendars:
             dom = etree.parse(html_file, etree.HTMLParser())
 
         parser_name = website_base["parser"]
-        parser = Parser(parser_name, dom)
+        parser = Parser(parser_name)
+        parser.set_dom(dom)
         event_urls = parser.get_event_urls()
 
         # if len(event_urls) == 0:
