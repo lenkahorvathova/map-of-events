@@ -6,7 +6,7 @@ import sys
 from datetime import datetime
 
 from lib import utils
-from lib.constants import DATA_DIR_PATH
+from lib.constants import DATA_DIR_PATH, INPUT_SITES_BASE_FILE_PATH
 
 
 class DownloadCalendars:
@@ -18,6 +18,13 @@ class DownloadCalendars:
     def __init__(self) -> None:
         self.args = self._parse_arguments()
         self.connection = utils.create_connection()
+
+        if not self.args.dry_run:
+            if not os.path.isfile(INPUT_SITES_BASE_FILE_PATH):
+                raise Exception("Missing an input base file: '{}'".format(INPUT_SITES_BASE_FILE_PATH))
+            missing_tables = utils.check_db(["calendar"])
+            if len(missing_tables) != 0 :
+                raise Exception("Missing tables in the DB: {}".format(missing_tables))
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:

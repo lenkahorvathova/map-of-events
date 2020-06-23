@@ -23,6 +23,11 @@ class ParseEvents:
         self.connection = utils.create_connection()
         self.base = utils.load_base()
 
+        if not self.args.dry_run:
+            missing_tables = utils.check_db(["calendar", "event_url", "event_html", "event_data"])
+            if len(missing_tables) != 0 :
+                raise Exception("Missing tables in the DB: {}".format(missing_tables))
+
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)

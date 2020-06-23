@@ -38,4 +38,9 @@ mkdir -p data/log/
   echo "PARSE EVENTS:"
   echo "============================================================"
   python3 -u bin/parse_events.py
+
+  echo "============================================================"
+  echo "PROCESS EVENTS' DATETIME:"
+  echo "============================================================"
+  python3 -u bin/process_datetime.py
 } 2>&1 | tee -a data/log/cron_process_"$current_time".txt

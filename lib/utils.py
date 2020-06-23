@@ -101,3 +101,22 @@ def store_to_json_file(output: Union[list, dict], file_path: str) -> None:
     """
     with open(file_path, 'w') as output_file:
         output_file.write(json.dumps(output, indent=4, ensure_ascii=False))
+
+
+def check_db(tables: list) -> list:
+    """Checks if specified tables exist in the database.
+
+    :param tables: names of tables
+    :return: list of missing tables (empty, if all specified tables exist)
+    """
+    query = '''SELECT name FROM sqlite_master WHERE type='table' AND name IN {}'''.format(tuple(tables))
+    connection = create_connection()
+    cursor = connection.execute(query)
+    db_tables = [row[0] for row in cursor.fetchall()]
+    connection.close()
+
+    if len(db_tables) == len(tables):
+        return []
+    else:
+        missing_tables = [table for table in tables if table not in db_tables]
+        return missing_tables
