@@ -30,6 +30,8 @@ class ProcessDatetime:
                             help="process datetime only of the specified domain")
         parser.add_argument('--event-url', type=str, default=None,
                             help="process datetime only of the specified URL")
+        parser.add_argument('--process-all', action='store_true', default=False,
+                            help="process datetimes of even already processed events")
 
         return parser.parse_args()
 
@@ -45,7 +47,10 @@ class ProcessDatetime:
                    INNER JOIN event_html eh on ed.event_html_id = eh.id 
                    INNER JOIN event_url eu ON eh.event_url_id = eu.id 
                    INNER JOIN calendar c ON eu.calendar_id = c.id 
-                   WHERE ed.id NOT IN (SELECT DISTINCT event_data_id FROM event_data_datetime)'''
+                   WHERE 1==1'''
+
+        if not self.args.process_all:
+            query += ''' AND ed.id NOT IN (SELECT DISTINCT event_data_id FROM event_data_datetime)'''
 
         if self.args.domain:
             website_base = utils.get_base_by("domain", self.args.domain)
@@ -99,12 +104,14 @@ class ProcessDatetime:
             return [], event_data_id
 
         debug_output += " | {}".format(len(processed_datetimes))
+        # if len(processed_datetimes) == 0:
         print(debug_output)
 
         return processed_datetimes, event_data_id
 
     def store_to_database(self, datetimes_to_insert: list, dry_run: bool) -> None:
-        print("Inserting processed datetimes into DB...")
+        if not dry_run:
+            print("Inserting processed datetimes into DB...")
         ok = 0
         nok = 0
 
@@ -114,6 +121,8 @@ class ProcessDatetime:
             if not processed_datetimes:
                 nok += 1
                 processed_datetimes = [(None, None, None, None)]
+            else:
+                ok += 1
 
             tuples_to_insert = [tpl + (event_data_id,) for tpl in processed_datetimes]
             tuples_to_insert = ", ".join([tpl.__str__().replace('None', 'null') for tpl in set(tuples_to_insert)])
@@ -125,12 +134,12 @@ class ProcessDatetime:
                 try:
                     self.connection.execute(query)
                 except sqlite3.Error as e:
+                    ok -= 1
                     nok += 1
                     print("Error occurred when storing {} into 'event_data_datetime' table: {}".format(
                         tuples_to_insert, str(e)))
                     continue
 
-            ok += 1
             self.connection.commit()
 
         print(">> Result: {} OKs + {} NOKs / {}".format(ok, nok, ok + nok))

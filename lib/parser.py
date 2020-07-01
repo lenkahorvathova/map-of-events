@@ -3,6 +3,7 @@ import locale
 import os
 import re
 from datetime import datetime
+from typing import Optional
 
 from lxml import etree
 
@@ -265,7 +266,8 @@ class Parser:
 
             dt_delimiter_match = re.search(self.DATE_TIME_DELIMITER, db_datetime)
             if dt_delimiter_match:
-                db_datetime = self._reorder_date_time(db_datetime)
+                range_delimiter = self._get_range_delimiter_from_format(formats)
+                db_datetime = self._reorder_date_time(db_datetime, range_delimiter)
 
             parsed_dt = self._process_datetime(db_datetime, formats)
             start_date, _, _, _ = parsed_dt
@@ -289,31 +291,41 @@ class Parser:
             time_metadata.append(self.DEFAULT_TIME_FORMAT)
 
             for date in date_metadata:
+                datetime_formats.add(date)
                 for time in time_metadata:
+                    datetime_formats.add(time)
                     dt_format = self._reorder_date_time("{}{}{}".format(date, self.DATE_TIME_DELIMITER, time))
                     datetime_formats.add(dt_format)
 
+        datetime_formats.add(self.DEFAULT_DATE_FORMAT)
+
         return datetime_formats
 
-    def _reorder_date_time(self, datetime_str: str) -> str:
+    def _reorder_date_time(self, datetime_str: str, range_delimiter: str = None) -> str:
         date_str, _, time_str = datetime_str.partition(self.DATE_TIME_DELIMITER)
-        date_range_match = re.search(self.RANGE_MATCH_REGEX, date_str)
-        time_range_match = re.search(self.RANGE_MATCH_REGEX, time_str)
+
+        if range_delimiter:
+            date_range_match = re.search(r'(.*)(' + range_delimiter + ')(.*)', date_str)
+            time_range_match = re.search(r'(.*)(' + range_delimiter + ')(.*)', time_str)
+        else:
+            date_range_match = re.search(self.RANGE_MATCH_REGEX, date_str)
+            time_range_match = re.search(self.RANGE_MATCH_REGEX, time_str)
 
         result_datetime = ""
-
         if date_range_match:
             start_date = date_range_match.group(1).strip()
             delimiter = date_range_match.group(2)
             end_date = date_range_match.group(3).strip()
 
+            if not range_delimiter:
+                delimiter = "%range{{{}}}".format(delimiter)
+
             if time_range_match:
                 start_time = time_range_match.group(1).strip()
                 end_time = time_range_match.group(3).strip()
-                result_datetime = "{} {} %range{{{}}} {} {}".format(start_date, start_time, delimiter, end_date,
-                                                                    end_time)
+                result_datetime = "{} {} {} {} {}".format(start_date, start_time, delimiter, end_date, end_time)
             else:
-                result_datetime = "{} {} %range{{{}}} {}".format(start_date, time_str, delimiter, end_date)
+                result_datetime = "{} {} {} {}".format(start_date, time_str, delimiter, end_date)
         else:
             if time_range_match:
                 time_str = re.sub(self.RANGE_MATCH_REGEX, '-', time_str)
@@ -325,6 +337,13 @@ class Parser:
         for month, replacement in self.MONTHS_TO_REPLACE.items():
             datetime_str = re.sub(month, replacement, datetime_str)
         return datetime_str
+
+    def _get_range_delimiter_from_format(self, formats: set) -> Optional[str]:
+        for format in formats:
+            range_match = re.search(self.RANGE_MATCH_REGEX, format)
+            if range_match:
+                return range_match.group(2)
+        return None
 
     def _process_datetime(self, datetime_str: str, formats: set) -> tuple:
         start_date, start_time, end_date, end_time = None, None, None, None
