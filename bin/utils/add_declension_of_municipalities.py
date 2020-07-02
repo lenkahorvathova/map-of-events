@@ -22,20 +22,20 @@ class AddDeclensionOfMunicipalities:
     def read_csv_file(self) -> list:
         print("Loading input municipalities...")
 
-        with open(MUNICIPALITIES_OF_CR_FILE, 'r') as csv_input_file:
+        with open(MUNICIPALITIES_OF_CR_FILE, 'r', encoding='utf-8') as csv_input_file:
             csv_reader = csv.reader(csv_input_file, delimiter=';')
             return [row for row in csv_reader]
 
     def add_declension(self, input_municipalities: list) -> None:
         already_parsed = set()
         if not os.path.exists(AddDeclensionOfMunicipalities.MUNICIPALITIES_OF_CR_WITH_DECLENSION_FILE):
-            with open(AddDeclensionOfMunicipalities.MUNICIPALITIES_OF_CR_WITH_DECLENSION_FILE, 'w') as csv_output_file:
+            with open(AddDeclensionOfMunicipalities.MUNICIPALITIES_OF_CR_WITH_DECLENSION_FILE, 'w', encoding='utf-8') as csv_output_file:
                 csv_writer = csv.writer(csv_output_file, lineterminator='\n')
                 row = input_municipalities[0]
                 row.append("LOCATIVE")
                 csv_writer.writerow(row)
         else:
-            with open(AddDeclensionOfMunicipalities.MUNICIPALITIES_OF_CR_WITH_DECLENSION_FILE, 'r') as csv_output_file:
+            with open(AddDeclensionOfMunicipalities.MUNICIPALITIES_OF_CR_WITH_DECLENSION_FILE, 'r', encoding='utf-8') as csv_output_file:
                 csv_reader = csv.reader(csv_output_file)
                 for row in csv_reader:
                     already_parsed.add(", ".join(row[:2]))
@@ -46,7 +46,7 @@ class AddDeclensionOfMunicipalities:
         multiwords = set()
 
         # x = 0
-        with open(AddDeclensionOfMunicipalities.MUNICIPALITIES_OF_CR_WITH_DECLENSION_FILE, 'a') as csv_output_file:
+        with open(AddDeclensionOfMunicipalities.MUNICIPALITIES_OF_CR_WITH_DECLENSION_FILE, 'a', encoding='utf-8') as csv_output_file:
             csv_writer = csv.writer(csv_output_file, lineterminator='\n')
 
             for index, row in enumerate(input_municipalities[1:]):
@@ -75,7 +75,7 @@ class AddDeclensionOfMunicipalities:
                     debug_output += " | RETRY LATER (Exception: {})".format(e)
                     input_municipalities.append(row)
                     time.sleep(1)
-                    print(debug_output)
+                    print(debug_output.encode('utf8').decode('ascii', "backslashreplace"))
                     continue
 
                 if response.status_code == 200:
@@ -91,12 +91,12 @@ class AddDeclensionOfMunicipalities:
                             input_municipalities.append(row)
                             debug_output += " | RETRY LATER (Server overloaded: Processing another request)"
                             time.sleep(1)
-                            print(debug_output)
+                            print(debug_output.encode('utf8').decode('ascii', "backslashreplace"))
                             continue
                         else:
                             debug_output += " | RETRY LATER (Server overloaded: Too many processed requests)"
-                            debug_output += "\n>> Script terminated"
-                            print(debug_output)
+                            print(debug_output.encode('utf8').decode('ascii', "backslashreplace"))
+                            print(">> Script terminated")
                             self.print_temp_stats(nok, nothing_found, more_than_one_found, multiwords)
                             sys.exit()
 
@@ -117,15 +117,15 @@ class AddDeclensionOfMunicipalities:
 
                 csv_writer.writerow(row)
                 time.sleep(1)
-                print(debug_output)
+                print(debug_output.encode('utf8').decode('ascii', "backslashreplace"))
 
         self.print_temp_stats(nok, nothing_found, more_than_one_found, multiwords)
 
     def print_temp_stats(self, nok: set, nothing_found: set, more_than_one_found: set, multiwords: set) -> None:
-        print(">> NOKs ({}): {}".format(len(nok), nok))
-        print(">> nothing_found ({}): {}".format(len(nothing_found), nothing_found))
-        print(">> more_than_one_found ({}): {}".format(len(more_than_one_found), more_than_one_found))
-        print(">> multiwords ({}): {}".format(len(multiwords), multiwords))
+        print(">> NOKs ({}): {}".format(len(nok), nok).encode('utf8').decode('ascii', "backslashreplace"))
+        print(">> nothing_found ({}): {}".format(len(nothing_found), nothing_found).encode('utf8').decode('ascii', "backslashreplace"))
+        print(">> more_than_one_found ({}): {}".format(len(more_than_one_found), more_than_one_found).encode('utf8').decode('ascii', "backslashreplace"))
+        #print(">> multiwords ({}): {}".format(len(multiwords), multiwords).encode('utf8').decode('ascii'))
 
 
 if __name__ == "__main__":
