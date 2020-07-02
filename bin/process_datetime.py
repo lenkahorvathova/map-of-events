@@ -112,10 +112,12 @@ class ProcessDatetime:
     def store_to_database(self, datetimes_to_insert: list, dry_run: bool) -> None:
         if not dry_run:
             print("Inserting processed datetimes into DB...")
+        milestones = [10, 30, 50, 70, 90, 100]
+
         ok = 0
         nok = 0
 
-        for dt_tuple in datetimes_to_insert:
+        for index, dt_tuple in enumerate(datetimes_to_insert):
             processed_datetimes, event_data_id = dt_tuple
 
             if not processed_datetimes:
@@ -128,6 +130,11 @@ class ProcessDatetime:
             tuples_to_insert = ", ".join([tpl.__str__().replace('None', 'null') for tpl in set(tuples_to_insert)])
 
             if not dry_run:
+                curr_percentage = (index + 1) / len(datetimes_to_insert) * 100
+                while len(milestones) > 0 and curr_percentage >= milestones[0]:
+                    print("...{:.0f} % inserted".format(milestones[0]))
+                    milestones = milestones[1:]
+
                 query = '''INSERT INTO event_data_datetime(start_date, start_time, end_date, end_time, event_data_id)
                            VALUES {}'''.format(tuples_to_insert)
 

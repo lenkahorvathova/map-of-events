@@ -129,6 +129,8 @@ class ParseCalendars:
         return events_to_insert
 
     def store_to_database(self, events_to_insert: list) -> None:
+        print("Inserting into DB...")
+
         count_query = '''SELECT count(*) FROM event_url'''
         cursor = self.connection.execute(count_query)
         events_count_before = int(cursor.fetchone()[0])
@@ -151,6 +153,8 @@ class ParseCalendars:
         print(">> Number of NEW events: {}".format(events_count_new))
 
     def update_database(self, input_websites: list) -> None:
+        print("Updating DB...")
+
         input_ids = [website[0] for website in input_websites]
 
         query = '''UPDATE calendar

@@ -136,6 +136,9 @@ class ParseEvents:
         return parsed_event_data, timestamp, event_tuple
 
     def store_to_database(self, events_to_insert: list, dry_run: bool) -> None:
+        if not dry_run:
+            print("Inserting into DB...")
+
         debug_output = ""
         parsed_data = []
         error_dict = defaultdict(int)
@@ -201,16 +204,16 @@ class ParseEvents:
         if dry_run:
             debug_output += ">> Data:\n"
             debug_output += "{}\n".format(json.dumps(parsed_data, indent=4, ensure_ascii=False))
-        debug_output += ">> Errors stats:\n"
-        debug_output += "{}\n".format(json.dumps(error_dict, indent=4, ensure_ascii=False))
-        nok = len(nok_list)
-        debug_output += ">> Result: {} OKs + {} NOKs / {}\n".format(ok, nok, ok + nok)
+
+        debug_output += ">> Errors stats: {}\n".format(json.dumps(error_dict, indent=4, ensure_ascii=False))
+        debug_output += ">> Result: {} OKs + {} NOKs / {}\n".format(ok, len(nok_list), ok + len(nok_list))
         debug_output += ">> Failed event_html IDs: {}\n".format(nok_list)
         print(debug_output, end="")
 
     def update_database(self, input_events: list) -> None:
-        input_ids = [event[0] for event in input_events]
+        print("Updating DB...")
 
+        input_ids = [event[0] for event in input_events]
         query = '''UPDATE event_html
                    SET is_parsed = 1
                    WHERE id IN ({})'''.format(",".join(['"{}"'.format(calendar_id) for calendar_id in input_ids]))

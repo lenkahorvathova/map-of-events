@@ -1,8 +1,10 @@
 import argparse
 import multiprocessing
 import os
+import random
 import sqlite3
 import sys
+import time
 from datetime import datetime
 
 from lib import utils
@@ -89,12 +91,15 @@ class DownloadEvents:
                 sys.exit("Unknown calendar URL '{}'!".format(calendar_url))
 
             input_tuples.append((index + 1, len(input_events), event, timestamp, website_base, self.args.dry_run))
+        random.shuffle(input_tuples)
 
         with multiprocessing.Pool(32) as p:
             return p.map(DownloadEvents.process_event_url, input_tuples)
 
     @staticmethod
     def process_event_url(input_tuple: tuple) -> (int, str, str):
+        time.sleep(round(random.uniform(0, 5), 2))
+
         input_index, total_length, event, timestamp, website_base, dry_run = input_tuple
         """ (input_index: int, total_length: int, event: (int, str, str), timestamp: datetime, website_base: dict,
             dry_run: bool) """
@@ -119,6 +124,9 @@ class DownloadEvents:
         return event_id, html_file_path, timestamp
 
     def store_to_database(self, events_to_insert: list, dry_run: bool) -> None:
+        if not dry_run:
+            print("Inserting into DB...")
+
         failed_url_ids = []
         event_url_ids = []
 

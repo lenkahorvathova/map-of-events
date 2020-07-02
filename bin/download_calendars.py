@@ -23,7 +23,7 @@ class DownloadCalendars:
             if not os.path.isfile(INPUT_SITES_BASE_FILE_PATH):
                 raise Exception("Missing an input base file: '{}'".format(INPUT_SITES_BASE_FILE_PATH))
             missing_tables = utils.check_db(self.connection, ["calendar"])
-            if len(missing_tables) != 0 :
+            if len(missing_tables) != 0:
                 raise Exception("Missing tables in the DB: {}".format(missing_tables))
 
     @staticmethod
@@ -90,6 +90,9 @@ class DownloadCalendars:
         return url, html_file_path, timestamp
 
     def store_to_database(self, calendars_to_insert: list, dry_run: str) -> None:
+        if not dry_run:
+            print("Inserting into DB...")
+
         failed_calendars = []
 
         for calendar_info in calendars_to_insert:
@@ -108,6 +111,7 @@ class DownloadCalendars:
                     self.connection.execute(query, values)
                 except sqlite3.Error as e:
                     print("Error occurred when storing {} into 'calendar' table: {}".format(values, str(e)))
+
         if not dry_run:
             self.connection.commit()
 
