@@ -40,10 +40,10 @@ class AddDeclensionOfMunicipalities:
                 for row in csv_reader:
                     already_parsed.add(", ".join(row[:2]))
 
-        nok = []
-        nothing_found = []
-        more_than_one_found = []
-        multiwords = []
+        nok = set()
+        nothing_found = set()
+        more_than_one_found = set()
+        multiwords = set()
 
         # x = 0
         with open(AddDeclensionOfMunicipalities.MUNICIPALITIES_OF_CR_WITH_DECLENSION_FILE, 'a') as csv_output_file:
@@ -65,7 +65,7 @@ class AddDeclensionOfMunicipalities:
                     url = "https://prirucka.ujc.cas.cz/?id={}".format(row[0])
                 else:
                     url = "https://prirucka.ujc.cas.cz/?slovo={}".format("+".join(municipality_split))
-                    multiwords.append(row[0])
+                    multiwords.add(row[0])
 
                 try:
                     response = requests.get(url, headers={
@@ -102,17 +102,17 @@ class AddDeclensionOfMunicipalities:
 
                     debug_output += " | OK"
                     if len(found_elements) == 0:
-                        nothing_found.append(row[0])
+                        nothing_found.add(row[0])
                         debug_output += " (nothing found)"
                     elif len(found_elements) > 1:
-                        more_than_one_found.append(row[0])
+                        more_than_one_found.add(row[0])
                         debug_output += " (more than one declension found)"
 
                     already_parsed.add(", ".join(row[:2]))
                     row.append(",".join(found_elements))
 
                 else:
-                    nok.append(row[0])
+                    nok.add(row[0])
                     debug_output += " | NOK (status code: {})".format(response.status_code)
 
                 csv_writer.writerow(row)
@@ -121,7 +121,7 @@ class AddDeclensionOfMunicipalities:
 
         self.print_temp_stats(nok, nothing_found, more_than_one_found, multiwords)
 
-    def print_temp_stats(self, nok: list, nothing_found: list, more_than_one_found: list, multiwords: list) -> None:
+    def print_temp_stats(self, nok: set, nothing_found: set, more_than_one_found: set, multiwords: set) -> None:
         print(">> NOKs ({}): {}".format(len(nok), nok))
         print(">> nothing_found ({}): {}".format(len(nothing_found), nothing_found))
         print(">> more_than_one_found ({}): {}".format(len(more_than_one_found), more_than_one_found))
