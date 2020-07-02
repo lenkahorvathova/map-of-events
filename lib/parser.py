@@ -335,7 +335,7 @@ class Parser:
 
     def _replace_months(self, datetime_str: str) -> str:
         for month, replacement in self.MONTHS_TO_REPLACE.items():
-            datetime_str = re.sub(month, replacement, datetime_str)
+            datetime_str = re.sub(r"{}\b".format(month), replacement, datetime_str)
         return datetime_str
 
     def _get_range_delimiter_from_format(self, formats: set) -> Optional[str]:

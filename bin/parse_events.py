@@ -4,6 +4,7 @@ import multiprocessing
 import os
 import sqlite3
 import sys
+from collections import defaultdict
 from datetime import datetime
 
 from lxml import etree
@@ -137,7 +138,8 @@ class ParseEvents:
     def store_to_database(self, events_to_insert: list, dry_run: bool) -> None:
         debug_output = ""
         parsed_data = []
-        nok = 0
+        error_dict = defaultdict(int)
+        nok_list = []
         ok = 0
 
         for event_data in events_to_insert:
@@ -145,7 +147,8 @@ class ParseEvents:
             event_html_id, event_html_file_path, event_url, _ = event_tuple
 
             if "error" in data_dict:
-                nok += 1
+                nok_list.append(event_html_id)
+                error_dict[data_dict["error"]] += 1
                 parsed_data.append({
                     "file": event_html_file_path if event_html_file_path else None,
                     "url": event_url if event_url else None,
@@ -157,7 +160,8 @@ class ParseEvents:
             datetime = data_dict.get("datetime", None)
 
             if not title or not datetime:
-                nok += 1
+                nok_list.append(event_html_id)
+                error_dict["Doesn't contain title or datetime!"] += 1
                 parsed_data.append({
                     "file": event_html_file_path,
                     "url": event_url,
@@ -176,7 +180,8 @@ class ParseEvents:
                 try:
                     self.connection.execute(query, values)
                 except sqlite3.Error as e:
-                    nok += 1
+                    nok_list.append(event_html_id)
+                    error_dict["Error occurred during storing!"] += 1
                     print("Error occurred when storing {} into 'event_data' table: {}".format(values, str(e)))
                     parsed_data.append({
                         "file": event_html_file_path,
@@ -196,8 +201,11 @@ class ParseEvents:
         if dry_run:
             debug_output += ">> Data:\n"
             debug_output += "{}\n".format(json.dumps(parsed_data, indent=4, ensure_ascii=False))
-
+        debug_output += ">> Errors stats:\n"
+        debug_output += "{}\n".format(json.dumps(error_dict, indent=4, ensure_ascii=False))
+        nok = len(nok_list)
         debug_output += ">> Result: {} OKs + {} NOKs / {}\n".format(ok, nok, ok + nok)
+        debug_output += ">> Failed event_html IDs: {}\n".format(nok_list)
         print(debug_output, end="")
 
     def update_database(self, input_events: list) -> None:

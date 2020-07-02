@@ -144,7 +144,7 @@ class DownloadEvents:
             self.connection.commit()
 
         print(">> Number of failed events: {}/{}".format(len(failed_url_ids), len(event_url_ids)))
-        print(">> Failed events' IDs: {}".format(failed_url_ids))
+        print(">> Failed event_url IDs: {}".format(failed_url_ids))
 
 
 if __name__ == '__main__':
