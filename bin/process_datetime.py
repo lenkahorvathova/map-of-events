@@ -115,13 +115,13 @@ class ProcessDatetime:
         milestones = [10, 30, 50, 70, 90, 100]
 
         ok = 0
-        nok = 0
+        nok = []
 
         for index, dt_tuple in enumerate(datetimes_to_insert):
             processed_datetimes, event_data_id = dt_tuple
 
             if not processed_datetimes:
-                nok += 1
+                nok.append(event_data_id)
                 processed_datetimes = [(None, None, None, None)]
             else:
                 ok += 1
@@ -142,14 +142,15 @@ class ProcessDatetime:
                     self.connection.execute(query)
                 except sqlite3.Error as e:
                     ok -= 1
-                    nok += 1
+                    nok.append(event_data_id)
                     print("Error occurred when storing {} into 'event_data_datetime' table: {}".format(
                         tuples_to_insert, str(e)))
                     continue
 
             self.connection.commit()
 
-        print(">> Result: {} OKs + {} NOKs / {}".format(ok, nok, ok + nok))
+        print(">> Result: {} OKs + {} NOKs / {}".format(ok, len(nok), ok + len(nok)))
+        print(">> Failed event_data IDs: {}".format(nok))
 
 
 if __name__ == '__main__':
