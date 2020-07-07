@@ -1,12 +1,17 @@
 import argparse
 import csv
+import time
 
+import requests
 from lxml import etree
 
 
-class AddDeclensionOfMunicipalities:
+class PrepareMunicipalitiesCSV:
     CUZK_XML_FILE_PATH = "resources/20200630_ST_UZSZ.xml"
     OUTPUT_CSV_FILE_PATH = "resources/municipalities_cr.csv"
+
+    SOURCE_EPSG = 5514  # Czechia
+    TARGET_EPSG = 4326  # World
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
@@ -27,13 +32,14 @@ class AddDeclensionOfMunicipalities:
     def run(self) -> None:
         districts = self.get_districts()
         municipalities_info = self.get_municipalities_info(districts)
-        self.write_to_csv(municipalities_info, self.args.dry_run)
+        converted_info = self.convert_gml_pos_to_gps(municipalities_info)
+        self.write_to_csv(converted_info, self.args.dry_run)
 
     @staticmethod
     def read_xml_file() -> etree.ElementTree:
         print("Loading input file...")
 
-        tree = etree.parse(AddDeclensionOfMunicipalities.CUZK_XML_FILE_PATH)
+        tree = etree.parse(PrepareMunicipalitiesCSV.CUZK_XML_FILE_PATH)
         root = tree.getroot()
 
         return root
@@ -62,12 +68,39 @@ class AddDeclensionOfMunicipalities:
             district_code = municipality.find("obi:Okres/oki:Kod", namespaces=self.ns).text
             locative = municipality.find("obi:MluvnickeCharakteristiky/com:Pad6", namespaces=self.ns).text
 
-            result_list.append((name, districts[district_code], locative))
+            gml_position_path = "obi:Geometrie/obi:DefinicniBod/gml:MultiPoint/gml:pointMembers/gml:Point/gml:pos"
+            gml_position = municipality.find(gml_position_path, namespaces=self.ns).text
+
+            result_list.append((name, districts[district_code], locative, gml_position))
 
         return result_list
 
-    def write_to_csv(self, municipalities_info: list, dry_run: bool) -> None:
-        header = ("MUNICIPALITY", "DISTRICT", "LOCATIVE OF MUNICIPALITY")
+    def convert_gml_pos_to_gps(self, municipalities_info: list) -> list:
+        print("Converting to GPS...")
+        batch_size = 100
+
+        converted_list = []
+        for i in range(0, len(municipalities_info), batch_size):
+            curr_batch = municipalities_info[i:i + batch_size]
+            curr_batch_gml_pos = [",".join(m[-1].split(" ")) for m in curr_batch]
+            url = "http://epsg.io/trans?data={}&s_srs={}&&t_srs={}".format(";".join(curr_batch_gml_pos),
+                                                                           self.SOURCE_EPSG, self.TARGET_EPSG)
+
+            response = requests.get(url)
+            response_json = response.json()
+            for j in range(len(curr_batch)):
+                gps = "{},{}".format(str(response_json[j]["y"]), str(response_json[j]["x"]))
+                new_tuple = municipalities_info[i + j][:-1] + (gps,)
+                converted_list.append(new_tuple)
+
+            time.sleep(3)
+            print("...{}/{} batches processed".format(i // batch_size, len(municipalities_info) // batch_size))
+
+        return converted_list
+
+    @staticmethod
+    def write_to_csv(municipalities_info: list, dry_run: bool) -> None:
+        header = ("MUNICIPALITY", "DISTRICT", "LOCATIVE OF MUNICIPALITY", "GPS")
 
         if dry_run:
             print(">> Would be written into CSV file:")
@@ -76,12 +109,12 @@ class AddDeclensionOfMunicipalities:
         else:
             print("Writing to CSV file...")
 
-            with open(AddDeclensionOfMunicipalities.OUTPUT_CSV_FILE_PATH, 'w') as csv_file:
+            with open(PrepareMunicipalitiesCSV.OUTPUT_CSV_FILE_PATH, 'w') as csv_file:
                 csv_writer = csv.writer(csv_file, lineterminator='\n')
                 csv_writer.writerow(header)
                 csv_writer.writerows(municipalities_info)
 
 
 if __name__ == "__main__":
-    add_declension_of_municipalities = AddDeclensionOfMunicipalities()
-    add_declension_of_municipalities.run()
+    prepare_municipalities_csv = PrepareMunicipalitiesCSV()
+    prepare_municipalities_csv.run()
