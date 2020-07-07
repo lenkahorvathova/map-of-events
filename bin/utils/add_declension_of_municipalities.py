@@ -1,131 +1,85 @@
+import argparse
 import csv
-import io
-import os
-import sys
-import time
 
-import requests
 from lxml import etree
-
-from lib.constants import MUNICIPALITIES_OF_CR_FILE
 
 
 class AddDeclensionOfMunicipalities:
-    MUNICIPALITIES_OF_CR_WITH_DECLENSION_FILE = "resources/municipalities_cr_with_declension.csv"
-    MUNICIPALITIES_COUNT = 6253
-    LOCATIVE_CASE_XPATH = u".//*[@id='content']/div/table/tr/td[contains(text(), '6. pád')]/following-sibling::td[@class='centrovane']/descendant-or-self::*[not(@name='sup')]/text()"
+    CUZK_XML_FILE_PATH = "resources/20200630_ST_UZSZ.xml"
+    OUTPUT_CSV_FILE_PATH = "resources/municipalities_cr.csv"
+
+    def __init__(self) -> None:
+        self.args = self._parse_arguments()
+
+        root = self.read_xml_file()
+        self.ns = root.nsmap
+        self.data = root.find("vf:Data", namespaces=self.ns)
+
+    @staticmethod
+    def _parse_arguments() -> argparse.Namespace:
+        parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+
+        parser.add_argument('--dry-run', action='store_true', default=False,
+                            help="don't store any output and print to stdout")
+
+        return parser.parse_args()
 
     def run(self) -> None:
-        input_municipalities = self.read_csv_file()
-        self.add_declension(input_municipalities)
+        districts = self.get_districts()
+        municipalities_info = self.get_municipalities_info(districts)
+        self.write_to_csv(municipalities_info, self.args.dry_run)
 
-    def read_csv_file(self) -> list:
-        print("Loading input municipalities...")
+    @staticmethod
+    def read_xml_file() -> etree.ElementTree:
+        print("Loading input file...")
 
-        with open(MUNICIPALITIES_OF_CR_FILE, 'r', encoding='utf-8') as csv_input_file:
-            csv_reader = csv.reader(csv_input_file, delimiter=';')
-            return [row for row in csv_reader]
+        tree = etree.parse(AddDeclensionOfMunicipalities.CUZK_XML_FILE_PATH)
+        root = tree.getroot()
 
-    def add_declension(self, input_municipalities: list) -> None:
-        already_parsed = set()
-        if not os.path.exists(AddDeclensionOfMunicipalities.MUNICIPALITIES_OF_CR_WITH_DECLENSION_FILE):
-            with open(AddDeclensionOfMunicipalities.MUNICIPALITIES_OF_CR_WITH_DECLENSION_FILE, 'w', encoding='utf-8') as csv_output_file:
-                csv_writer = csv.writer(csv_output_file, lineterminator='\n')
-                row = input_municipalities[0]
-                row.append("LOCATIVE")
-                csv_writer.writerow(row)
+        return root
+
+    def get_districts(self) -> dict:
+        print("Loading districts...")
+
+        districts = self.data.find("vf:Okresy", namespaces=self.ns)
+
+        result_dict = {}
+        for district in districts:
+            code = district.find("oki:Kod", namespaces=self.ns).text
+            name = district.find("oki:Nazev", namespaces=self.ns).text
+            result_dict[code] = name
+
+        return result_dict
+
+    def get_municipalities_info(self, districts: dict) -> list:
+        print("Loading municipality info...")
+
+        municipalities = self.data.find("vf:Obce", namespaces=self.ns)
+
+        result_list = []
+        for municipality in municipalities:
+            name = municipality.find("obi:Nazev", namespaces=self.ns).text
+            district_code = municipality.find("obi:Okres/oki:Kod", namespaces=self.ns).text
+            locative = municipality.find("obi:MluvnickeCharakteristiky/com:Pad6", namespaces=self.ns).text
+
+            result_list.append((name, districts[district_code], locative))
+
+        return result_list
+
+    def write_to_csv(self, municipalities_info: list, dry_run: bool) -> None:
+        header = ("MUNICIPALITY", "DISTRICT", "LOCATIVE OF MUNICIPALITY")
+
+        if dry_run:
+            print(">> Would be written into CSV file:")
+            print(",".join(header))
+            print("\n".join([",".join(el) for el in municipalities_info]))
         else:
-            with open(AddDeclensionOfMunicipalities.MUNICIPALITIES_OF_CR_WITH_DECLENSION_FILE, 'r', encoding='utf-8') as csv_output_file:
-                csv_reader = csv.reader(csv_output_file)
-                for row in csv_reader:
-                    already_parsed.add(", ".join(row[:2]))
+            print("Writing to CSV file...")
 
-        nok = set()
-        nothing_found = set()
-        more_than_one_found = set()
-        multiwords = set()
-
-        # x = 0
-        with open(AddDeclensionOfMunicipalities.MUNICIPALITIES_OF_CR_WITH_DECLENSION_FILE, 'a', encoding='utf-8') as csv_output_file:
-            csv_writer = csv.writer(csv_output_file, lineterminator='\n')
-
-            for index, row in enumerate(input_municipalities[1:]):
-                debug_output = "{}/{} | {}".format(index + 1, AddDeclensionOfMunicipalities.MUNICIPALITIES_COUNT,
-                                                   row[0])
-
-                if ", ".join(row[:2]) in already_parsed:
-                    continue
-                # else:
-                #     if x == 1:
-                #         sys.exit()
-                #     x += 1
-
-                municipality_split = row[0].split()
-                if len(municipality_split) == 1:
-                    url = "https://prirucka.ujc.cas.cz/?id={}".format(row[0])
-                else:
-                    url = "https://prirucka.ujc.cas.cz/?slovo={}".format("+".join(municipality_split))
-                    multiwords.add(row[0])
-
-                try:
-                    response = requests.get(url, headers={
-                        'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36",
-                    }, timeout=5)
-                except Exception as e:
-                    debug_output += " | RETRY LATER (Exception: {})".format(e)
-                    input_municipalities.append(row)
-                    time.sleep(1)
-                    print(debug_output.encode('utf8').decode('ascii', "backslashreplace"))
-                    continue
-
-                if response.status_code == 200:
-                    html = response.text
-                    dom = etree.parse(io.StringIO(html), etree.HTMLParser())
-                    found_elements = dom.xpath(AddDeclensionOfMunicipalities.LOCATIVE_CASE_XPATH)
-
-                    if 'server is overloaded' in html:
-                        if "not to wait" in html:
-                            requests.get(url + "&action=free", headers={
-                                'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36",
-                            })
-                            input_municipalities.append(row)
-                            debug_output += " | RETRY LATER (Server overloaded: Processing another request)"
-                            time.sleep(1)
-                            print(debug_output.encode('utf8').decode('ascii', "backslashreplace"))
-                            continue
-                        else:
-                            debug_output += " | RETRY LATER (Server overloaded: Too many processed requests)"
-                            print(debug_output.encode('utf8').decode('ascii', "backslashreplace"))
-                            print(">> Script terminated")
-                            self.print_temp_stats(nok, nothing_found, more_than_one_found, multiwords)
-                            sys.exit()
-
-                    debug_output += " | OK"
-                    if len(found_elements) == 0:
-                        nothing_found.add(row[0])
-                        debug_output += " (nothing found)"
-                    elif len(found_elements) > 1:
-                        more_than_one_found.add(row[0])
-                        debug_output += " (more than one declension found)"
-
-                    already_parsed.add(", ".join(row[:2]))
-                    row.append(",".join(found_elements))
-
-                else:
-                    nok.add(row[0])
-                    debug_output += " | NOK (status code: {})".format(response.status_code)
-
-                csv_writer.writerow(row)
-                time.sleep(1)
-                print(debug_output.encode('utf8').decode('ascii', "backslashreplace"))
-
-        self.print_temp_stats(nok, nothing_found, more_than_one_found, multiwords)
-
-    def print_temp_stats(self, nok: set, nothing_found: set, more_than_one_found: set, multiwords: set) -> None:
-        print(">> NOKs ({}): {}".format(len(nok), nok).encode('utf8').decode('ascii', "backslashreplace"))
-        print(">> nothing_found ({}): {}".format(len(nothing_found), nothing_found).encode('utf8').decode('ascii', "backslashreplace"))
-        print(">> more_than_one_found ({}): {}".format(len(more_than_one_found), more_than_one_found).encode('utf8').decode('ascii', "backslashreplace"))
-        #print(">> multiwords ({}): {}".format(len(multiwords), multiwords).encode('utf8').decode('ascii'))
+            with open(AddDeclensionOfMunicipalities.OUTPUT_CSV_FILE_PATH, 'w') as csv_file:
+                csv_writer = csv.writer(csv_file, lineterminator='\n')
+                csv_writer.writerow(header)
+                csv_writer.writerows(municipalities_info)
 
 
 if __name__ == "__main__":
