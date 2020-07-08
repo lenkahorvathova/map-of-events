@@ -8,6 +8,8 @@ from lib.constants import MUNICIPALITIES_OF_CR_FILE
 
 
 class GeocodeLocation:
+    ONLINE_PATTERN = r'\b(online|Online|ONLINE|On-line|on-line|ON-LINE|Virtuálně|virtuálně)\b'
+
     def __init__(self) -> None:
         self.connection = utils.create_connection()
 
@@ -16,87 +18,165 @@ class GeocodeLocation:
         self.geocode_location(events_to_geocode)
 
     def load_events(self) -> list:
-        query = '''SELECT id, title, perex, location
-                   FROM event_data
-                   WHERE gps IS NULL'''
+        print("Loading events...")
+
+        query = '''SELECT ed.id, ed.title, ed.perex, ed.location, c.url
+                   FROM event_data ed 
+                   JOIN event_html eh ON ed.event_html_id = eh.id
+                   JOIN event_url eu ON eh.event_url_id = eu.id
+                   JOIN calendar c ON eu.calendar_id = c.id
+                   WHERE ed.gps IS NULL'''
 
         cursor = self.connection.execute(query)
         return cursor.fetchall()
 
     def geocode_location(self, events_to_geocode: list):
-        print("Loading events...")
         matched_location = {
             "all": len(events_to_geocode),
-            "matched": 0,
-            "count": defaultdict(int),
+            "no_match": 0,
+            "no_match_no_gps": 0,
+            "distinct_matches": 0,
+            "distinct_matches_no_gps": 0,
+            "more_than_one_matches": 0,
+            "ambiguous_matches": 0,
+            "online": 0,
             "events": defaultdict(dict)
         }
 
         input_tuples = []
-        municipalities = self.get_municipalities_of_CR()
+        municipalities = self.load_municipalities_csv()
+        calendars_with_default_gps = [base_dict["url"] for base_dict in utils.get_base_by("default_gps")]
+
         for index, event in enumerate(events_to_geocode):
-            input_tuples.append((index + 1, len(events_to_geocode), event, municipalities))
+            input_tuples.append((index + 1, len(events_to_geocode), event, municipalities, calendars_with_default_gps))
 
         with multiprocessing.Pool(32) as p:
             matched_location["events"] = p.map(GeocodeLocation.parse_out_municipalities, input_tuples)
 
         for match in matched_location["events"]:
-            if match["count"] > 0:
-                matched_location["count"][match["count"]] += 1
+            if len(match["matched"]) == 0:
+                matched_location["no_match"] += 1
+                if not match["has_default_gps"]:
+                    matched_location["no_match_no_gps"] += 1
+            elif len(match["matched"]) == 1:
+                matched_location["distinct_matches"] += 1
+                if not match["has_default_gps"]:
+                    matched_location["distinct_matches_no_gps"] += 1
+            elif len(match["matched"]) > 1:
+                matched_location["more_than_one_matches"] += 1
 
-        matched_location["matched"] = sum(count for count in matched_location["count"].values())
+            if len(match["ambiguous"]) > 0:
+                matched_location["ambiguous_matches"] += 1
+
+            if match["online"]:
+                matched_location["online"] += 1
 
         utils.store_to_json_file(matched_location, "data/tmp/geocode_location_output.json")
-        print("Could be geocoded: {}/{}".format(matched_location["matched"], len(events_to_geocode)))
+
+    @staticmethod
+    def load_municipalities_csv() -> list:
+        print("Loading municipalities...")
+
+        municipalities = []
+        with open(MUNICIPALITIES_OF_CR_FILE, 'r') as csv_file:
+            csv_reader = csv.reader(csv_file)
+
+            seen = set()
+            ambiguous = set()
+
+            for municip, district, locative, gps in csv_reader:
+                locative_list = locative.split("; ")
+                pattern_value_list = [municip] + locative_list + [municip.upper()] + [loc.upper() for loc in
+                                                                                      locative_list]
+                pattern_value = "|".join(pattern_value_list)
+
+                municip_dict = {
+                    "municipality": municip,
+                    "district": district,
+                    "re_pattern": re.compile(r'\b({})\b'.format(pattern_value))
+                }
+                municipalities.append(municip_dict)
+
+                if municip in seen:
+                    ambiguous.add(municip)
+                seen.add(municip)
+
+        for municip_dict in municipalities:
+            if municip_dict["municipality"] in ambiguous:
+                municip_dict["ambiguous"] = True
+            else:
+                municip_dict["ambiguous"] = False
+
+        return municipalities
 
     @staticmethod
     def parse_out_municipalities(input_tuple: tuple) -> dict:
-        input_index, total_length, event, municipalities = input_tuple
-        id, title, perex, location = event
+        input_index, total_length, event, municipalities, calendars_with_default_gps = input_tuple
+        event_id, title, perex, location, calendar_url = event
 
         event_dict = {
-            "id": id,
+            "id": event_id,
             "count": 0,
             "matched": set(),
+            "ambiguous": set(),
+            "online": False,
+            "has_default_gps": calendar_url in calendars_with_default_gps,
             "title": title,
             "perex": perex,
             "location": location
         }
 
-        for municipality, pattern in municipalities.items():
-            for key in ["title", "perex", "location"]:
-                if event_dict[key]:
-                    match = pattern.search(event_dict[key].lower())
+        priority_order = [location, title, perex]
+        for text in priority_order:
+            event_dict["online"] = GeocodeLocation.match_online_in_text(text)
 
-                    if match:
-                        event_dict["matched"].add(municipality)
+            matches = GeocodeLocation.match_municipality_in_text(text, municipalities)
+            for match_dict in matches:
+                matched = "{}, {}".format(match_dict["municipality"], match_dict["district"])
+
+                if not GeocodeLocation.is_ambiguous(text, match_dict):
+                    event_dict["matched"].add(matched)
+                else:
+                    event_dict["ambiguous"].add(matched)
+
+            if len(event_dict["matched"]) > 0:
+                break
 
         event_dict["matched"] = list(event_dict["matched"])
-        event_dict["count"] = len(event_dict["matched"])
+        event_dict["ambiguous"] = list(event_dict["ambiguous"])
 
-        print("{}/{} | Geocoding event: {}".format(input_index, total_length, id))
+        print("{}/{} | Geocoding event: {}".format(input_index, total_length, event_id))
 
         return event_dict
 
-    def get_municipalities_of_CR(self) -> dict:
-        municips = {}
+    @staticmethod
+    def match_online_in_text(text: str) -> bool:
+        if not text:
+            return False
+        online_match = re.search(GeocodeLocation.ONLINE_PATTERN, text)
+        if online_match:
+            return True
+        return False
 
-        with open(MUNICIPALITIES_OF_CR_FILE, 'r') as csv_file:
-            csv_reader = csv.reader(csv_file, delimiter=';')
+    @staticmethod
+    def match_municipality_in_text(text: str, municipalities: list) -> list:
+        if not text:
+            return []
+        result = []
+        for municip_dict in municipalities:
+            municip_match = municip_dict["re_pattern"].search(text)
+            if municip_match:
+                result.append(municip_dict)
+        return result
 
-        ambiguous = set()
-        count_all = 0
-
-        for row in csv_reader:
-            count_all += 1
-
-            if row[0] not in municips:
-                municips[row[0]] = re.compile(r'\b({})\b'.format(row[0].lower()))
+    @staticmethod
+    def is_ambiguous(text: str, municip_dict: dict) -> bool:
+        if municip_dict["ambiguous"]:
+            district_match = re.search(r'\b({})\b'.format(municip_dict["district"]), text)
+            if district_match:
+                return False
             else:
-                ambiguous.add(row[0])
-
-        print("Ambiguous municipalities: {}/{}".format(len(ambiguous), count_all))
-        return municips
+                return True
 
 
 if __name__ == "__main__":
