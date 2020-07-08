@@ -1,14 +1,16 @@
 import argparse
 import csv
+import math
 import time
 
 import requests
 from lxml import etree
 
+from lib.constants import MUNICIPALITIES_OF_CR_FILE
+
 
 class PrepareMunicipalitiesCSV:
     CUZK_XML_FILE_PATH = "resources/20200630_ST_UZSZ.xml"
-    OUTPUT_CSV_FILE_PATH = "resources/municipalities_cr.csv"
 
     SOURCE_EPSG = 5514  # Czechia
     TARGET_EPSG = 4326  # World
@@ -94,13 +96,15 @@ class PrepareMunicipalitiesCSV:
                 converted_list.append(new_tuple)
 
             time.sleep(3)
-            print("...{}/{} batches processed".format(i // batch_size, len(municipalities_info) // batch_size))
+            print("...{}/{} batches processed".format((i // batch_size) + 1,
+                                                      math.ceil(len(municipalities_info) / batch_size)))
 
         return converted_list
 
     @staticmethod
     def write_to_csv(municipalities_info: list, dry_run: bool) -> None:
         header = ("MUNICIPALITY", "DISTRICT", "LOCATIVE OF MUNICIPALITY", "GPS")
+        municipalities_info.sort()
 
         if dry_run:
             print(">> Would be written into CSV file:")
@@ -109,7 +113,7 @@ class PrepareMunicipalitiesCSV:
         else:
             print("Writing to CSV file...")
 
-            with open(PrepareMunicipalitiesCSV.OUTPUT_CSV_FILE_PATH, 'w') as csv_file:
+            with open(MUNICIPALITIES_OF_CR_FILE, 'w') as csv_file:
                 csv_writer = csv.writer(csv_file, lineterminator='\n')
                 csv_writer.writerow(header)
                 csv_writer.writerows(municipalities_info)

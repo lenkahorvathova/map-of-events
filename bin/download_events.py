@@ -65,7 +65,7 @@ class DownloadEvents:
                    WHERE 1==1'''
 
         if self.args.domain:
-            website_base = utils.get_base_by("domain", self.args.domain)
+            website_base = utils.get_base_by_domain(self.args.domain)
             if website_base is None:
                 sys.exit("Unknown domain '{}'!".format(self.args.domain))
             calendar_url = website_base["url"]
@@ -86,7 +86,7 @@ class DownloadEvents:
 
         for index, event in enumerate(input_events):
             _, _, calendar_url = event
-            website_base = utils.get_base_by("url", calendar_url)
+            website_base = utils.get_base_by_url(calendar_url)
             if website_base is None:
                 sys.exit("Unknown calendar URL '{}'!".format(calendar_url))
 

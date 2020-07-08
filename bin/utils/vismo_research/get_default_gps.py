@@ -76,7 +76,7 @@ class GetDefaultGPS:
 
     def load_domains(self) -> list:
         if self.args.domain:
-            website_base = utils.get_base_by("domain", self.args.domain)
+            website_base = utils.get_base_by_domain(self.args.domain)
             if website_base is None:
                 sys.exit("Unknown domain '{}'!".format(self.args.domain))
             return [website_base]

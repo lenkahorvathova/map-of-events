@@ -47,7 +47,7 @@ class DownloadCalendars:
         print("Loading input calendars...")
 
         if self.args.domain:
-            website_base = utils.get_base_by("domain", self.args.domain)
+            website_base = utils.get_base_by_domain(self.args.domain)
             if website_base is None:
                 sys.exit("Unknown domain '{}'!".format(self.args.domain))
 

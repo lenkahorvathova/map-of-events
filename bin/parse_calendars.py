@@ -56,7 +56,7 @@ class ParseCalendars:
         query = '''SELECT id, url, html_file_path FROM calendar WHERE 1==1'''
 
         if self.args.domain:
-            website_base = utils.get_base_by("domain", self.args.domain)
+            website_base = utils.get_base_by_domain(self.args.domain)
             if website_base is None:
                 sys.exit("Unknown domain '{}'!".format(self.args.domain))
             calendar_url = website_base["url"]
@@ -75,7 +75,7 @@ class ParseCalendars:
 
         for index, calendar_tuple in enumerate(input_calendars):
             _, calendar_url, _ = calendar_tuple
-            website_base = utils.get_base_by("url", calendar_url)
+            website_base = utils.get_base_by_url(calendar_url)
             input_tuples.append((index + 1, len(input_calendars), calendar_tuple, timestamp, website_base))
 
         with multiprocessing.Pool(32) as p:

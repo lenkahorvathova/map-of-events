@@ -1,7 +1,7 @@
 import json
 import sqlite3
 import urllib.parse as urllib
-from typing import Optional, Union
+from typing import Union, Optional
 
 import requests
 
@@ -50,19 +50,45 @@ def load_base() -> list:
     return base
 
 
-def get_base_by(attr: str, value: str) -> Optional[dict]:
+def get_base_by(attr: str, value: str = None) -> list:
     """ Gets a base information for the specified value of the specified attribute.
 
     :param attr: a key to search by
     :param value: a value for the key
-    :return: a dictionary with the base; None if such a base doesn't exist
+    :return: a list of dictionaries with the base
     """
+    result = []
 
     for obj in load_base():
-        if obj[attr] == value:
-            return obj
+        if value is None:
+            if attr in obj:
+                result.append(obj)
+        elif obj.get(attr, None) == value:
+            result.append(obj)
 
-    return None
+    return result
+
+
+def get_base_by_domain(value: str) -> Optional[dict]:
+    base_list = get_base_by("domain", value)
+
+    if len(base_list) == 0:
+        return None
+    elif len(base_list) == 1:
+        return base_list[0]
+    else:
+        raise Exception("Specified domain is not unique: {}".format(value))
+
+
+def get_base_by_url(value: str) -> Optional[dict]:
+    base_list = get_base_by("url", value)
+
+    if len(base_list) == 0:
+        return None
+    elif len(base_list) == 1:
+        return base_list[0]
+    else:
+        raise Exception("Specified URL is not unique: {}".format(value))
 
 
 def download_html_content(url: str, html_file_path: str, encoding: str = None, dry_run: bool = False) -> str:

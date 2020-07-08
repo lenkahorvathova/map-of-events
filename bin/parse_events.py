@@ -59,7 +59,7 @@ class ParseEvents:
                    INNER JOIN calendar c ON eu.calendar_id = c.id WHERE 1==1'''
 
         if self.args.domain:
-            website_base = utils.get_base_by("domain", self.args.domain)
+            website_base = utils.get_base_by_domain(self.args.domain)
             if website_base is None:
                 sys.exit("Unknown domain '{}'!".format(self.args.domain))
             calendar_url = website_base["url"]
@@ -81,7 +81,7 @@ class ParseEvents:
 
         for index, event_tuple in enumerate(input_events):
             _, _, _, calendar_url = event_tuple
-            website_base = utils.get_base_by("url", calendar_url)
+            website_base = utils.get_base_by_url(calendar_url)
             input_tuples.append((index + 1, len(input_events), event_tuple, timestamp, website_base))
 
         with multiprocessing.Pool(32) as p:
