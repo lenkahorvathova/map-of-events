@@ -1,4 +1,4 @@
-PROJECT_DIR="/nlp/projekty/event_map/repository"
+PROJECT_DIR=$(pwd)
 PYTHON_ENV="venv/bin/activate"
 
 (ls "$PROJECT_DIR" >>/dev/null 2>&1) || (
@@ -43,4 +43,9 @@ mkdir -p data/log/
   echo "PROCESS EVENTS' DATETIME:"
   echo "============================================================"
   python3 -u bin/process_datetime.py
+
+  echo "============================================================"
+  echo "GEOCODE EVENTS' LOCATION:"
+  echo "============================================================"
+  python3 -u bin/geocode_location.py
 } 2>&1 | tee -a data/log/cron_process_"$current_time".txt

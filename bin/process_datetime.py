@@ -14,9 +14,8 @@ class ProcessDatetime:
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
-            missing_tables = utils.check_db(self.connection,
-                                            ["calendar", "event_url", "event_html", "event_data",
-                                             "event_data_datetime"])
+            missing_tables = utils.check_db(self.connection, ["calendar", "event_url", "event_html", "event_data",
+                                                              "event_data_datetime"])
             if len(missing_tables) != 0:
                 raise Exception("Missing tables in the DB: {}".format(missing_tables))
 
@@ -30,6 +29,8 @@ class ProcessDatetime:
                             help="process datetime only of the specified domain")
         parser.add_argument('--event-url', type=str, default=None,
                             help="process datetime only of the specified URL")
+        parser.add_argument('--events-ids', type=int, nargs="*",
+                            help="process datetime only of the specified events' IDs")
         parser.add_argument('--process-all', action='store_true', default=False,
                             help="process datetimes of even already processed events")
 
@@ -61,6 +62,10 @@ class ProcessDatetime:
 
         if self.args.event_url:
             query += ''' AND eu.url = "{}"'''.format(self.args.event_url)
+
+        if self.args.events_ids:
+            query += ''' AND ed.id IN ({})'''.format(",".join(["{}".format(event_id)
+                                                               for event_id in self.args.events_ids]))
 
         cursor = self.connection.execute(query)
         return cursor.fetchall()

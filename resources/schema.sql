@@ -46,11 +46,12 @@ CREATE TABLE IF NOT EXISTS event_data_datetime (
   UNIQUE(start_date, start_time, end_date, end_time, event_data_id)
 );
 
-CREATE TABLE IF NOT EXISTS event_data_location (
+CREATE TABLE IF NOT EXISTS event_data_gps (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  municipality TEXT,
-  gps TEXT,
   online INTEGER,
   has_default INTEGER,
+  gps TEXT,
+  municipality TEXT,
+  district TEXT,
   event_data_id INTEGER, FOREIGN KEY (event_data_id) REFERENCES event_data(id)
 )
