@@ -1,4 +1,4 @@
-PROJECT_DIR=$(pwd)
+PROJECT_DIR="/nlp/projekty/event_map/repository"
 PYTHON_ENV="venv/bin/activate"
 
 (ls "$PROJECT_DIR" >>/dev/null 2>&1) || (

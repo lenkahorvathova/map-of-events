@@ -142,7 +142,7 @@ class GeocodeLocation:
             if event_dict["online"]:
                 break
 
-        if not event_dict["has_default"] and not event_dict["online"]:
+        if not event_dict["has_default"]:
             priority_order = []
 
             last_location_index = -1
