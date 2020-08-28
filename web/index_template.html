@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="cs">
+    <head>
+        <title>Map of Events</title>
+
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Mapy.cz API -->
+        <script type="text/javascript" src="https://api.mapy.cz/loader.js"></script>
+        <script type="text/javascript">Loader.load()</script>
+
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+        <!-- Mapy.cz Script -->
+        <script type="text/javascript" src="scripts/events_map.js"></script>
+        <script>const data = JSON.parse(`<<events_dataset>>`);</script>
+    </head>
+
+    <body>
+        <div class="container-fluid">
+            <form id="js-search-form" onsubmit="return handleFormSubmission(event)" style="margin: 10px">
+                <label for="search-form__location">Location:</label>
+                <div id="search-form__location" class="form-group form-inline">
+                    <div class="form-group">
+                        <input type="text" id="js-search-form__location__municipality" class="form-control"
+                               placeholder="Municipality">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="js-search-form__location__radius">-> radius to search: </label>
+                        <input type="number" id="js-search-form__location__radius" class="form-control" value=0> km
+                    </div>
+                </div>
+
+                <div id="search-form__checkboxes" class="form-group form-inline">
+                    <input type="checkbox" id="js-search-form__checkboxes__online"
+                           onclick="disableLocationInputWhenOnlineChecked()">
+                    <label for="js-search-form__checkboxes__online">online</label>
+                </div>
+
+                <label for="search-form__datetime">Start:</label>
+                <div id="search-form__datetime" class="form-group form-inline">
+                    <div class="form-group">
+                        <input type="date" id="js-search-form__datetime__date-picker" class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <input type="time" id="js-search-form__datetime__time-picker" class="form-control">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-default">Search</button>
+            </form>
+
+            <div style="margin: 10px">
+                <div id="map" style="width:100%; height:400px;"></div>
+            </div>
+
+            <table id="js-events-table" class="table table-bordered table-striped table-hover" style="margin: 10px">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Title</th>
+                        <th scope="col">Location</th>
+                        <th scope="col">Start</th>
+                        <th scope="col">End</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+
+        <script type="text/javascript" src="scripts/index.js"></script>
+        <script>
+            $(function () {
+                setCurrentDatetimeIntoPickers();
+                filterEventsAndLoadMap(data);
+            })
+        </script>
+    </body>
+</html>
