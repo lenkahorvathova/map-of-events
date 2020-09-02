@@ -20,11 +20,13 @@ function filterEventsAndLoadMap(data) {
 
     let startDate = document.getElementById('js-search-form__datetime__start__date-picker').value;
     let startTime = document.getElementById('js-search-form__datetime__start__time-picker').value;
+    startTime = startTime !== null ? startTime : '00:00';
     let pickedStartDatetime = new Date(startDate + ' ' + startTime);
 
     let endDate = document.getElementById('js-search-form__datetime__end__date-picker').value;
     let endTime = document.getElementById('js-search-form__datetime__end__time-picker').value;
-    let pickedEndDatetime = new Date(endDate + ' ' + endTime);
+    endTime = (endDate !== null && endTime !== null) ? endTime : '23:59';
+    let pickedEndDatetime = endDate !== null ? new Date(endDate + ' ' + endTime) : new Date(8640000000000000);
 
     let number = 1;
     for (let eventId in data) {

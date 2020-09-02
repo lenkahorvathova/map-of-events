@@ -44,12 +44,28 @@
                     <label for="js-search-form__checkboxes__online">online</label>
                 </div>
 
+                <label for="search-form__datetime">Range:</label>
                 <div id="search-form__datetime" class="form-group">
+                    <div id="search-form__datetime__buttons" class="form-group form-inline">
+                        <button id="search-form__datetime__buttons__today"
+                                onclick="setTodayIntoDatetimePickers()">
+                            Today
+                        </button>
+                        <button id="search-form__datetime__buttons__tomorrow"
+                                onclick="setTomorrowIntoDatetimePickers()">
+                            Tomorrow
+                        </button>
+                        <button id="search-form__datetime__buttons__next-10-days"
+                                onclick="setNext10DaysIntoDatetimePickers()">
+                            Next 10 days
+                        </button>
+                    </div>
+
                     <label for="search-form__datetime__start">Start:</label>
                     <div id="search-form__datetime__start" class="form-group form-inline">
                         <div class="form-group">
                             <input type="date" id="js-search-form__datetime__start__date-picker" class="form-control"
-                                   onchange="handleOnChangeOfStartDatePicker(this)">
+                                   onchange="handleOnChangeOfStartDatePicker(this)" required>
                         </div>
 
                         <div class="form-group">
@@ -58,15 +74,19 @@
                         </div>
                     </div>
 
-                    <label for="search-form__datetime__end">End:</label>
+                    <label for="js-search-form__datetime__end__checkbox">End:</label>
                     <div id="search-form__datetime__end" class="form-group form-inline">
+                        <input type="checkbox" id="js-search-form__datetime__end__checkbox"
+                               onclick="disableEndAndGetAllEventsFromStart()">
+
                         <div class="form-group">
                             <input type="date" id="js-search-form__datetime__end__date-picker" class="form-control"
-                                   onchange="handleOnChangeOfEndDatePicker(this)">
+                                   onchange="handleOnChangeOfEndDatePicker(this)" disabled>
                         </div>
 
                         <div class="form-group">
-                            <input type="time" id="js-search-form__datetime__end__time-picker" class="form-control">
+                            <input type="time" id="js-search-form__datetime__end__time-picker" class="form-control"
+                                   disabled>
                         </div>
                     </div>
                 </div>
@@ -94,7 +114,7 @@
         <script type="text/javascript" src="scripts/index.js"></script>
         <script>
             $(function () {
-                setCurrentDatetimeIntoPickers();
+                getAllFutureEvents();
                 filterEventsAndLoadMap(data);
             })
         </script>
