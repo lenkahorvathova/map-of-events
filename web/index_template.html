@@ -44,14 +44,27 @@
                     <label for="js-search-form__checkboxes__online">online</label>
                 </div>
 
-                <label for="search-form__datetime">Start:</label>
-                <div id="search-form__datetime" class="form-group form-inline">
-                    <div class="form-group">
-                        <input type="date" id="js-search-form__datetime__date-picker" class="form-control">
+                <div id="search-form__datetime" class="form-group">
+                    <label for="search-form__datetime__start">Start:</label>
+                    <div id="search-form__datetime__start" class="form-group form-inline">
+                        <div class="form-group">
+                            <input type="date" id="js-search-form__datetime__start__date-picker" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="time" id="js-search-form__datetime__start__time-picker" class="form-control">
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <input type="time" id="js-search-form__datetime__time-picker" class="form-control">
+                    <label for="search-form__datetime__end">End:</label>
+                    <div id="search-form__datetime__end" class="form-group form-inline">
+                        <div class="form-group">
+                            <input type="date" id="js-search-form__datetime__end__date-picker" class="form-control">
+                        </div>
+
+                        <div class="form-group">
+                            <input type="time" id="js-search-form__datetime__end__time-picker" class="form-control">
+                        </div>
                     </div>
                 </div>
 

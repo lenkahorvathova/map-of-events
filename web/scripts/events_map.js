@@ -17,9 +17,14 @@ function filterEventsAndLoadMap(data) {
     table.appendChild(tbody);
 
     let onlineChecked = document.getElementById('js-search-form__checkboxes__online').checked;
-    let startDate = document.getElementById('js-search-form__datetime__date-picker').value;
-    let startTime = document.getElementById('js-search-form__datetime__time-picker').value;
-    let pickedDatetime = new Date(startDate + ' ' + startTime);
+
+    let startDate = document.getElementById('js-search-form__datetime__start__date-picker').value;
+    let startTime = document.getElementById('js-search-form__datetime__start__time-picker').value;
+    let pickedStartDatetime = new Date(startDate + ' ' + startTime);
+
+    let endDate = document.getElementById('js-search-form__datetime__end__date-picker').value;
+    let endTime = document.getElementById('js-search-form__datetime__end__time-picker').value;
+    let pickedEndDatetime = new Date(endDate + ' ' + endTime);
 
     let number = 1;
     for (let eventId in data) {
@@ -31,10 +36,16 @@ function filterEventsAndLoadMap(data) {
             continue;
         }
 
-        let eventsTime = data[eventId]['start_time'] !== null ? data[eventId]['start_time'] : "23:59";
-        let eventsDatetime = new Date(data[eventId]['start_date'] + ' ' + eventsTime);
+        let eventsStartDate = data[eventId]['start_date']
+        let eventsStartTime = data[eventId]['start_time'] !== null ? data[eventId]['start_time'] : "00:00";
+        let eventsStartDatetime = new Date(eventsStartDate + ' ' + eventsStartTime);
 
-        if (pickedDatetime > eventsDatetime) {
+        let eventsEndDate = data[eventId]['end_date'] !== null ? data[eventId]['end_date'] : eventsStartDate;
+        let eventsEndTime = data[eventId]['end_time'] !== null ? data[eventId]['end_time'] : "23:59";
+        let eventsEndDatetime = new Date(eventsEndDate + ' ' + eventsEndTime);
+
+        if ((eventsStartDatetime < pickedStartDatetime || eventsStartDatetime > pickedEndDatetime)
+            && (eventsEndDatetime < pickedStartDatetime || eventsEndDatetime > pickedEndDatetime)) {
             continue;
         }
 

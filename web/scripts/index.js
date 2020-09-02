@@ -10,12 +10,56 @@ function setCurrentDatetimeIntoPickers() {
     let today = year + '-' + month + '-' + day;
     let now = hours + ':' + minutes
 
-    let datePicker = $('#js-search-form__datetime__date-picker');
-    let timePicker = $('#js-search-form__datetime__time-picker');
+    let startDatePicker = document.getElementById('js-search-form__datetime__start__date-picker');
+    let startTimePicker = document.getElementById('js-search-form__datetime__start__time-picker');
+    let endDatePicker = document.getElementById('js-search-form__datetime__end__date-picker');
+    let endTimePicker = document.getElementById('js-search-form__datetime__end__time-picker');
 
-    datePicker.val(today);
-    datePicker.attr('min', today);
-    timePicker.val(now);
+    startDatePicker.value = today;
+    startDatePicker.min = today;
+    startTimePicker.value = now;
+
+    endDatePicker.value = today;
+    endDatePicker.min = today;
+    endTimePicker.value = '23:59';
+    endTimePicker.min = now;
+
+    startDatePicker.addEventListener('change', function () {
+        let endDatePicker = document.getElementById('js-search-form__datetime__end__date-picker');
+        endDatePicker.min = this.value;
+
+        if (this.value === endDatePicker.value) {
+            let startTimePicker = document.getElementById('js-search-form__datetime__start__time-picker');
+            setEndTimePickerMin(startTimePicker.value);
+        } else {
+            setEndTimePickerMin("");
+        }
+    });
+
+    endDatePicker.addEventListener('change', function () {
+        let startDatePicker = document.getElementById('js-search-form__datetime__start__date-picker');
+
+        if (this.value === startDatePicker.value) {
+            let startTimePicker = document.getElementById('js-search-form__datetime__start__time-picker');
+            setEndTimePickerMin(startTimePicker.value);
+        } else {
+            setEndTimePickerMin("");
+        }
+    });
+
+    startTimePicker.addEventListener('change', function () {
+        let startDatePicker = document.getElementById('js-search-form__datetime__start__date-picker');
+        let endDatePicker = document.getElementById('js-search-form__datetime__end__date-picker');
+
+        if (startDatePicker.value === endDatePicker.value) {
+            setEndTimePickerMin(this.value);
+        }
+    });
+}
+
+function setEndTimePickerMin(newMin) {
+    let endTimePicker = document.getElementById('js-search-form__datetime__end__time-picker');
+    endTimePicker.min = newMin;
 }
 
 function disableLocationInputWhenOnlineChecked() {
