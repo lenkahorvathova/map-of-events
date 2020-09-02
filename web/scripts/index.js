@@ -23,43 +23,43 @@ function setCurrentDatetimeIntoPickers() {
     endDatePicker.min = today;
     endTimePicker.value = '23:59';
     endTimePicker.min = now;
-
-    startDatePicker.addEventListener('change', function () {
-        let endDatePicker = document.getElementById('js-search-form__datetime__end__date-picker');
-        endDatePicker.min = this.value;
-
-        if (this.value === endDatePicker.value) {
-            let startTimePicker = document.getElementById('js-search-form__datetime__start__time-picker');
-            setEndTimePickerMin(startTimePicker.value);
-        } else {
-            setEndTimePickerMin("");
-        }
-    });
-
-    endDatePicker.addEventListener('change', function () {
-        let startDatePicker = document.getElementById('js-search-form__datetime__start__date-picker');
-
-        if (this.value === startDatePicker.value) {
-            let startTimePicker = document.getElementById('js-search-form__datetime__start__time-picker');
-            setEndTimePickerMin(startTimePicker.value);
-        } else {
-            setEndTimePickerMin("");
-        }
-    });
-
-    startTimePicker.addEventListener('change', function () {
-        let startDatePicker = document.getElementById('js-search-form__datetime__start__date-picker');
-        let endDatePicker = document.getElementById('js-search-form__datetime__end__date-picker');
-
-        if (startDatePicker.value === endDatePicker.value) {
-            setEndTimePickerMin(this.value);
-        }
-    });
 }
 
 function setEndTimePickerMin(newMin) {
     let endTimePicker = document.getElementById('js-search-form__datetime__end__time-picker');
     endTimePicker.min = newMin;
+}
+
+function handleOnChangeOfStartDatePicker(startDatePicker) {
+    let endDatePicker = document.getElementById('js-search-form__datetime__end__date-picker');
+    endDatePicker.min = startDatePicker.value;
+
+    if (startDatePicker.value === endDatePicker.value) {
+        let startTimePicker = document.getElementById('js-search-form__datetime__start__time-picker');
+        setEndTimePickerMin(startTimePicker.value);
+    } else {
+        setEndTimePickerMin("");
+    }
+}
+
+function handleOnChangeOfEndDatePicker(endDatePicker) {
+    let startDatePicker = document.getElementById('js-search-form__datetime__start__date-picker');
+
+    if (startDatePicker.value === endDatePicker.value) {
+        let startTimePicker = document.getElementById('js-search-form__datetime__start__time-picker');
+        setEndTimePickerMin(startTimePicker.value);
+    } else {
+        setEndTimePickerMin("");
+    }
+}
+
+function handleOnChangeOfStartTimePicker(startTimePicker) {
+    let startDatePicker = document.getElementById('js-search-form__datetime__start__date-picker');
+    let endDatePicker = document.getElementById('js-search-form__datetime__end__date-picker');
+
+    if (startDatePicker.value === endDatePicker.value) {
+        setEndTimePickerMin(startTimePicker.value);
+    }
 }
 
 function disableLocationInputWhenOnlineChecked() {
