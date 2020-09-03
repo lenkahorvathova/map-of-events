@@ -154,7 +154,17 @@ function disableLocationInputWhenOnlineChecked() {
     radiusSpecification.disabled = onlineCheckBox.checked === true;
 }
 
-function handleFormSubmission(event) {
+function handleFormSubmission(event, data) {
     event.preventDefault();
+    let queryValue = document.getElementById("js-search-form__location__municipality").value;
+    if (queryValue === "") {
+        filterEventsAndLoadMap(data);
+    } else {
+        searchLocationAndFilterEventsAndLoadMap(data, queryValue);
+    }
+}
+
+function handleFirstLoad(data) {
+    getAllFutureEvents();
     filterEventsAndLoadMap(data);
 }

@@ -17,14 +17,17 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
-        <!-- Mapy.cz Script -->
+        <!-- Custom script with modified Mapy.cz functions -->
         <script type="text/javascript" src="scripts/events_map.js"></script>
         <script>const data = JSON.parse(`<<events_dataset>>`);</script>
+
+        <!-- Custom script with helper functions -->
+        <script type="text/javascript" src="scripts/index.js"></script>
     </head>
 
-    <body>
+    <body onload="handleFirstLoad(data)">
         <div class="container-fluid">
-            <form id="js-search-form" onsubmit="return handleFormSubmission(event)" style="margin: 10px">
+            <form id="js-search-form" onsubmit="return handleFormSubmission(event, data)" style="margin: 10px">
                 <label for="search-form__location">Location:</label>
                 <div id="search-form__location" class="form-group form-inline">
                     <div class="form-group">
@@ -110,13 +113,5 @@
                 </thead>
             </table>
         </div>
-
-        <script type="text/javascript" src="scripts/index.js"></script>
-        <script>
-            $(function () {
-                getAllFutureEvents();
-                filterEventsAndLoadMap(data);
-            })
-        </script>
     </body>
 </html>
