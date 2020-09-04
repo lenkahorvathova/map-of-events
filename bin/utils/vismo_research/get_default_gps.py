@@ -72,7 +72,8 @@ class GetDefaultGPS:
 
         if self.args.part == "3":
             input_domains = self.load_domains()
-            self.update_base(input_domains, self.args.dry_run)
+            default_locations = self.get_default_locations()
+            self.update_base(input_domains, default_locations, self.args.dry_run)
 
     def load_domains(self) -> list:
         if self.args.domain:
@@ -231,7 +232,23 @@ class GetDefaultGPS:
                 f.write(file)
 
     @staticmethod
-    def update_base(input_domains: list, dry_run: bool) -> None:
+    def get_default_locations():
+        with open(GetDefaultGPS.OUTPUT_FILE_PATH, 'r') as json_file:
+            stats_dict = json.load(json_file)
+
+        location_info = stats_dict["location_info"]
+        default_locations = {}
+
+        for municipality in location_info:
+            if "contact_value" in municipality and len(municipality["contact_value"]) >= 1:
+                domain = municipality["domain"]
+                location = municipality["contact_value"][0]
+                default_locations[domain] = location
+
+        return default_locations
+
+    @staticmethod
+    def update_base(input_domains: list, default_locations: dict, dry_run: bool) -> None:
         with open(GetDefaultGPS.GEOCODING_OUTPUT_JSON_FILE) as json_file:
             dataset = json.load(json_file)
             found_gps = {}
@@ -245,10 +262,13 @@ class GetDefaultGPS:
         gps_count = 0
         without_gps = []
         for website in input_domains:
-            gps = found_gps.get(website["domain"], None)
+            domain = website["domain"]
+            gps = found_gps.get(domain, None)
             if gps is not None:
                 gps_count += 1
                 website["default_gps"] = GetDefaultGPS.convert_gps_to_dec(gps)
+                if domain in default_locations:
+                    website["default_location"] = default_locations[domain]
             else:
                 without_gps.append(website["domain"])
 
