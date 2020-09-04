@@ -11,28 +11,28 @@
         "url": "http://www.barchovice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.94426444444444, 14.968963888888888",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Barchovice"
     },
     {
         "domain": "batelov_eu",
         "url": "http://www.batelov.eu/ap",
         "parser": "vismo",
         "default_gps": "49.31462416666666, 15.393939166666666",
-        "default_location": "Úřad městyse Batelova"
+        "default_location": "Městys Batelov"
     },
     {
         "domain": "belaobec_cz",
         "url": "http://www.belaobec.cz/ap",
         "parser": "vismo",
         "default_gps": "49.75207777777778, 15.237421388888889",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Bělá"
     },
     {
         "domain": "belec_kreptov_cz",
         "url": "http://www.belec-kreptov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.43433722222222, 16.382493611111112",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Běleč"
     },
     {
         "domain": "benesov_city_cz",
@@ -53,21 +53,21 @@
         "url": "http://www.bily-kamen.cz/ap",
         "parser": "vismo",
         "default_gps": "49.43651388888888, 15.507738055555556",
-        "default_location": "Obecní úřad Bílý Kámen"
+        "default_location": "Obec Bílý Kámen"
     },
     {
         "domain": "blazovice_eu",
         "url": "http://www.blazovice.eu/ap",
         "parser": "vismo",
         "default_gps": "49.16439861111111, 16.790300555555557",
-        "default_location": "Obecní úřad Blažovice"
+        "default_location": "Obec Blažovice"
     },
     {
         "domain": "bohunovice_cz",
         "url": "http://www.bohunovice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.66338777777778, 17.287223611111113",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Bohouňovice"
     },
     {
         "domain": "brandysek_cz",
@@ -88,21 +88,21 @@
         "url": "http://www.brezany-obec.cz/ap",
         "parser": "vismo",
         "default_gps": "49.34633055555556, 13.619145",
-        "default_location": "Obecní úřad Břežany"
+        "default_location": "Obec Břežany"
     },
     {
         "domain": "brno_jih_cz",
         "url": "http://www.brno-jih.cz/ap",
         "parser": "vismo",
         "default_gps": "49.17453861111111, 16.622887777777777",
-        "default_location": "Kontaktní poštovní adresa"
+        "default_location": "Městská část Brno-jih"
     },
     {
         "domain": "brodce_cz",
         "url": "http://www.brodce.cz/ap",
         "parser": "vismo",
         "default_gps": "50.33077916666667, 14.868103333333334",
-        "default_location": "Úřad městyse Brodce"
+        "default_location": "Městys Brodce"
     },
     {
         "domain": "broumov_mesto_cz",
@@ -123,21 +123,21 @@
         "url": "http://www.brzkov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.52619111111111, 15.727366388888889",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Brzkov"
     },
     {
         "domain": "bubovice_cz",
         "url": "http://www.bubovice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.970729722222224, 14.168513888888889",
-        "default_location": "Obecní úřad Bubovice"
+        "default_location": "Obec Bubovice"
     },
     {
         "domain": "bucovice_cz",
         "url": "http://www.bucovice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.150103055555554, 17.00321222222222",
-        "default_location": "Městský úřad Bučovice"
+        "default_location": "Město Bučovice"
     },
     {
         "domain": "bysice_eu",
@@ -151,7 +151,7 @@
         "url": "http://www.bystriceph.cz/ap",
         "parser": "vismo",
         "default_gps": "49.399990555555554, 17.672037500000002",
-        "default_location": "Městský úřad"
+        "default_location": "Město Bystřice pod Hostýnem"
     },
     {
         "domain": "ceperka_cz",
@@ -165,7 +165,7 @@
         "url": "http://www.cercany.cz/ap",
         "parser": "vismo",
         "default_gps": "49.84903638888889, 14.70443472222222",
-        "default_location": "Obecní úřad Čerčany"
+        "default_location": "Obec Čerčany"
     },
     {
         "domain": "cervenarecice_info",
@@ -186,7 +186,7 @@
         "url": "http://www.ceskyrudolec.cz/ap",
         "parser": "vismo",
         "default_gps": "49.067507222222225, 15.32337361111111",
-        "default_location": "Struktura obecního úřadu"
+        "default_location": "Obec Český Rudolec"
     },
     {
         "domain": "chlistov_info",
@@ -200,21 +200,21 @@
         "url": "http://www.chocen-mesto.cz/ap",
         "parser": "vismo",
         "default_gps": "50.000909444444446, 16.224396944444443",
-        "default_location": "Kontaktní adresa úřadu: Městský úřad Choceň"
+        "default_location": "Město Choceň"
     },
     {
         "domain": "chotetov_cz",
         "url": "http://www.chotetov.cz/ap",
         "parser": "vismo",
         "default_gps": "50.337453333333336, 14.801624166666667",
-        "default_location": "Úřad městyse Chotětov"
+        "default_location": "Městys Chotětov"
     },
     {
         "domain": "chrlice_brno_cz",
         "url": "http://www.chrlice.brno.cz/ap",
         "parser": "vismo",
         "default_gps": "49.13609777777778, 16.652971388888886",
-        "default_location": "Úřad MČ"
+        "default_location": "Mestská část Brno-Chrlice"
     },
     {
         "domain": "chvateruby_cz",
@@ -228,7 +228,7 @@
         "url": "http://www.chynov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.40620194444444, 14.811040833333333",
-        "default_location": "Městský úřad Chýnov"
+        "default_location": "Město Chýnov"
     },
     {
         "domain": "cimelice_cz",
@@ -263,27 +263,28 @@
         "url": "http://www.dobrovice.cz/ap",
         "parser": "vismo",
         "default_gps": "50.36944944444444, 14.962239722222222",
-        "default_location": "Městský úřad Dobrovice"
+        "default_location": "Město Dobrovice"
     },
     {
         "domain": "dolany_ol_cz",
         "url": "http://www.dolany-ol.cz/ap",
         "parser": "vismo",
         "default_gps": "49.649906666666666, 17.324860833333332",
-        "default_location": "Obecní úřad Dolany"
+        "default_location": "Obec Dolany"
     },
     {
         "domain": "dolni_dunajovice_cz",
         "url": "http://www.dolni-dunajovice.cz/ap",
         "parser": "vismo",
-        "default_gps": "48.852024166666666, 16.593297222222223"
+        "default_gps": "48.852024166666666, 16.593297222222223",
+        "default_location": "Obec Dolní Dunajovice"
     },
     {
         "domain": "dolnibezdekov_cz",
         "url": "http://dolnibezdekov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.95738888888889, 15.881789722222223",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Dolní Bezděkov"
     },
     {
         "domain": "dolnikounice_cz",
@@ -297,7 +298,7 @@
         "url": "http://www.dolninivy.cz/ap",
         "parser": "vismo",
         "default_gps": "50.24330527777778, 12.636272777777778",
-        "default_location": "Obecní úřad Dolní NIvy"
+        "default_location": "Obec Dolní Nivy"
     },
     {
         "domain": "domanin_eu",
@@ -324,7 +325,8 @@
         "domain": "drasov_cz",
         "url": "http://www.drasov.cz/ap",
         "parser": "vismo",
-        "default_gps": "48.852024166666666, 16.593297222222223"
+        "default_gps": "48.852024166666666, 16.593297222222223",
+        "default_location": "Městys Drásov"
     },
     {
         "domain": "dudin_cz",
@@ -338,34 +340,35 @@
         "url": "http://www.frydlantno.cz/ap",
         "parser": "vismo",
         "default_gps": "49.59278388888889, 18.359538055555557",
-        "default_location": "Městský úřad Frýdlant nad Ostravicí"
+        "default_location": "Město Frýdlant nad Ostravicí"
     },
     {
         "domain": "fulnek_cz",
         "url": "http://www.fulnek.cz/ap",
         "parser": "vismo",
-        "default_gps": "49.712785555555556, 17.9030125"
+        "default_gps": "49.712785555555556, 17.9030125",
+        "default_location": "Město Fulnek"
     },
     {
         "domain": "habruvka_cz",
         "url": "http://www.habruvka.cz/ap",
         "parser": "vismo",
         "default_gps": "49.3040525, 16.72307222222222",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Habrůvka"
     },
     {
         "domain": "habry_cz",
         "url": "http://www.habry.cz/ap",
         "parser": "vismo",
         "default_gps": "49.75626138888889, 15.48444861111111",
-        "default_location": "Městský úřad Habry"
+        "default_location": "Město Habry"
     },
     {
         "domain": "halze_cz",
         "url": "http://www.halze.cz/ap",
         "parser": "vismo",
         "default_gps": "49.82998166666667, 12.578289999999999",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Halže"
     },
     {
         "domain": "hbenesov_cz",
@@ -379,21 +382,21 @@
         "url": "http://www.heralec.cz/ap",
         "parser": "vismo",
         "default_gps": "49.53174305555555, 15.456056944444443",
-        "default_location": "Obecní úřad Herálec"
+        "default_location": "Obec Herálec"
     },
     {
         "domain": "hermanicky_cz",
         "url": "http://hermanicky.cz/ap",
         "parser": "vismo",
         "default_gps": "49.602205, 14.582234999999999",
-        "default_location": "Obecní úřad Heřmaničky"
+        "default_location": "Obec Heřmaničky"
     },
     {
         "domain": "hlubocky_cz",
         "url": "http://www.hlubocky.cz/ap",
         "parser": "vismo",
         "default_gps": "49.63014777777778, 17.403507777777776",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Hlubočky"
     },
     {
         "domain": "hnevkovice_cz",
@@ -407,7 +410,7 @@
         "url": "http://www.hodonin.eu/ap",
         "parser": "vismo",
         "default_gps": "48.85156916666667, 17.12626611111111",
-        "default_location": "MěÚ Hodonín"
+        "default_location": "Město Hodonín"
     },
     {
         "domain": "holstejn_eu",
@@ -420,14 +423,15 @@
         "domain": "horice_org",
         "url": "http://www.horice.org/ap",
         "parser": "vismo",
-        "default_gps": "50.36750444444444, 15.632397222222222"
+        "default_gps": "50.36750444444444, 15.632397222222222",
+        "default_location": "Město Hořice"
     },
     {
         "domain": "horni_stropnice_cz",
         "url": "http://www.horni-stropnice.cz/ap",
         "parser": "vismo",
         "default_gps": "48.76173277777778, 14.736119166666667",
-        "default_location": "Obec Horní  Stropnice"
+        "default_location": "Obec Horní Stropnice"
     },
     {
         "domain": "hornilapac_cz",
@@ -447,7 +451,8 @@
         "domain": "hostoun_cz",
         "url": "http://www.hostoun.cz/ap",
         "parser": "vismo",
-        "default_gps": "49.55937722222222, 12.771783055555556"
+        "default_gps": "49.55937722222222, 12.771783055555556",
+        "default_location": "Město Hostouň"
     },
     {
         "domain": "hradcanyutisnova_cz",
@@ -461,14 +466,14 @@
         "url": "http://www.hrubavrbka.cz/ap",
         "parser": "vismo",
         "default_gps": "48.87179583333334, 17.477023055555552",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Hrubá Vrbka"
     },
     {
         "domain": "hury_cz",
         "url": "http://www.hury.cz/ap",
         "parser": "vismo",
         "default_gps": "49.00614777777778, 14.539252222222222",
-        "default_location": "Obecní úřad Hůry"
+        "default_location": "Obec Hůry"
     },
     {
         "domain": "hybralec_cz",
@@ -489,14 +494,14 @@
         "url": "http://www.jablonnevp.cz/ap",
         "parser": "vismo",
         "default_gps": "50.76525777777778, 14.760836944444444",
-        "default_location": "Adresa"
+        "default_location": "Město Jablonné v Podještědí"
     },
     {
         "domain": "jamneujihlavy_cz",
         "url": "http://www.jamneujihlavy.cz/ap",
         "parser": "vismo",
         "default_gps": "49.42943972222222, 15.720851388888889",
-        "default_location": "Obecní úřad Jamné"
+        "default_location": "Obec Jamné"
     },
     {
         "domain": "janovuhrenska_cz",
@@ -524,7 +529,7 @@
         "url": "http://www.jerisno.cz/ap",
         "parser": "vismo",
         "default_gps": "49.79150388888889, 15.641288333333334",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Jerišno"
     },
     {
         "domain": "jevisovka_cz",
@@ -559,46 +564,49 @@
         "url": "http://www.jundrov.info/ap",
         "parser": "vismo",
         "default_gps": "49.207515, 16.555141944444443",
-        "default_location": "Brno-Jundrov, městská část"
+        "default_location": "Městská část Brno-Jundrov"
     },
     {
         "domain": "kadlin_cz",
         "url": "http://www.kadlin.cz/ap",
         "parser": "vismo",
         "default_gps": "50.39917138888889, 14.698105555555555",
-        "default_location": "Obecní úřad Kadlín"
+        "default_location": "Obec Kadlín"
     },
     {
         "domain": "kamenicenl_cz",
         "url": "http://www.kamenicenl.cz/ap",
         "parser": "vismo",
-        "default_gps": "49.301807499999995, 15.076703888888888"
+        "default_gps": "49.301807499999995, 15.076703888888888",
+        "default_location": "Město Kamenice nad Lipou"
     },
     {
         "domain": "kameniceujihlavy_cz",
         "url": "http://www.kameniceujihlavy.cz/ap",
         "parser": "vismo",
         "default_gps": "49.36843388888889, 15.781710555555556",
-        "default_location": "Úřad městyse Kamenice"
+        "default_location": "Městys Kamenice"
     },
     {
         "domain": "kejzlice_cz",
         "url": "http://www.kejzlice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.589602500000005, 15.391794722222222",
-        "default_location": "Obecní úřad Kejžlice"
+        "default_location": "Obec Kejžlice"
     },
     {
         "domain": "kliny_eu",
         "url": "http://www.kliny.eu/ap",
         "parser": "vismo",
-        "default_gps": "50.63521194444444, 13.557269166666668"
+        "default_gps": "50.63521194444444, 13.557269166666668",
+        "default_location": "Obec Klíny"
     },
     {
         "domain": "kly_cz",
         "url": "http://www.kly.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.308791666666664, 14.501484166666666"
+        "default_gps": "50.308791666666664, 14.501484166666666",
+        "default_location": "Obec Kly"
     },
     {
         "domain": "knezice_com",
@@ -619,14 +627,14 @@
         "url": "http://www.kohoutovice.brno.cz/ap",
         "parser": "vismo",
         "default_gps": "49.19328611111111, 16.53546777777778",
-        "default_location": "Úřad městské části města Brna Brno-Kohoutovice"
+        "default_location": "Městská část Brno-Kohoutovice"
     },
     {
         "domain": "kojetice_cz",
         "url": "http://www.kojetice.cz/ap",
         "parser": "vismo",
         "default_gps": "50.237561944444444, 14.498537777777777",
-        "default_location": "Obecní úřad Kojetice"
+        "default_location": "Obec Kojetice"
     },
     {
         "domain": "kolaje_cz",
@@ -640,21 +648,21 @@
         "url": "http://www.kolodeje.cz/ap",
         "parser": "vismo",
         "default_gps": "50.06216111111111, 14.638211111111112",
-        "default_location": "Úřad městské části Praha - Koloděje"
+        "default_location": "Městská část Praha-Koloděje"
     },
     {
         "domain": "kolovraty_cz",
         "url": "http://www.kolovraty.cz/ap",
         "parser": "vismo",
         "default_gps": "50.01270916666667, 14.623011388888889",
-        "default_location": "ÚŘAD MĚSTSKÉ ČÁSTI"
+        "default_location": "Městská část Praha-Kolovraty"
     },
     {
         "domain": "kosicky_cz",
         "url": "http://www.kosicky.cz/ap",
         "parser": "vismo",
         "default_gps": "50.17948666666666, 15.555567777777778",
-        "default_location": "Obecní úřad Kosičky"
+        "default_location": "Obec Kosičky"
     },
     {
         "domain": "kosik_obec_cz",
@@ -675,7 +683,7 @@
         "url": "http://www.kostelecncl.cz/ap",
         "parser": "vismo",
         "default_gps": "49.994934444444446, 14.860862777777777",
-        "default_location": "Městský úřad"
+        "default_location": "Město Kostelec nad Černými Lesy"
     },
     {
         "domain": "kostelecno_cz",
@@ -702,7 +710,8 @@
         "domain": "kralovopole_brno_cz",
         "url": "http://www.kralovopole.brno.cz/ap",
         "parser": "vismo",
-        "default_gps": "49.22374472222222, 16.594623055555555"
+        "default_gps": "49.22374472222222, 16.594623055555555",
+        "default_location": "Městská část Brno-Královo Pole"
     },
     {
         "domain": "kraluv_dvur_cz",
@@ -751,7 +760,7 @@
         "url": "http://www.kresice.cz/ap",
         "parser": "vismo",
         "default_gps": "50.525578333333335, 14.215935277777778",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Křešice"
     },
     {
         "domain": "kreslice_cz",
@@ -772,7 +781,7 @@
         "url": "http://www.krnov.cz/ap",
         "parser": "vismo",
         "default_gps": "50.08976333333334, 17.70343388888889",
-        "default_location": "Městský úřad Krnov"
+        "default_location": "Město Krnov"
     },
     {
         "domain": "kropacovavrutice_cz",
@@ -793,21 +802,21 @@
         "url": "http://www.kuzelov.com/ap",
         "parser": "vismo",
         "default_gps": "48.86082138888889, 17.484527222222223",
-        "default_location": "Obecní úřad Kuželov"
+        "default_location": "Obec Kuželov"
     },
     {
         "domain": "kvetinov_cz",
         "url": "http://www.kvetinov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.565194166666664, 15.507201944444445",
-        "default_location": "Obecní úřad Květinov"
+        "default_location": "Obec Květinov"
     },
     {
         "domain": "labskechrcice_eu",
         "url": "http://www.labskechrcice.eu/ap",
         "parser": "vismo",
         "default_gps": "50.04826611111111, 15.410544444444445",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Labské Chrčice"
     },
     {
         "domain": "leskovicehb_cz",
@@ -821,28 +830,28 @@
         "url": "http://www.libesice.cz/ap",
         "parser": "vismo",
         "default_gps": "50.56884416666667, 14.290019444444445",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Liběšice"
     },
     {
         "domain": "libhost_cz",
         "url": "http://www.libhost.cz/ap",
         "parser": "vismo",
         "default_gps": "49.62778388888889, 18.0760325",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Libhošť"
     },
     {
         "domain": "libisany_cz",
         "url": "http://www.libisany.cz/ap",
         "parser": "vismo",
         "default_gps": "50.15307305555555, 15.75741",
-        "default_location": "Obecní úřad Libišany"
+        "default_location": "Obec Libišany"
     },
     {
         "domain": "libkova_voda_cz",
         "url": "http://www.libkova-voda.cz/ap",
         "parser": "vismo",
         "default_gps": "49.37596, 15.189266666666667",
-        "default_location": "Libkova Voda"
+        "default_location": "Obec Libkova Voda"
     },
     {
         "domain": "lipnicens_cz",
@@ -856,13 +865,14 @@
         "url": "http://www.litohost.cz/ap",
         "parser": "vismo",
         "default_gps": "49.44931472222222, 15.090618055555556",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Litohošť"
     },
     {
         "domain": "lodenice_cz",
         "url": "http://www.lodenice.cz/ap",
         "parser": "vismo",
-        "default_gps": "49.994769166666664, 14.1570275"
+        "default_gps": "49.994769166666664, 14.1570275",
+        "default_location": "Obec Loděnice"
     },
     {
         "domain": "lomnice_cz",
@@ -883,7 +893,7 @@
         "url": "http://www.lovcice.eu/ap",
         "parser": "vismo",
         "default_gps": "50.16765611111111, 15.383669444444443",
-        "default_location": "Obec Lovčice / Obecní úřad Lovčice"
+        "default_location": "Obec Lovčice"
     },
     {
         "domain": "lubenec_cz",
@@ -911,7 +921,7 @@
         "url": "http://www.malomerice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.2185275, 16.64360138888889",
-        "default_location": "Adresa úřadu:"
+        "default_location": "Městská část Brno-Maloměřice"
     },
     {
         "domain": "malsovice_cz",
@@ -925,7 +935,7 @@
         "url": "http://www.maly-bor.cz/ap",
         "parser": "vismo",
         "default_gps": "49.33103777777778, 13.650688055555555",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Malý Bor"
     },
     {
         "domain": "meceriz_cz",
@@ -938,14 +948,15 @@
         "domain": "mecholupyublovic_cz",
         "url": "http://www.mecholupyublovic.cz/ap",
         "parser": "vismo",
-        "default_gps": "49.51974472222222, 13.532631111111112"
+        "default_gps": "49.51974472222222, 13.532631111111112",
+        "default_location": "Obec Měcholoupy"
     },
     {
         "domain": "melnik_cz",
         "url": "http://www.melnik.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.350975, 14.474310833333334",
-        "default_location": "Městský úřad"
+        "default_gps": "50.352560555555556, 14.474963333333333",
+        "default_location": "Město Mělník"
     },
     {
         "domain": "mesin_cz",
@@ -958,7 +969,7 @@
         "domain": "mesto_chlumec_cz",
         "url": "http://www.mesto-chlumec.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.699142499999994, 13.9314175",
+        "default_gps": "50.69924111111111, 13.9359125",
         "default_location": "Město Chlumec"
     },
     {
@@ -966,13 +977,14 @@
         "url": "http://www.mesto-doksy.cz/ap",
         "parser": "vismo",
         "default_gps": "50.563602499999995, 14.655257777777779",
-        "default_location": "Městský úřad Doksy"
+        "default_location": "Město Doksy"
     },
     {
         "domain": "mesto_humpolec_cz",
         "url": "http://www.mesto-humpolec.cz/ap",
         "parser": "vismo",
-        "default_gps": "49.54152194444444, 15.359319166666666"
+        "default_gps": "49.54152194444444, 15.359319166666666",
+        "default_location": "Město Humpolec"
     },
     {
         "domain": "mesto_miroslav_cz",
@@ -985,7 +997,8 @@
         "domain": "mesto_most_cz",
         "url": "http://www.mesto-most.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.50286694444444, 13.640523888888888"
+        "default_gps": "50.50286694444444, 13.640523888888888",
+        "default_location": "Město Most"
     },
     {
         "domain": "mesto_polna_cz",
@@ -998,13 +1011,15 @@
         "domain": "mesto_ustek_cz",
         "url": "http://www.mesto-ustek.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.58434638888889, 14.342720833333335"
+        "default_gps": "50.58434638888889, 14.342720833333335",
+        "default_location": "Město Úštěk"
     },
     {
         "domain": "mesto_zubri_cz",
         "url": "http://www.mesto-zubri.cz/ap",
         "parser": "vismo",
-        "default_gps": "49.472753611111116, 18.090966666666667"
+        "default_gps": "49.472753611111116, 18.090966666666667",
+        "default_location": "Město Zubří"
     },
     {
         "domain": "mestochrast_cz",
@@ -1024,20 +1039,22 @@
         "domain": "mestohradek_ro_cz",
         "url": "http://www.mestohradek-ro.cz/ap",
         "parser": "vismo",
-        "default_gps": "49.710730833333336, 13.648265"
+        "default_gps": "49.710730833333336, 13.648265",
+        "default_location": "Město Hrádek"
     },
     {
         "domain": "mestojachymov_cz",
         "url": "http://www.mestojachymov.cz/ap",
         "parser": "vismo",
         "default_gps": "50.37141361111111, 12.913575",
-        "default_location": "Městský úřad Jáchymov"
+        "default_location": "Město Jáchymov"
     },
     {
         "domain": "mestokladno_cz",
         "url": "http://www.mestokladno.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.14730333333333, 14.10343611111111"
+        "default_gps": "50.14730333333333, 14.10343611111111",
+        "default_location": "Město Kladno"
     },
     {
         "domain": "mestokourim_cz",
@@ -1058,7 +1075,7 @@
         "url": "https://www.mestopacov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.473599722222225, 15.002730833333333",
-        "default_location": "Městský úřad Pacov"
+        "default_location": "Město Pacov"
     },
     {
         "domain": "mestopelhrimov_cz",
@@ -1071,15 +1088,15 @@
         "domain": "mestoplumlov_cz",
         "url": "http://www.mestoplumlov.cz/ap",
         "parser": "vismo",
-        "default_gps": "49.473152222222225, 16.985359444444445",
-        "default_location": "Rudé armády 302"
+        "default_gps": "49.464325, 17.01679222222222",
+        "default_location": "Město Plumlov"
     },
     {
         "domain": "mestorudna_cz",
         "url": "http://www.mestorudna.cz/ap",
         "parser": "vismo",
         "default_gps": "50.03379944444444, 14.232194166666666",
-        "default_location": "Městský úřad Rudná"
+        "default_location": "Město Rudná"
     },
     {
         "domain": "mestosazava_cz",
@@ -1092,14 +1109,15 @@
         "domain": "mestosec_cz",
         "url": "http://www.mestosec.cz/ap",
         "parser": "vismo",
-        "default_gps": "49.84735388888889, 15.660188611111112"
+        "default_gps": "49.84735388888889, 15.660188611111112",
+        "default_location": "Město Seč"
     },
     {
         "domain": "mestosmirice_cz",
         "url": "http://www.mestosmirice.cz/ap",
         "parser": "vismo",
         "default_gps": "50.30000694444444, 15.869100555555557",
-        "default_location": "Městský úřad Smiřice"
+        "default_location": "Město Smiřice"
     },
     {
         "domain": "mestoterezin_cz",
@@ -1120,41 +1138,42 @@
         "url": "http://www.mestysmarsovice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.7142075, 14.564340833333334",
-        "default_location": "Úřad městyse Maršovice"
+        "default_location": "Městys Maršovice"
     },
     {
         "domain": "mestysmladebuky_cz",
         "url": "http://www.mestysmladebuky.cz/ap",
         "parser": "vismo",
         "default_gps": "50.60467138888889, 15.835129444444446",
-        "default_location": "Úřad městyse"
+        "default_location": "Městys Mladé Buky"
     },
     {
         "domain": "meucaslav_cz",
         "url": "http://www.meucaslav.cz/ap",
         "parser": "vismo",
         "default_gps": "49.91095833333333, 15.390564722222221",
-        "default_location": "Městský úřad Čáslav"
+        "default_location": "Město Čáslav"
     },
     {
         "domain": "meulovo_cz",
         "url": "http://www.meulovo.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.51501916666667, 14.050820833333335"
+        "default_gps": "50.51501916666667, 14.050820833333335",
+        "default_location": "Město Lovosice"
     },
     {
         "domain": "mezibori_cz",
         "url": "http://www.mezibori.cz/ap",
         "parser": "vismo",
         "default_gps": "50.620157222222225, 13.606627222222222",
-        "default_location": "Městský úřad Meziboří"
+        "default_location": "Městso Meziboří"
     },
     {
         "domain": "mezimesti_cz",
         "url": "http://www.mezimesti.cz/ap",
         "parser": "vismo",
         "default_gps": "50.62538416666667, 16.240277222222222",
-        "default_location": "Městský úřad Meziměstí"
+        "default_location": "Město Meziměstí"
     },
     {
         "domain": "mezna_cz",
@@ -1189,7 +1208,7 @@
         "url": "http://www.mnichovice.info/ap",
         "parser": "vismo",
         "default_gps": "49.935584166666665, 14.710207222222222",
-        "default_location": "Městský úřad"
+        "default_location": "Město Mnichovice"
     },
     {
         "domain": "mokra_horakov_cz",
@@ -1203,7 +1222,7 @@
         "url": "http://www.moravanyubrna.cz/ap",
         "parser": "vismo",
         "default_gps": "49.14492111111111, 16.5773575",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Moravany"
     },
     {
         "domain": "moravskypisek_cz",
@@ -1224,7 +1243,7 @@
         "url": "https://www.morinka.eu/ap",
         "parser": "vismo",
         "default_gps": "49.938518888888886, 14.234522777777777",
-        "default_location": "Obecní úřad Mořinka"
+        "default_location": "Obec Mořinka"
     },
     {
         "domain": "mostyujablunkova_cz",
@@ -1238,40 +1257,42 @@
         "url": "http://www.mratin.cz/ap",
         "parser": "vismo",
         "default_gps": "50.20442111111112, 14.554200833333335",
-        "default_location": "Obecní úřad Mratín"
+        "default_location": "Obec Mratín"
     },
     {
         "domain": "muas_cz",
         "url": "http://www.muas.cz/ap",
         "parser": "vismo",
         "default_gps": "50.22229027777778, 12.19026388888889",
-        "default_location": "Městský úřad Aš"
+        "default_location": "Město Aš"
     },
     {
         "domain": "muhb_cz",
         "url": "http://www.muhb.cz/ap",
         "parser": "vismo",
-        "default_gps": "49.60657777777778, 15.5785825"
+        "default_gps": "49.60657777777778, 15.5785825",
+        "default_location": "Město Havlíčkův Brod"
     },
     {
         "domain": "mulitvinov_cz",
         "url": "http://www.mulitvinov.cz/ap",
         "parser": "vismo",
         "default_gps": "50.59883694444445, 13.611725555555555",
-        "default_location": "Město Litvínov se sídlem Městský úřad Litvínov"
+        "default_location": "Město Litvínov"
     },
     {
         "domain": "munovapaka_cz",
         "url": "http://www.munovapaka.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.49449388888889, 15.515031666666667"
+        "default_gps": "50.49449388888889, 15.515031666666667",
+        "default_location": "Město Nová Paka"
     },
     {
         "domain": "muunhost_cz",
         "url": "http://www.muunhost.cz/ap",
         "parser": "vismo",
         "default_gps": "50.08414138888889, 14.132067777777777",
-        "default_location": "Městský úřad v Unhošti"
+        "default_location": "Město Unhošť"
     },
     {
         "domain": "muzdanice_cz",
@@ -1320,7 +1341,7 @@
         "url": "http://www.novabystrice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.01961083333333, 15.103234444444444",
-        "default_location": "Městský úřad Nová Bystřice"
+        "default_location": "Město Nová Bystřice"
     },
     {
         "domain": "novalhota_cz",
@@ -1334,14 +1355,14 @@
         "url": "http://novaves-bv.cz/ap",
         "parser": "vismo",
         "default_gps": "49.10628666666667, 16.314969722222223",
-        "default_location": "Obecní úřad Nová Ves"
+        "default_location": "Obec Nová Ves"
     },
     {
         "domain": "novehamry_eu",
         "url": "http://www.novehamry.eu/ap",
         "parser": "vismo",
         "default_gps": "50.36255638888889, 12.721935277777778",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Nové Hamry"
     },
     {
         "domain": "novy_bor_cz",
@@ -1355,28 +1376,28 @@
         "url": "http://www.novy-liskovec.cz/ap",
         "parser": "vismo",
         "default_gps": "49.17624083333333, 16.553160555555557",
-        "default_location": "Úřad městské části Brno - Nový Lískovec"
+        "default_location": "Městská část Brno-Nový Lískovec"
     },
     {
         "domain": "novybydzov_cz",
         "url": "http://www.novybydzov.cz/ap",
         "parser": "vismo",
         "default_gps": "50.24122472222222, 15.4898175",
-        "default_location": "Městský úřad Nový Bydžov"
+        "default_location": "Město Nový Bydžov"
     },
     {
         "domain": "ob_vis_net",
         "url": "http://www.ob-vis.net/ap",
         "parser": "vismo",
         "default_gps": "50.96663166666667, 15.022702500000001",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Višňová"
     },
     {
         "domain": "obec_cebin_cz",
         "url": "http://www.obec-cebin.cz/ap",
         "parser": "vismo",
         "default_gps": "49.31277138888888, 16.47904222222222",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Čebín"
     },
     {
         "domain": "obec_dobra_voda_cz",
@@ -1390,20 +1411,21 @@
         "url": "http://www.obec-dobsice.cz/ap",
         "parser": "vismo",
         "default_gps": "50.13420638888889, 15.268456666666667",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Dobšice"
     },
     {
         "domain": "obec_domasov_net",
         "url": "http://obec.domasov.net/ap",
         "parser": "vismo",
-        "default_gps": "49.24356388888889, 16.34457388888889"
+        "default_gps": "49.24356388888889, 16.34457388888889",
+        "default_location": "Obec Domašov"
     },
     {
         "domain": "obec_hovorany_cz",
         "url": "http://www.obec-hovorany.cz/ap",
         "parser": "vismo",
         "default_gps": "48.95489888888889, 16.991734444444447",
-        "default_location": "Obecní úřad Hovorany"
+        "default_location": "Obec Hovorany"
     },
     {
         "domain": "obec_jirice_cz",
@@ -1417,14 +1439,14 @@
         "url": "http://www.obec-krasov.eu/ap",
         "parser": "vismo",
         "default_gps": "50.09171305555556, 17.541486666666668",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Krasov"
     },
     {
         "domain": "obec_kyselovice_cz",
         "url": "http://www.obec-kyselovice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.376758055555555, 17.404693888888886",
-        "default_location": "Obecní úřad Kyselovice"
+        "default_location": "Obec Kyselovice"
     },
     {
         "domain": "obec_kytlice_cz",
@@ -1452,56 +1474,56 @@
         "url": "http://www.obec-ondrejov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.39243972222222, 15.177797222222221",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Ondřejov"
     },
     {
         "domain": "obec_vilemovice_cz",
         "url": "http://www.obec-vilemovice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.685938611111105, 15.323925",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Vilémovice"
     },
     {
         "domain": "obecarnolec_cz",
         "url": "http://www.obecarnolec.cz/ap",
         "parser": "vismo",
         "default_gps": "49.4351, 15.822200277777778",
-        "default_location": "Obecní úřad Arnolec"
+        "default_location": "Obec Arnolec"
     },
     {
         "domain": "obecberovice_cz",
         "url": "http://www.obecberovice.cz/ap",
         "parser": "vismo",
         "default_gps": "50.26906472222222, 14.122834166666667",
-        "default_location": "Obecní úřad Beřovice"
+        "default_location": "Obec Beřovice"
     },
     {
         "domain": "obecbrehy_cz",
         "url": "http://www.obecbrehy.cz/ap",
         "parser": "vismo",
         "default_gps": "50.05222805555555, 15.577337777777778",
-        "default_location": "Obecní úřad Břehy"
+        "default_location": "Obec Břehy"
     },
     {
         "domain": "obecbrezovice_cz",
         "url": "http://www.obecbrezovice.cz/ap",
         "parser": "vismo",
         "default_gps": "50.47057166666667, 14.732438611111112",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Březovice"
     },
     {
         "domain": "obecbudikov_cz",
         "url": "http://www.obecbudikov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.578342500000005, 15.362987222222221",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Budíkov"
     },
     {
         "domain": "obeccholina_cz",
         "url": "http://www.obeccholina.cz/ap",
         "parser": "vismo",
         "default_gps": "49.65730333333333, 17.051825",
-        "default_location": "obec Cholina"
+        "default_location": "Obec Cholina"
     },
     {
         "domain": "obecdobev_cz",
@@ -1515,7 +1537,7 @@
         "url": "http://www.obecholcovice.cz/ap",
         "parser": "vismo",
         "default_gps": "50.15653388888889, 17.48778888888889",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Holčovice"
     },
     {
         "domain": "obecjanovice_cz",
@@ -1529,35 +1551,35 @@
         "url": "http://www.obecjivova.cz/ap",
         "parser": "vismo",
         "default_gps": "49.70816972222222, 17.392725277777778",
-        "default_location": "Obecní úřad Jívová"
+        "default_location": "Obec Jívová"
     },
     {
         "domain": "obeckaliste_cz",
         "url": "http://www.obeckaliste.cz/ap",
         "parser": "vismo",
         "default_gps": "49.592695, 15.301981666666668",
-        "default_location": "Obecní úřad Kaliště"
+        "default_location": "Obec Kaliště"
     },
     {
         "domain": "obecknyk_cz",
         "url": "http://www.obecknyk.cz/ap",
         "parser": "vismo",
         "default_gps": "49.64497472222222, 15.576830555555555",
-        "default_location": "Obecní úřad Knyk"
+        "default_location": "Obec Knyk"
     },
     {
         "domain": "obeckolec_eu",
         "url": "http://www.obeckolec.eu/ap",
         "parser": "vismo",
         "default_gps": "50.197505, 14.224521666666666",
-        "default_location": "Obecní úřad Koleč"
+        "default_location": "Obec Koleč"
     },
     {
         "domain": "obeckrizany_cz",
         "url": "http://www.obeckrizany.cz/ap",
         "parser": "vismo",
         "default_gps": "50.73851944444444, 14.905958333333334",
-        "default_location": "Obecní úřad Křižany"
+        "default_location": "Obec Křižany"
     },
     {
         "domain": "obeclibomerice_cz",
@@ -1599,28 +1621,28 @@
         "url": "http://www.obecpisek.cz/ap",
         "parser": "vismo",
         "default_gps": "49.55900027777778, 18.80264916666667",
-        "default_location": "Obecní úřad Písek"
+        "default_location": "Obec Písek"
     },
     {
         "domain": "obecpozden_cz",
         "url": "http://www.obecpozden.cz/ap",
         "parser": "vismo",
         "default_gps": "50.242045555555556, 13.943616111111112",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Pozdeň"
     },
     {
         "domain": "obecptice_cz",
         "url": "http://www.obecptice.cz/ap",
         "parser": "vismo",
         "default_gps": "50.052281666666666, 14.166865",
-        "default_location": "Obecní úřad Ptice"
+        "default_location": "Obec Ptice"
     },
     {
         "domain": "obecpuklice_cz",
         "url": "http://www.obecpuklice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.359680000000004, 15.652544722222222",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Puklice"
     },
     {
         "domain": "obecradslavice_com",
@@ -1641,21 +1663,21 @@
         "url": "http://www.obecsopotnice.cz/ap",
         "parser": "vismo",
         "default_gps": "50.05670611111111, 16.345201666666664",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Sopotnice"
     },
     {
         "domain": "obecstaremesto_cz",
         "url": "http://www.obecstaremesto.cz/ap",
         "parser": "vismo",
         "default_gps": "50.00349666666666, 17.431953611111112",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Staré Město"
     },
     {
         "domain": "obecsucha_cz",
         "url": "http://www.obecsucha.cz/ap",
         "parser": "vismo",
         "default_gps": "49.30122027777777, 15.577698055555555",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Suchá"
     },
     {
         "domain": "obecveseli_cz",
@@ -1669,14 +1691,14 @@
         "url": "http://www.obecvez.cz/ap",
         "parser": "vismo",
         "default_gps": "49.56365361111111, 15.457998888888888",
-        "default_location": "Obecní úřad Věž"
+        "default_location": "Obec Věž"
     },
     {
         "domain": "obecveznice_eu",
         "url": "http://www.obecveznice.eu/ap",
         "parser": "vismo",
         "default_gps": "49.40752361111111, 15.760100277777777",
-        "default_location": "Obecní úřad Věžnice"
+        "default_location": "Obec Věžnice"
     },
     {
         "domain": "obecvokov_cz",
@@ -1711,14 +1733,14 @@
         "url": "http://www.ochozubrna.cz/ap",
         "parser": "vismo",
         "default_gps": "49.25412055555555, 16.737195",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Ochoz u Brna"
     },
     {
         "domain": "odry_cz",
         "url": "http://www.odry.cz/ap",
         "parser": "vismo",
         "default_gps": "49.66192222222222, 17.830705833333333",
-        "default_location": "Městský úřad Odry"
+        "default_location": "Město Odry"
     },
     {
         "domain": "olesna_cz",
@@ -1739,7 +1761,7 @@
         "url": "http://www.omice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.16847111111111, 16.449866944444445",
-        "default_location": "Obecní úřad Omice"
+        "default_location": "Obec Omice"
     },
     {
         "domain": "opatovice_eu",
@@ -1753,7 +1775,7 @@
         "url": "http://www.osek.eu/ap",
         "parser": "vismo",
         "default_gps": "49.4426375, 14.300553333333333",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Osek"
     },
     {
         "domain": "ostrov_cz",
@@ -1780,14 +1802,15 @@
         "domain": "peruc_cz",
         "url": "http://www.peruc.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.34475416666667, 13.961565277777778"
+        "default_gps": "50.34475416666667, 13.961565277777778",
+        "default_location": "Městys Peruc"
     },
     {
         "domain": "petihosty_cz",
         "url": "http://www.petihosty.cz/ap",
         "parser": "vismo",
         "default_gps": "49.885955277777775, 14.705791666666666",
-        "default_location": "Obecní úřad Pětihosty"
+        "default_location": "Obec Pětihosty"
     },
     {
         "domain": "pletenyujezd_cz",
@@ -1829,34 +1852,35 @@
         "url": "http://www.pozorice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.208488055555556, 16.788460555555556",
-        "default_location": "Úřad městyse"
+        "default_location": "Městys Pozořice"
     },
     {
         "domain": "praha18_cz",
         "url": "http://praha18.cz/ap",
         "parser": "vismo",
         "default_gps": "50.13715361111111, 14.515142222222222",
-        "default_location": "Úřad MČ Praha 18"
+        "default_location": "Mestská část Praha 18"
     },
     {
         "domain": "praha_dubec_cz",
         "url": "http://www.praha-dubec.cz/ap",
         "parser": "vismo",
         "default_gps": "50.05954083333333, 14.58611027777778",
-        "default_location": "Městská část Praha - Dubeč"
+        "default_location": "Městská část Praha-Dubeč"
     },
     {
         "domain": "pravcice_cz",
         "url": "http://www.pravcice.cz/ap",
         "parser": "vismo",
-        "default_gps": "49.32507027777778, 17.499574722222224"
+        "default_gps": "49.32507027777778, 17.499574722222224",
+        "default_location": "Obec Pravčice"
     },
     {
         "domain": "prestavlkyuprerova_cz",
         "url": "http://www.prestavlkyuprerova.cz/ap",
         "parser": "vismo",
         "default_gps": "49.38959305555556, 17.48108111111111",
-        "default_location": "Obecní úřad Přestavlky"
+        "default_location": "Obec Přestavlky"
     },
     {
         "domain": "pribyslav_cz",
@@ -1877,7 +1901,7 @@
         "url": "http://www.prosecpodkremesnikem.cz/ap",
         "parser": "vismo",
         "default_gps": "49.41545722222222, 15.2952275",
-        "default_location": "Obecní úřad Proseč pod Křemešníkem"
+        "default_location": "Obec Proseč pod Křemešníkem"
     },
     {
         "domain": "provodov_cz",
@@ -1912,14 +1936,14 @@
         "url": "http://www.ridelov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.23561388888889, 15.405928333333334",
-        "default_location": "Obecní úřad Řídelov"
+        "default_location": "Obec Řídelov"
     },
     {
         "domain": "ripec_cz",
         "url": "http://www.ripec.cz/ap",
         "parser": "vismo",
         "default_gps": "49.214288333333336, 14.736728055555554",
-        "default_location": "Obecní úřad Řípec"
+        "default_location": "Obec Řípec"
     },
     {
         "domain": "rokycany_cz",
@@ -1939,8 +1963,8 @@
         "domain": "rychnov_city_cz",
         "url": "http://www.rychnov-city.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.161815555555556, 16.277648888888887",
-        "default_location": "Městský úřad Rychnov nad Kněžnou"
+        "default_gps": "50.16079944444444, 16.27545111111111",
+        "default_location": "Město Rychnov nad Kněžnou"
     },
     {
         "domain": "rynarec_cz",
@@ -1968,27 +1992,28 @@
         "url": "http://www.sedlec-prcice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.572538333333334, 14.532234722222222",
-        "default_location": "Městský úřad Sedlec-Prčice"
+        "default_location": "Město Sedlec-Prčice"
     },
     {
         "domain": "seminuprelouce_cz",
         "url": "http://www.seminuprelouce.cz/ap",
         "parser": "vismo",
         "default_gps": "50.05383055555555, 15.520017222222224",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Semín"
     },
     {
         "domain": "senozaty_cz",
         "url": "http://www.senozaty.cz/ap",
         "parser": "vismo",
         "default_gps": "49.56760416666667, 15.1962575",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Senožaty"
     },
     {
         "domain": "sezemice_cz",
         "url": "http://www.sezemice.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.06650638888889, 15.852698333333333"
+        "default_gps": "50.06650638888889, 15.852698333333333",
+        "default_location": "Město Sezemice"
     },
     {
         "domain": "skalsko_cz",
@@ -2002,14 +2027,14 @@
         "url": "http://www.skripel.cz/ap",
         "parser": "vismo",
         "default_gps": "49.841123333333336, 14.066618611111112",
-        "default_location": "Obecní úřad Skřipel"
+        "default_location": "Obec Skřipel"
     },
     {
         "domain": "slavikov_cz",
         "url": "http://www.slavikov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.74406888888889, 15.78018888888889",
-        "default_location": "Obecní úřad Slavíkov"
+        "default_location": "Obec Slavíkov"
     },
     {
         "domain": "slavonice_mesto_cz",
@@ -2023,7 +2048,7 @@
         "url": "http://www.smecno-mesto.cz/ap",
         "parser": "vismo",
         "default_gps": "50.18904944444444, 14.039341944444445",
-        "default_location": "Městský úřad"
+        "default_location": "Město Smečno"
     },
     {
         "domain": "smetanovalhota_cz",
@@ -2037,14 +2062,14 @@
         "url": "http://www.smilovyhory.cz/ap",
         "parser": "vismo",
         "default_gps": "49.53757916666667, 14.87861638888889",
-        "default_location": "Smilovy Hory"
+        "default_location": "Obec Smilovy Hory"
     },
     {
         "domain": "smrzovka_cz",
         "url": "http://www.smrzovka.cz/ap",
         "parser": "vismo",
         "default_gps": "50.73975333333333, 15.245107222222222",
-        "default_location": "Městský úřad Smržovka"
+        "default_location": "Město Smržovka"
     },
     {
         "domain": "sobetuchy_cz",
@@ -2058,35 +2083,35 @@
         "url": "http://www.spaleneporici.cz/ap",
         "parser": "vismo",
         "default_gps": "49.61477777777778, 13.6040475",
-        "default_location": "Městský úřad Spálené Poříčí"
+        "default_location": "Město Spálené Poříčí"
     },
     {
         "domain": "srbska_kamenice_cz",
         "url": "http://www.srbska-kamenice.cz/ap",
         "parser": "vismo",
         "default_gps": "50.822608333333335, 14.355351944444443",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Srbská Kamenice"
     },
     {
         "domain": "stare_herminovy_eu",
         "url": "http://www.stare-herminovy.eu/ap",
         "parser": "vismo",
         "default_gps": "49.93290111111111, 17.626109444444445",
-        "default_location": "Obecní úřad Staré Heřminovy"
+        "default_location": "Obec Staré Heřminovy"
     },
     {
         "domain": "steblova_cz",
         "url": "http://www.steblova.cz/ap",
         "parser": "vismo",
         "default_gps": "50.09281138888889, 15.749548611111111",
-        "default_location": "Obecní úřad Stéblová"
+        "default_location": "Obec Stéblová"
     },
     {
         "domain": "stitna_popov_cz",
         "url": "http://www.stitna-popov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.06924138888889, 17.976934444444442",
-        "default_location": "Obecní úřad Štítná nad Vláří - Popov"
+        "default_location": "Obec Štítná nad Vláří - Popov"
     },
     {
         "domain": "stoky_cz",
@@ -2107,20 +2132,21 @@
         "url": "http://www.strancice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.949151666666666, 14.678182777777778",
-        "default_location": "Obecní úřad Strančice"
+        "default_location": "Obec Strančice"
     },
     {
         "domain": "straznice_mesto_cz",
         "url": "http://www.straznice-mesto.cz/ap",
         "parser": "vismo",
         "default_gps": "48.90169916666667, 17.31379",
-        "default_location": "Městský úřad Strážnice"
+        "default_location": "Město Strážnice"
     },
     {
         "domain": "streliceubrna_cz",
         "url": "http://www.streliceubrna.cz/ap",
         "parser": "vismo",
-        "default_gps": "49.152211944444446, 16.503985277777776"
+        "default_gps": "49.152211944444446, 16.503985277777776",
+        "default_location": "Obec Střelice"
     },
     {
         "domain": "stremy_cz",
@@ -2133,55 +2159,57 @@
         "domain": "sulejovice_cz",
         "url": "http://www.sulejovice.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.498534166666666, 14.037968611111111"
+        "default_gps": "50.498534166666666, 14.037968611111111",
+        "default_location": "Obec Sulejovice"
     },
     {
         "domain": "svabov_cz",
         "url": "http://www.svabov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.30855, 15.35849",
-        "default_location": "Obecní úřad Švábov"
+        "default_location": "Obec Švábov"
     },
     {
         "domain": "svepravice_cz",
         "url": "http://www.svepravice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.497194444444446, 15.233923888888889",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Svépravice"
     },
     {
         "domain": "sviadnov_cz",
         "url": "http://sviadnov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.68825222222222, 18.326229166666668",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Sviadnov"
     },
     {
         "domain": "syrovice_cz",
         "url": "http://www.syrovice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.078792222222226, 16.547510833333334",
-        "default_location": "Obecní úřad Syrovice"
+        "default_location": "Obec Syrovice"
     },
     {
         "domain": "terlicko_cz",
         "url": "http://www.terlicko.cz/ap",
         "parser": "vismo",
         "default_gps": "49.752251111111114, 18.482626666666665",
-        "default_location": "Obecní úřad Těrlicko"
+        "default_location": "Obec Těrlicko"
     },
     {
         "domain": "trebechovice_cz",
         "url": "http://www.trebechovice.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.20129583333333, 15.992524166666666"
+        "default_gps": "50.20129583333333, 15.992524166666666",
+        "default_location": "Obec Třebechovice pod Orebem"
     },
     {
         "domain": "trebovle_obec_cz",
         "url": "http://www.trebovle-obec.cz/ap",
         "parser": "vismo",
         "default_gps": "50.02865944444444, 14.961683611111111",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Třebovle"
     },
     {
         "domain": "trest_cz",
@@ -2209,20 +2237,21 @@
         "url": "http://www.tvarozna-lhota.cz/ap",
         "parser": "vismo",
         "default_gps": "48.87920833333333, 17.35658888888889",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Tvarožná Lhota"
     },
     {
         "domain": "tynecnadlabem_cz",
         "url": "http://www.tynecnadlabem.cz/ap",
         "parser": "vismo",
         "default_gps": "50.04134722222222, 15.357998055555555",
-        "default_location": "Městský úřad Týnec nad Labem"
+        "default_location": "Město Týnec nad Labem"
     },
     {
         "domain": "uhelna_cz",
         "url": "http://www.uhelna.cz/ap",
         "parser": "vismo",
-        "default_gps": "50.36680777777778, 17.029111944444445"
+        "default_gps": "50.36680777777778, 17.029111944444445",
+        "default_location": "Obec Uhelná"
     },
     {
         "domain": "uhlirskejanovice_cz",
@@ -2236,14 +2265,14 @@
         "url": "http://www.unicov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.77077361111111, 17.12152777777778",
-        "default_location": "Městský úřad Uničov"
+        "default_location": "Město Uničov"
     },
     {
         "domain": "usobi_cz",
         "url": "http://www.usobi.cz/ap",
         "parser": "vismo",
         "default_gps": "49.51445972222222, 15.501720555555556",
-        "default_location": "Úřad městyse Úsobí"
+        "default_location": "Městys Úsobí"
     },
     {
         "domain": "utechovicky_cz",
@@ -2278,14 +2307,14 @@
         "url": "http://www.velkepopovice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.922528888888884, 14.636074444444445",
-        "default_location": "Obecní úřad Velké Popovice"
+        "default_location": "Obec Velké Popovice"
     },
     {
         "domain": "velkeporici_cz",
         "url": "http://www.velkeporici.cz/ap",
         "parser": "vismo",
         "default_gps": "50.46163805555556, 16.18844222222222",
-        "default_location": "Úřad městyse Velké Poříčí"
+        "default_location": "Městys Velké Poříčí"
     },
     {
         "domain": "velkyberanov_cz",
@@ -2313,20 +2342,21 @@
         "url": "http://www.veprikov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.74320638888889, 15.570672777777778",
-        "default_location": "Obecní úřad Vepříkov"
+        "default_location": "Obec Vepříkov"
     },
     {
         "domain": "vernerice_cz",
         "url": "http://www.vernerice.cz/ap",
         "parser": "vismo",
         "default_gps": "50.66164888888889, 14.30134638888889",
-        "default_location": "Městský úřad Verneřice"
+        "default_location": "Město Verneřice"
     },
     {
         "domain": "veseli_nad_moravou_cz",
         "url": "http://www.veseli-nad-moravou.cz/ap",
         "parser": "vismo",
-        "default_gps": "48.95215527777778, 17.380033055555558"
+        "default_gps": "48.95215527777778, 17.380033055555558",
+        "default_location": "Město Veselí nad Moravou"
     },
     {
         "domain": "vetrnyjenikov_eu",
@@ -2340,14 +2370,14 @@
         "url": "http://www.vilemov.cz/ap",
         "parser": "vismo",
         "default_gps": "50.99219305555555, 14.330708055555556",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Vilémov u Šluknova"
     },
     {
         "domain": "vilemov_ol_cz",
         "url": "http://www.vilemov-ol.cz/ap",
         "parser": "vismo",
         "default_gps": "49.63596111111111, 16.996027222222224",
-        "default_location": "Obec Vílémov"
+        "default_location": "Obec Vílémov u Litovle"
     },
     {
         "domain": "vilemovice_cz",
@@ -2361,7 +2391,7 @@
         "url": "http://www.vlastec.cz/ap",
         "parser": "vismo",
         "default_gps": "49.365452222222224, 14.21173111111111",
-        "default_location": "Obecní úřad Vlastec"
+        "default_location": "Obec Vlastec"
     },
     {
         "domain": "vlkos_cz",
@@ -2375,14 +2405,14 @@
         "url": "http://www.vrcovice.cz/ap",
         "parser": "vismo",
         "default_gps": "49.34417138888889, 14.173942222222221",
-        "default_location": "Obecní úřad Vrcovice"
+        "default_location": "Obec Vrcovice"
     },
     {
         "domain": "vyskov_mesto_cz",
         "url": "http://www.vyskov-mesto.cz/ap",
         "parser": "vismo",
         "default_gps": "49.2772675, 16.998987222222222",
-        "default_location": "Adresa"
+        "default_location": "Město Vyškov"
     },
     {
         "domain": "vysokestudnice_eu",
@@ -2396,21 +2426,21 @@
         "url": "http://www.vysoky-ujezd-urad.cz/ap",
         "parser": "vismo",
         "default_gps": "49.99290222222222, 14.207159722222222",
-        "default_location": "Obecní úřad"
+        "default_location": "Obec Vysoký Újezd"
     },
     {
         "domain": "zabreh_cz",
         "url": "http://www.zabreh.cz/ap",
         "parser": "vismo",
         "default_gps": "49.882133611111115, 16.872292222222224",
-        "default_location": "Městský úřad Zábřeh"
+        "default_location": "Město Zábřeh"
     },
     {
         "domain": "zachrastany_cz",
         "url": "http://www.zachrastany.cz/ap",
         "parser": "vismo",
         "default_gps": "50.211266388888895, 15.485486388888887",
-        "default_location": "Obecní úřad Zachrašťany"
+        "default_location": "Obec Zachrašťany"
     },
     {
         "domain": "zajickov_cz",
@@ -2424,7 +2454,7 @@
         "url": "http://www.zebetin.cz/ap",
         "parser": "vismo",
         "default_gps": "49.20776055555556, 16.486980000000003",
-        "default_location": "Úřad městské části města Brna Brno-Žebětín"
+        "default_location": "Městská část Brno-Žebětín"
     },
     {
         "domain": "zilina_obec_cz",
