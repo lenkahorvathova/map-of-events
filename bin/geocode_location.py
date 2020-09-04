@@ -266,14 +266,15 @@ class GeocodeLocation:
                     result_dict["-geocoded"] += 1
 
                 if len(match["matched"]) == 0:
-                    result_dict["-no_match"] += 1
-                elif len(match["matched"]) == 1 and len(match["ambiguous"]) == 0:
-                    result_dict["-distinct_match"] += 1
+                    if len(match["ambiguous"]) == 0:
+                        result_dict["-no_match"] += 1
+                    else:
+                        result_dict["-ambiguous_match"] += 1
                 else:
-                    result_dict["-more_than_one_match"] += 1
-
-                if len(match["ambiguous"]) > 0:
-                    result_dict["-ambiguous_match"] += 1
+                    if len(match["ambiguous"]) == 0:
+                        result_dict["-distinct_match"] += 1
+                    else:
+                        result_dict["-more_than_one_match"] += 1
 
                 match_without_default = dict(match)
                 del match_without_default["has_default"]
@@ -306,12 +307,15 @@ class GeocodeLocation:
             online = info["online"]
             has_default = info["has_default"]
             gps = None
+            location = None
             municipality = None
             district = None
 
             if not online:
                 if has_default:
                     gps = info["base"]["default_gps"]
+                    if "default_location" in info["base"]:
+                        location = info["base"]["default_location"]
                 elif info["geocoded_location"]:
                     gps = info["geocoded_location"]["gps"]
                     municipality = info["geocoded_location"]["municipality"]
@@ -320,12 +324,13 @@ class GeocodeLocation:
             if not online and not has_default and not municipality:
                 nok_list.add(event_id)
 
-            values = (online, has_default, gps, municipality, district, event_id)
+            values = (online, has_default, gps, location, municipality, district, event_id)
             if dry_run:
                 data_to_insert.append(values)
             else:
-                query = '''INSERT INTO event_data_gps(online, has_default, gps, municipality, district, event_data_id)
-                           VALUES (?, ?, ?, ?, ?, ?)'''
+                query = '''INSERT INTO event_data_gps(online, has_default, gps, 
+                                                      location, municipality, district, event_data_id)
+                           VALUES (?, ?, ?, ?, ?, ?, ?)'''
 
                 try:
                     self.connection.execute(query, values)
