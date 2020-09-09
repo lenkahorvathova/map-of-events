@@ -25,9 +25,14 @@ class GenerateHTML:
         with open(GenerateHTML.INDEX_GENERATED_HTML_FILE_PATH, 'w') as generated_html_file:
             generated_html_file.write(file)
 
+        # Copy Scripts
         os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/'), exist_ok=True)
         shutil.copy2('web/scripts/events_map.js', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/events_map.js'))
         shutil.copy2('web/scripts/index.js', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/index.js'))
+
+        # Copy Styles
+        os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/'), exist_ok=True)
+        shutil.copy2('web/styles/dashboard.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/dashboard.css'))
 
     def get_events(self):
         query = '''SELECT ed.id, ed.title, ed.perex, ed.location, ed.organizer, ed.types, 

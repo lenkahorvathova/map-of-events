@@ -3,19 +3,25 @@
     <head>
         <title>Map of Events</title>
 
-        <meta charset="utf-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Webpage for the Master's Thesis.">
+        <meta name="author" content="Lenka Horvathova">
+
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+              integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+              crossorigin="anonymous">
+
+        <!-- Font Awesome Icons for Bootstrap -->
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
+
+        <!-- Custom styles for this template -->
+        <link href="styles/dashboard.css" rel="stylesheet">
 
         <!-- Mapy.cz API -->
         <script type="text/javascript" src="https://api.mapy.cz/loader.js"></script>
         <script type="text/javascript">Loader.load()</script>
-
-        <!-- jQuery -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-
-        <!-- Bootstrap -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
 
         <!-- Custom script with modified Mapy.cz functions -->
         <script type="text/javascript" src="scripts/events_map.js"></script>
@@ -26,92 +32,177 @@
     </head>
 
     <body onload="handleFirstLoad(data)">
-        <div class="container-fluid">
-            <form id="js-search-form" onsubmit="return handleFormSubmission(event, data)" style="margin: 10px">
-                <label for="search-form__location">Location:</label>
-                <div id="search-form__location" class="form-group form-inline">
-                    <div class="form-group">
-                        <input type="text" id="js-search-form__location__municipality" class="form-control"
-                               placeholder="Municipality">
+
+        <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
+            <a class="navbar-brand col-sm-3 col-md-2 mr-0">Map of Events</a>
+        </nav>
+
+        <div class="row">
+            <nav id="sidebar" class="col-md-4 d-block bg-light sidebar px-4">
+                <div class="sidebar-sticky">
+                    <form id="js-search-form" onsubmit="return handleFormSubmission(event, data)">
+                        <h6 class="sidebar-heading d-flex mt-4 text-muted">Retrieving GPS</h6>
+                        <label for="search-form__location">Location:</label>
+                        <div id="search-form__location" class="form-group">
+                            <div class="form-group input-group">
+                                <input type="text" id="js-search-form__location__municipality" class="form-control"
+                                       placeholder="Search">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <table id="js-gps-table" class="table table-bordered table-hover table-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">#</th>
+                                        <th scope="col">Location</th>
+                                        <th scope="col">Longitude</th>
+                                        <th scope="col">Latitude</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Brno, Česko</td>
+                                        <td>49°12'0.796"N</td>
+                                        <td>16°36'28.228"E</td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Okres Brno-město, Jihomoravský kraj, Česko</td>
+                                        <td>49°12'24.347"N</td>
+                                        <td>16°35'19.582"E</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <h6 class="sidebar-heading d-flex mt-4 text-muted">Narrowing Locations</h6>
+                            <div id="search-form__checkboxes" class="form-group form-inline">
+                                <input type="checkbox" id="js-search-form__checkboxes__online" class="mr-2"
+                                       onclick="disableLocationInputWhenOnlineChecked()">
+                                <label for="js-search-form__checkboxes__online">ONLINE</label>
+                            </div>
+
+                            <label for="js-search-form__location__gps">GPS:</label>
+                            <div class="form-group">
+                                <div class="form-group input-group">
+                                    <div class="input-group-prepend">
+                                        <div class="input-group-text">
+                                            <input type="checkbox" id="js-search-form__location__gps__checkbox"
+                                                   onclick="">
+                                        </div>
+                                    </div>
+                                    <div id="js-search-form__location__gps">
+                                        <input type="text" id="js-search-form__location__gps-longitude"
+                                               class="form-control" placeholder="Longitude" disabled>
+                                        <input type="text" id="js-search-form__location__gps-latitude"
+                                               class="form-control" placeholder="Latitude" disabled>
+                                    </div>
+                                </div>
+
+                                <label for="js-search-form__location__radius">Radius: </label>
+                                <div class="form-group form-inline">
+                                    <input type="number" id="js-search-form__location__radius" class="form-control mr-2"
+                                           value=0> km
+                                </div>
+                            </div>
+                        </div>
+
+                        <h6 class="sidebar-heading d-flex mt-4 text-muted">
+                            Specifying Dates</h6>
+                        <div id="search-form__datetime" class="form-group">
+                            <div id="search-form__datetime__buttons" class="form-group text-center">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-outline-dark"
+                                            id="search-form__datetime__buttons__today"
+                                            onclick="setTodayIntoDatetimePickers()">
+                                        Today
+                                    </button>
+                                    <button type="button" class="btn btn-outline-dark"
+                                            id="search-form__datetime__buttons__tomorrow"
+                                            onclick="setTomorrowIntoDatetimePickers()">
+                                        Tomorrow
+                                    </button>
+                                    <button type="button" class="btn btn-outline-dark"
+                                            id="search-form__datetime__buttons__next-10-days"
+                                            onclick="setNext10DaysIntoDatetimePickers()">
+                                        Next 10 days
+                                    </button>
+                                </div>
+                            </div>
+
+                            <label for="search-form__datetime__start">Start:</label>
+                            <div id="search-form__datetime__start" class="form-group form-inline input-group">
+                                <input type="date" id="js-search-form__datetime__start__date-picker"
+                                       class="form-control"
+                                       style="margin-left: 37px;"
+                                       onchange="handleOnChangeOfStartDatePicker(this)" required>
+
+                                <input type="time" id="js-search-form__datetime__start__time-picker"
+                                       class="form-control"
+                                       onchange="handleOnChangeOfStartTimePicker(this)">
+                            </div>
+
+                            <label for="js-search-form__datetime__end__checkbox">End:</label>
+                            <div id="search-form__datetime__end" class="form-group form-inline input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text">
+                                        <input type="checkbox" id="js-search-form__datetime__end__checkbox"
+                                               onclick="disableEndAndGetAllEventsFromStart()">
+                                    </div>
+                                </div>
+
+                                <input type="date" id="js-search-form__datetime__end__date-picker"
+                                       class="form-control"
+                                       onchange="handleOnChangeOfEndDatePicker(this)" disabled>
+
+                                <input type="time" id="js-search-form__datetime__end__time-picker"
+                                       class="form-control" disabled>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary float-right">Search</button>
+                    </form>
+                </div>
+            </nav>
+
+            <main id="content" role="main" class="col-md-8 ml-sm-auto px-4">
+                <div class="container-fluid">
+                    <div class="d-flex">
+                        <div id="map" class="my-4 w-100 border border-light rounded"
+                             style="width:100%; height:400px;"></div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="js-search-form__location__radius">-> radius to search: </label>
-                        <input type="number" id="js-search-form__location__radius" class="form-control" value=0> km
+                    <h2>Events Found</h2>
+                    <div class="table-responsive rounded">
+                        <table id="js-events-table" class="table table-bordered table-striped table-hover table-sm">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Title</th>
+                                    <th scope="col">Location</th>
+                                    <th scope="col">Start</th>
+                                    <th scope="col">End</th>
+                                </tr>
+                            </thead>
+                        </table>
                     </div>
                 </div>
-
-                <div id="search-form__checkboxes" class="form-group form-inline">
-                    <input type="checkbox" id="js-search-form__checkboxes__online"
-                           onclick="disableLocationInputWhenOnlineChecked()">
-                    <label for="js-search-form__checkboxes__online">online</label>
-                </div>
-
-                <label for="search-form__datetime">Range:</label>
-                <div id="search-form__datetime" class="form-group">
-                    <div id="search-form__datetime__buttons" class="form-group form-inline">
-                        <button id="search-form__datetime__buttons__today"
-                                onclick="setTodayIntoDatetimePickers()">
-                            Today
-                        </button>
-                        <button id="search-form__datetime__buttons__tomorrow"
-                                onclick="setTomorrowIntoDatetimePickers()">
-                            Tomorrow
-                        </button>
-                        <button id="search-form__datetime__buttons__next-10-days"
-                                onclick="setNext10DaysIntoDatetimePickers()">
-                            Next 10 days
-                        </button>
-                    </div>
-
-                    <label for="search-form__datetime__start">Start:</label>
-                    <div id="search-form__datetime__start" class="form-group form-inline">
-                        <div class="form-group">
-                            <input type="date" id="js-search-form__datetime__start__date-picker" class="form-control"
-                                   onchange="handleOnChangeOfStartDatePicker(this)" required>
-                        </div>
-
-                        <div class="form-group">
-                            <input type="time" id="js-search-form__datetime__start__time-picker" class="form-control"
-                                   onchange="handleOnChangeOfStartTimePicker(this)">
-                        </div>
-                    </div>
-
-                    <label for="js-search-form__datetime__end__checkbox">End:</label>
-                    <div id="search-form__datetime__end" class="form-group form-inline">
-                        <input type="checkbox" id="js-search-form__datetime__end__checkbox"
-                               onclick="disableEndAndGetAllEventsFromStart()">
-
-                        <div class="form-group">
-                            <input type="date" id="js-search-form__datetime__end__date-picker" class="form-control"
-                                   onchange="handleOnChangeOfEndDatePicker(this)" disabled>
-                        </div>
-
-                        <div class="form-group">
-                            <input type="time" id="js-search-form__datetime__end__time-picker" class="form-control"
-                                   disabled>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn btn-default">Search</button>
-            </form>
-
-            <div style="margin: 10px">
-                <div id="map" style="width:100%; height:400px;"></div>
-            </div>
-
-            <table id="js-events-table" class="table table-bordered table-striped table-hover" style="margin: 10px">
-                <thead>
-                    <tr>
-                        <th scope="col">#</th>
-                        <th scope="col">Title</th>
-                        <th scope="col">Location</th>
-                        <th scope="col">Start</th>
-                        <th scope="col">End</th>
-                    </tr>
-                </thead>
-            </table>
+            </main>
         </div>
+
+        <!-- Optional JavaScript -->
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+                integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+                crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+                integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+                crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+                integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+                crossorigin="anonymous"></script>
     </body>
 </html>
