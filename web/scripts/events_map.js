@@ -48,6 +48,7 @@ function addRow(tbody, number, event) {
 
 function filterEventsAndLoadMap(eventsData, foundCoordinates) {
     const dropRed = "https://api.mapy.cz/img/api/marker/drop-red.png";
+    const dropBlue = "https://api.mapy.cz/img/api/marker/drop-blue.png"
 
     let map = new SMap(document.getElementById('map'));
     map.addControl(new SMap.Control.Sync());
@@ -65,8 +66,46 @@ function filterEventsAndLoadMap(eventsData, foundCoordinates) {
     let tbody = document.createElement('tbody');
     table.appendChild(tbody);
 
-    let radius = document.getElementById('js-search-form__location__radius').value;
-    let onlineChecked = document.getElementById('js-search-form__checkboxes__online').checked;
+    let onlineChecked = document.getElementById('js-search-form__location__options__online').checked;
+    let gpsChecked = document.getElementById('js-search-form__location__options__gps').checked;
+
+    let radius = null;
+    let specifiedCoordinates = null;
+    if (gpsChecked) {
+        radius = document.getElementById('js-search-form__location__radius').value;
+        let gpsLatitude = parseFloat(document.getElementById('js-search-form__location__gps-latitude').value);
+        let gpsLongitude = parseFloat(document.getElementById('js-search-form__location__gps-longitude').value);
+
+        specifiedCoordinates = SMap.Coords.fromWGS84(gpsLongitude, gpsLatitude);
+        let specifiedCoordinatesOptions = {
+            url: dropBlue,
+            anchor: {left: 10, bottom: 1}
+        };
+
+        let mark = new SMap.Marker(specifiedCoordinates, null, specifiedCoordinatesOptions);
+        marks.push(mark);
+        coordinates.push(specifiedCoordinates);
+
+        let geometryLayer = new SMap.Layer.Geometry();
+        map.addLayer(geometryLayer);
+        geometryLayer.enable();
+
+        const equator = 6378 * 2 * Math.PI;
+        let yrad = Math.PI * gpsLatitude / 180;
+        let line = equator * Math.cos(yrad);
+        let angle = 360 * radius / line;
+
+        let point = SMap.Coords.fromWGS84(gpsLongitude + angle, gpsLatitude);
+        let circleOptions = {
+            color: "blue",
+            opacity: 0.1,
+            outlineColor: "blue",
+            outlineOpacity: 0.5,
+            outlineWidth: 3
+        };
+        let circle = new SMap.Geometry(SMap.GEOMETRY_CIRCLE, null, [specifiedCoordinates, point], circleOptions);
+        geometryLayer.addGeometry(circle);
+    }
 
     let startDate = document.getElementById('js-search-form__datetime__start__date-picker').value;
     let startTime = document.getElementById('js-search-form__datetime__start__time-picker').value;
@@ -106,9 +145,8 @@ function filterEventsAndLoadMap(eventsData, foundCoordinates) {
             let parsedCoordinates = SMap.Coords.fromWGS84(dataCoordinates[1], dataCoordinates[0]);
 
 
-            if (foundCoordinates && foundCoordinates.length > 0) {
-                let distance = calculateDistanceInKilometers(parsedCoordinates, foundCoordinates[0]);
-                // TODO: For now, it considers only the first location found - implement choosing from all found locations.
+            if (gpsChecked && specifiedCoordinates !== null) {
+                let distance = calculateDistanceInKilometers(parsedCoordinates, specifiedCoordinates);
                 if (distance >= radius) {
                     continue;
                 }

@@ -145,13 +145,17 @@ function handleOnChangeOfStartTimePicker(startTimePicker) {
     }
 }
 
-function disableLocationInputWhenOnlineChecked() {
-    let onlineCheckBox = document.getElementById('js-search-form__checkboxes__online');
-    let municipalitySearch = document.getElementById('js-search-form__location__municipality');
+function handleRadioButtonsForGPSInput() {
+    let gpsRadioButton = document.getElementById('js-search-form__location__options__gps');
+    let gpsLongitude = document.getElementById('js-search-form__location__gps-longitude');
+    let gpsLatitude = document.getElementById('js-search-form__location__gps-latitude');
     let radiusSpecification = document.getElementById('js-search-form__location__radius');
 
-    municipalitySearch.disabled = onlineCheckBox.checked === true;
-    radiusSpecification.disabled = onlineCheckBox.checked === true;
+    gpsLongitude.disabled = gpsRadioButton.checked !== true;
+    gpsLatitude.disabled = gpsRadioButton.checked !== true;
+    gpsLongitude.required = gpsRadioButton.checked === true;
+    gpsLatitude.required = gpsRadioButton.checked === true;
+    radiusSpecification.disabled = gpsRadioButton.checked !== true;
 }
 
 function handleFormSubmission(event, data) {

@@ -41,7 +41,7 @@
             <nav id="sidebar" class="col-md-4 d-block bg-light sidebar px-4">
                 <div class="sidebar-sticky">
                     <form id="js-search-form" onsubmit="return handleFormSubmission(event, data)">
-                        <h6 class="sidebar-heading d-flex mt-4 text-muted">Retrieving GPS</h6>
+                        <h6 class="sidebar-heading d-flex mt-4 text-muted">Acquiring GPS</h6>
                         <label for="search-form__location">Location:</label>
                         <div id="search-form__location" class="form-group">
                             <div class="form-group input-group">
@@ -58,54 +58,65 @@
                                     <tr>
                                         <th scope="col">#</th>
                                         <th scope="col">Location</th>
-                                        <th scope="col">Longitude</th>
                                         <th scope="col">Latitude</th>
+                                        <th scope="col">Longitude</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
                                         <td>1</td>
                                         <td>Brno, Česko</td>
-                                        <td>49°12'0.796"N</td>
-                                        <td>16°36'28.228"E</td>
-                                    </tr>
-                                    <tr>
-                                        <td>2</td>
-                                        <td>Okres Brno-město, Jihomoravský kraj, Česko</td>
-                                        <td>49°12'24.347"N</td>
-                                        <td>16°35'19.582"E</td>
+                                        <td>49.1948428</td>
+                                        <td>16.6090925</td>
                                     </tr>
                                 </tbody>
                             </table>
 
-                            <h6 class="sidebar-heading d-flex mt-4 text-muted">Narrowing Locations</h6>
-                            <div id="search-form__checkboxes" class="form-group form-inline">
-                                <input type="checkbox" id="js-search-form__checkboxes__online" class="mr-2"
-                                       onclick="disableLocationInputWhenOnlineChecked()">
-                                <label for="js-search-form__checkboxes__online">ONLINE</label>
+                            <h6 class="sidebar-heading d-flex mt-4 text-muted">Narrowing Location</h6>
+                            <div id="search-form__location__options" class="form-group form-inline">
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" id="js-search-form__location__options__all"
+                                           class="form-check-input" name="locationOptions" value="allOption"
+                                           onclick="handleRadioButtonsForGPSInput()" checked>
+                                    <label for="js-search-form__location__options__all" class="form-check-label">
+                                        ALL
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" id="js-search-form__location__options__online"
+                                           class="form-check-input" name="locationOptions" value="onlineOption"
+                                           onclick="handleRadioButtonsForGPSInput()">
+                                    <label for="js-search-form__location__options__online" class="form-check-label">
+                                        ONLINE
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input type="radio" id="js-search-form__location__options__gps"
+                                           class="form-check-input" name="locationOptions" value="gpsRadiusOption"
+                                           onclick="handleRadioButtonsForGPSInput()">
+                                    <label for="js-search-form__location__options__gps" class="form-check-label">
+                                        GPS
+                                    </label>
+                                </div>
                             </div>
 
                             <label for="js-search-form__location__gps">GPS:</label>
                             <div class="form-group">
-                                <div class="form-group input-group">
-                                    <div class="input-group-prepend">
-                                        <div class="input-group-text">
-                                            <input type="checkbox" id="js-search-form__location__gps__checkbox"
-                                                   onclick="">
-                                        </div>
-                                    </div>
-                                    <div id="js-search-form__location__gps">
-                                        <input type="text" id="js-search-form__location__gps-longitude"
-                                               class="form-control" placeholder="Longitude" disabled>
-                                        <input type="text" id="js-search-form__location__gps-latitude"
-                                               class="form-control" placeholder="Latitude" disabled>
-                                    </div>
+                                <div id="js-search-form__location__gps" class="form-inline input-group">
+                                    <input type="text" id="js-search-form__location__gps-latitude"
+                                           class="form-control" placeholder="Latitude"
+                                           pattern="^(\+|-)?(?:90(?:(?:\.0{1,})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,})?))$"
+                                           title="(Use a decimal format of a coordinate.)" disabled>
+                                    <input type="text" id="js-search-form__location__gps-longitude"
+                                           class="form-control" placeholder="Longitude"
+                                           pattern="^(\+|-)?(?:180(?:(?:\.0{1,})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,})?))$"
+                                           title="(Use a decimal format of a coordinate.)" disabled>
                                 </div>
 
                                 <label for="js-search-form__location__radius">Radius: </label>
                                 <div class="form-group form-inline">
                                     <input type="number" id="js-search-form__location__radius" class="form-control mr-2"
-                                           value=0> km
+                                           value=20 min=0 disabled> km
                                 </div>
                             </div>
                         </div>
