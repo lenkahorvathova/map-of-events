@@ -37,6 +37,31 @@
             <a class="navbar-brand col-sm-3 col-md-2 mr-0">Map of Events</a>
         </nav>
 
+        <div id="locationTable" class="modal">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Location Search Results</h4>
+                        <button type="button" id="modal-button-close" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="js-gps-table-title"></p>
+                        <table id="js-gps-table" class="table table-bordered table-hover table-sm">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Location</th>
+                                    <th scope="col">Latitude</th>
+                                    <th scope="col">Longitude</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div class="row">
             <nav id="sidebar" class="col-md-4 d-block bg-light sidebar px-4">
                 <div class="sidebar-sticky">
@@ -48,29 +73,13 @@
                                 <input type="text" id="js-search-form__location__municipality" class="form-control"
                                        placeholder="Search">
                                 <div class="input-group-append">
-                                    <button class="btn btn-outline-secondary" type="button">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                            data-toggle="modal" data-target="#locationTable"
+                                            onclick="geocodeLocation()">
                                         <i class="fa fa-search"></i>
                                     </button>
                                 </div>
                             </div>
-                            <table id="js-gps-table" class="table table-bordered table-hover table-sm">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">#</th>
-                                        <th scope="col">Location</th>
-                                        <th scope="col">Latitude</th>
-                                        <th scope="col">Longitude</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>1</td>
-                                        <td>Brno, Česko</td>
-                                        <td>49.1948428</td>
-                                        <td>16.6090925</td>
-                                    </tr>
-                                </tbody>
-                            </table>
 
                             <h6 class="sidebar-heading d-flex mt-4 text-muted">Narrowing Location</h6>
                             <div id="search-form__location__options" class="form-group form-inline">

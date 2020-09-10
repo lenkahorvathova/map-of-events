@@ -160,12 +160,7 @@ function handleRadioButtonsForGPSInput() {
 
 function handleFormSubmission(event, data) {
     event.preventDefault();
-    let queryValue = document.getElementById("js-search-form__location__municipality").value;
-    if (queryValue === "") {
-        filterEventsAndLoadMap(data);
-    } else {
-        searchLocationAndFilterEventsAndLoadMap(data, queryValue);
-    }
+    filterEventsAndLoadMap(data);
 }
 
 function handleFirstLoad(data) {

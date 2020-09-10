@@ -21,7 +21,7 @@ function calculateDistanceInKilometers(coordinatesA, coordinatesB) {
     return 2 * earthRadius * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-function addRow(tbody, number, event) {
+function addRowToEventsTable(tbody, number, event) {
     let tr = tbody.insertRow();
     tr.insertCell(0).outerHTML = `<th scope="row">${number}</th>`;
 
@@ -46,7 +46,7 @@ function addRow(tbody, number, event) {
     }
 }
 
-function filterEventsAndLoadMap(eventsData, foundCoordinates) {
+function filterEventsAndLoadMap(eventsData) {
     const dropRed = "https://api.mapy.cz/img/api/marker/drop-red.png";
     const dropBlue = "https://api.mapy.cz/img/api/marker/drop-blue.png"
 
@@ -163,7 +163,7 @@ function filterEventsAndLoadMap(eventsData, foundCoordinates) {
             coordinates.push(parsedCoordinates);
         }
 
-        addRow(tbody, number, eventsData[eventId]);
+        addRowToEventsTable(tbody, number, eventsData[eventId]);
         number += 1;
     }
 
@@ -197,23 +197,70 @@ function filterEventsAndLoadMap(eventsData, foundCoordinates) {
     map.setCenterZoom(centerZoom[0], centerZoom[1]);
 }
 
-function geocode_callback(geocoder, eventsData) {
-    if (!geocoder.getResults()[0].results.length) {
-        alert("We don't know to geocode your location, please, try to rewrite it!");
-        return;
-    }
-    let locationResults = geocoder.getResults()[0].results;
-    let foundCoordinates = [];
-    while (locationResults.length) {
-        let item = locationResults.shift()
-        foundCoordinates.push(item.coords);
-    }
+function copyGPSValueIntoForm(itemId) {
+    let itemLatitude = document.getElementById(`js-gps-table__${itemId}-latitude`).innerText;
+    let itemLongitude = document.getElementById(`js-gps-table__${itemId}-longitude`).innerText;
 
-    filterEventsAndLoadMap(eventsData, foundCoordinates);
+    let gpsRadioButton = document.getElementById('js-search-form__location__options__gps');
+    let gpsLongitude = document.getElementById('js-search-form__location__gps-longitude');
+    let gpsLatitude = document.getElementById('js-search-form__location__gps-latitude');
+    let radiusSpecification = document.getElementById('js-search-form__location__radius');
+
+    gpsLatitude.disabled = false;
+    gpsLatitude.required = true;
+    gpsLatitude.value = itemLatitude;
+    gpsRadioButton.checked = true;
+    gpsLongitude.disabled = false;
+    gpsLongitude.required = true;
+    gpsLongitude.value = itemLongitude;
+    radiusSpecification.disabled = false;
+
+    document.getElementById('modal-button-close').click();
 }
 
-function searchLocationAndFilterEventsAndLoadMap(eventsData, queryValue) {
-    new SMap.Geocoder(queryValue, function () {
-        geocode_callback(this, eventsData);
-    });
+function addRowToGPSTable(tbody, number, item) {
+    let tr = tbody.insertRow();
+    tr.insertCell(0).outerHTML = `<th scope="row">${number}</th>`;
+
+    let td1 = tr.insertCell();
+    td1.textContent = item['label'];
+
+    let td2 = tr.insertCell();
+    td2.textContent = item['coords']['y'];
+    td2.id = `js-gps-table__${number}-latitude`
+
+    let td3 = tr.insertCell();
+    td3.textContent = item['coords']['x'];
+    td3.id = `js-gps-table__${number}-longitude`
+
+    let td4 = tr.insertCell();
+    td4.innerHTML = `<button type="button" class="btn btn-primary btn-block" onclick="copyGPSValueIntoForm(${number})">Use</button>`;
+}
+
+function geocodeCallback(geocoder) {
+    let locationResults = geocoder.getResults()[0].results;
+
+    let oldTbody = document.querySelector('#js-gps-table > tbody');
+    if (oldTbody) oldTbody.remove();
+
+    let table = document.getElementById('js-gps-table');
+    let tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+
+    if (!locationResults.length) {
+        let tr = tbody.insertRow();
+        tr.insertCell().outerHTML = `<td colspan="5" style="text-align: center;">The Specified location couldn't be geocoded!</td>`;
+    }
+
+    for (let i = 0; i < locationResults.length; i++) {
+        let item = locationResults[i];
+        addRowToGPSTable(tbody, i + 1, item);
+    }
+}
+
+function geocodeLocation() {
+    let queryValue = document.getElementById('js-search-form__location__municipality').value;
+    let tableTitle = document.getElementById('js-gps-table-title')
+    tableTitle.innerHTML = `Value used for the search: <strong>"${queryValue}"</strong>`
+    new SMap.Geocoder(queryValue, geocodeCallback);
 }
