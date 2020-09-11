@@ -37,7 +37,7 @@ class GenerateHTML:
     def get_events(self):
         query = '''SELECT ed.id, ed.title, ed.perex, ed.location, ed.organizer, ed.types, 
                           edd.start_date, edd.start_time, edd.end_date, edd.end_time,
-                          edg.online, edg.has_default, edg.gps, edg.municipality, edg.district
+                          edg.online, edg.has_default, edg.gps, edg.location, edg.municipality, edg.district
                    FROM event_data ed 
                    INNER JOIN event_data_datetime edd ON ed.id == edd.event_data_id 
                    INNER JOIN event_data_gps edg ON ed.id == edg.event_data_id 
@@ -62,9 +62,10 @@ class GenerateHTML:
                 "end_time": event[9],
                 "online": event[10] == 1,
                 "has_default": event[11] == 1,
+                "default_location": event[13],
                 "gps": event[12],
-                "municipality": event[13],
-                "district": event[14]
+                "municipality": event[14],
+                "district": event[15]
             }
             events_jsons[event_id] = event_dict
 

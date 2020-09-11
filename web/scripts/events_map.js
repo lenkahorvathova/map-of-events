@@ -23,26 +23,35 @@ function calculateDistanceInKilometers(coordinatesA, coordinatesB) {
 
 function addRowToEventsTable(tbody, number, event) {
     let tr = tbody.insertRow();
-    tr.insertCell(0).outerHTML = `<th scope="row">${number}</th>`;
 
     let td1 = tr.insertCell();
     td1.textContent = event['title'];
 
     let td2 = tr.insertCell();
-    td2.textContent = event['location'];
+    if (event['location']) {
+        td2.textContent = event['location']
+    } else if (event['has_default']) {
+        td2.textContent = event['default_location']
+    } else if (!event['has_default']) {
+        td2.textContent = event['municipality'] + ", " + event['district']
+    }
 
     let td3 = tr.insertCell();
-    td3.textContent = event['start_date']
+    let startDatetimeString = event['start_date'];
     if (event['start_time'] != null) {
-        td3.textContent += " " + event['start_time']
+        startDatetimeString += " " + event['start_time'];
     }
+    let startDatetime = new Date(startDatetimeString);
+    td3.textContent = startDatetime.toLocaleString();
 
     let td4 = tr.insertCell();
     if (event['end_date'] != null) {
-        td4.textContent = event['end_date']
+        let endDatetimeString = event['end_date'];
         if (event['end_time'] != null) {
-            td4.textContent += " " + event['end_time']
+            endDatetimeString += " " + event['end_time'];
         }
+        let endDatetime = new Date(endDatetimeString);
+        td4.textContent = endDatetime.toLocaleString();
     }
 }
 
@@ -169,7 +178,7 @@ function filterEventsAndLoadMap(eventsData) {
 
     if (number === 1) {
         let tr = tbody.insertRow();
-        tr.insertCell().outerHTML = `<td colspan="5" style="text-align: center;">No events were found!</td>`;
+        tr.insertCell().outerHTML = `<td colspan="4" style="text-align: center;">No events were found!</td>`;
     }
 
     let options = {
