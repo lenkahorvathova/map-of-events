@@ -160,10 +160,34 @@ function handleRadioButtonsForGPSInput() {
 
 function handleFormSubmission(event, data) {
     event.preventDefault();
-    filterEventsAndLoadMap(data);
+    let eventsData = filterEventsAndLoadMap(data);
+    reloadEventsTable(eventsData)
+}
+
+function reloadEventsTable(eventsData) {
+    let datatable = $('#js-events-table').DataTable();
+    datatable.clear();
+    datatable.rows.add(eventsData);
+    datatable.draw();
+}
+
+function setupEventsTable(eventsData) {
+    $('#js-events-table').DataTable({
+        "data": eventsData,
+        columns: [
+            {data: 'title'},
+            {data: 'location'},
+            {data: 'start_datetime'},
+            {data: 'end_datetime'}
+        ],
+        "order": [[2, "asc"]],
+        "select": true
+    });
+    $('.dataTables_length').addClass('bs-select');
 }
 
 function handleFirstLoad(data) {
     getAllFutureEvents();
-    filterEventsAndLoadMap(data);
+    let eventsData = filterEventsAndLoadMap(data);
+    setupEventsTable(eventsData);
 }

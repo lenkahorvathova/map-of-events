@@ -21,37 +21,37 @@ function calculateDistanceInKilometers(coordinatesA, coordinatesB) {
     return 2 * earthRadius * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-function addRowToEventsTable(tbody, number, event) {
-    let tr = tbody.insertRow();
-
-    let td1 = tr.insertCell();
-    td1.textContent = event['title'];
-
-    let td2 = tr.insertCell();
+function prepareEventData(event) {
+    let location = null;
     if (event['location']) {
-        td2.textContent = event['location']
+        location = event['location']
     } else if (event['has_default']) {
-        td2.textContent = event['default_location']
+        location = event['default_location']
     } else if (!event['has_default']) {
-        td2.textContent = event['municipality'] + ", " + event['district']
+        location = event['municipality'] + ", " + event['district']
     }
 
-    let td3 = tr.insertCell();
+    let startDatetime = null;
     let startDatetimeString = event['start_date'];
     if (event['start_time'] != null) {
         startDatetimeString += " " + event['start_time'];
     }
-    let startDatetime = new Date(startDatetimeString);
-    td3.textContent = startDatetime.toLocaleString();
+    startDatetime = new Date(startDatetimeString).toLocaleString();
 
-    let td4 = tr.insertCell();
+    let endDatetime = null;
     if (event['end_date'] != null) {
         let endDatetimeString = event['end_date'];
         if (event['end_time'] != null) {
             endDatetimeString += " " + event['end_time'];
         }
-        let endDatetime = new Date(endDatetimeString);
-        td4.textContent = endDatetime.toLocaleString();
+        endDatetime = new Date(endDatetimeString).toLocaleString();
+    }
+
+    return {
+        "title": event['title'],
+        "location": location,
+        "start_datetime": startDatetime,
+        "end_datetime": endDatetime
     }
 }
 
@@ -67,13 +67,6 @@ function filterEventsAndLoadMap(eventsData) {
 
     let marks = [];
     let coordinates = [];
-
-    let oldTbody = document.querySelector('#js-events-table > tbody');
-    if (oldTbody) oldTbody.remove();
-
-    let table = document.getElementById('js-events-table');
-    let tbody = document.createElement('tbody');
-    table.appendChild(tbody);
 
     let onlineChecked = document.getElementById('js-search-form__location__options__online').checked;
     let gpsChecked = document.getElementById('js-search-form__location__options__gps').checked;
@@ -126,7 +119,7 @@ function filterEventsAndLoadMap(eventsData) {
     endTime = (endDate !== null && endTime !== null) ? endTime : "23:59";
     let pickedEndDatetime = endDate !== null ? new Date(endDate + ' ' + endTime) : new Date(8640000000000000);
 
-    let number = 1;
+    let eventsDataArray = []
     for (let eventId in eventsData) {
         if (!eventsData.hasOwnProperty(eventId)) {
             continue;
@@ -172,13 +165,8 @@ function filterEventsAndLoadMap(eventsData) {
             coordinates.push(parsedCoordinates);
         }
 
-        addRowToEventsTable(tbody, number, eventsData[eventId]);
-        number += 1;
-    }
-
-    if (number === 1) {
-        let tr = tbody.insertRow();
-        tr.insertCell().outerHTML = `<td colspan="4" style="text-align: center;">No events were found!</td>`;
+        let eventData = prepareEventData(eventsData[eventId]);
+        eventsDataArray.push(eventData)
     }
 
     let options = {
@@ -204,6 +192,8 @@ function filterEventsAndLoadMap(eventsData) {
 
     let centerZoom = map.computeCenterZoom(coordinates);
     map.setCenterZoom(centerZoom[0], centerZoom[1]);
+
+    return eventsDataArray
 }
 
 function copyGPSValueIntoForm(itemId) {
