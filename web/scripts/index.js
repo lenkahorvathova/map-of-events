@@ -169,6 +169,79 @@ function reloadEventsTable(eventsData) {
     datatable.clear();
     datatable.rows.add(eventsData);
     datatable.draw();
+    addOnClickToEventsTable();
+}
+
+function showEventDetailsModal(event, element) {
+    let datatable = $('#js-events-table').DataTable();
+    let data = datatable.row($(element).parents('tr')).data();
+
+    if (data !== null) {
+        let title = document.getElementById('event-title');
+        title.innerText = data['title'];
+
+        let defaultLocation = document.getElementById('event-default-location');
+        defaultLocation.hidden = true;
+        if (data['online']) {
+            defaultLocation.hidden = false;
+            defaultLocation.outerHTML = `<i id="event-online" class="fa fa-check-circle text-primary"> ONLINE</i>`
+        } else {
+            defaultLocation.hidden = false;
+            defaultLocation.innerText = data['default_location'];
+        }
+
+        let datetime = document.getElementById('event-datetime');
+        datetime.innerText = data['table_start_datetime'];
+        if (data['table_end_datetime']) {
+            datetime.innerText += ' - ' + data['table_end_datetime'];
+        }
+
+        let perex = document.getElementById('event-perex');
+        perex.innerText = data['perex'];
+
+        let location = document.getElementById('event-location');
+        if (data['location']) location.innerText = data['location'];
+
+        let gps = document.getElementById('event-gps');
+        if (data['gps'] !== null) {
+            gps.innerText = data['gps'];
+        } else {
+            gps.innerText = data['geocoded_gps'];
+
+            let geocoded = document.getElementById('event-geocoded');
+            if (data['has_default']) {
+                geocoded.innerText = '(' + data['default_location'] + ')';
+            } else {
+                geocoded.innerText = '(' + data['municipality'] + ', ' + data['district'] + ')';
+            }
+        }
+
+        let organizer = document.getElementById('event-organizer');
+        if (data['organizer']) organizer.innerText = data['organizer'];
+
+        let source = document.getElementById('event-calendar-url');
+        source.href = data['calendar_url'];
+        source.innerText = data['calendar_url'];
+
+        let fetchedAt = document.getElementById('event-downloaded-at');
+        fetchedAt.innerText = new Date(data['calendar_downloaded_at']).toLocaleString();
+
+        let eventButton = document.getElementById('event-url');
+        eventButton.href = data['event_url'];
+    }
+}
+
+function zoomToEventGPS(event, element) {
+    let data = $('#js-events-table').DataTable().row($(element).parents('tr')).data();
+
+    let gps = data["gps"];
+    if (gps === null) {
+        gps = data["geocoded_gps"];
+    }
+    let dataCoordinates = gps.split(',').map(coordinate => parseFloat(coordinate));
+    let coords = SMap.Coords.fromWGS84(dataCoordinates[1], dataCoordinates[0]);
+
+    map.setCenterZoom(coords, 18);
 }
 
 function setupEventsTable(eventsData) {
@@ -176,13 +249,33 @@ function setupEventsTable(eventsData) {
         "data": eventsData,
         columns: [
             {data: 'title'},
-            {data: 'location'},
-            {data: 'start_datetime'},
-            {data: 'end_datetime'}
+            {data: 'table_location'},
+            {data: 'table_start_datetime'},
+            {data: 'table_end_datetime'},
+            {data: null}
         ],
         "order": [[2, "asc"]],
-        "select": true
+        "responsive": true,
+        "select": true,
+        "columnDefs": [{
+            "targets": -1,
+            "data": null,
+            "orderable": false,
+            "defaultContent": `
+                <div style="text-align: center; white-space: nowrap">
+                    <button type="button" id="event-detail-btn" class="btn btn-secondary btn-sm"
+                            data-toggle="modal" data-target="#eventDetails" onclick="showEventDetailsModal(event, this)"
+                            title="Show event's details.">
+                        <i class="fa fa-info-circle"></i>
+                    </button>
+                    <button type="button" id="event-target-btn" class="btn btn-secondary btn-sm"
+                            onclick="zoomToEventGPS(event, this)" title="Zoom event's location on the map.">
+                        <i class="fa fa-bullseye"></i>
+                    </button>
+                </div>`
+        }]
     });
+
     $('.dataTables_length').addClass('bs-select');
 }
 

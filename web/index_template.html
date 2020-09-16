@@ -25,7 +25,10 @@
 
         <!-- Custom script with modified Mapy.cz functions -->
         <script type="text/javascript" src="scripts/events_map.js"></script>
-        <script>const data = JSON.parse(`<<events_dataset>>`);</script>
+        <script>
+            let map;
+            const data = JSON.parse(`<<events_dataset>>`);
+        </script>
 
         <!-- Custom script with helper functions -->
         <script type="text/javascript" src="scripts/index.js"></script>
@@ -59,6 +62,59 @@
                                 </tr>
                             </thead>
                         </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="eventDetails" class="modal">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header card-header">
+                        <h4 class="modal-title my-0 font-weight-normal">Event's Detail</h4>
+                        <button type="button" id="detail-button-close" class="close" data-dismiss="modal">
+                            &times;
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="text-center">
+                            <h5 id="event-title"></h5>
+                            <p id="event-default-location" class="mb-2 text-muted text-uppercase small" hidden></p>
+                            <p><span class="mr-1"><strong id="event-datetime"></strong></span></p>
+                        </div>
+                        <p id="event-perex" class="pt-1"></p>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-borderless mb-0">
+                                <tbody>
+                                    <tr>
+                                        <th class="pl-0 w-25" scope="row"><strong>Location</strong></th>
+                                        <td id="event-location">UNKNOWN</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="pl-0 w-25" scope="row"><strong>GPS</strong></th>
+                                        <td><span id="event-gps">UNKNOWN</span>
+                                            <span id="event-geocoded" class="text-muted small"></span></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="pl-0 w-25" scope="row"><strong>Organizer</strong></th>
+                                        <td id="event-organizer">UNKNOWN</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="pl-0 w-25" scope="row"><strong>Source</strong></th>
+                                        <td><a id="event-calendar-url" target="_blank">UNKNOWN</a></td>
+                                    </tr>
+                                    <tr>
+                                        <th class="pl-0 w-25" scope="row"><strong>Fetched at</strong></th>
+                                        <td id="event-downloaded-at">UNKNOWN</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <hr>
+                        <a id="event-url" type="button" target="_blank"
+                           class="btn btn-info btn-md mr-1 mb-2 float-right">
+                            <i class="fa fa-external-link-square"></i> Go to event's page
+                        </a>
                     </div>
                 </div>
             </div>
@@ -126,7 +182,8 @@
 
                                 <label for="js-search-form__location__radius">Radius: </label>
                                 <div class="form-group form-inline">
-                                    <input type="number" id="js-search-form__location__radius" class="form-control mr-2"
+                                    <input type="number" id="js-search-form__location__radius"
+                                           class="form-control mr-2"
                                            value=20 min=0 disabled> km
                                 </div>
                             </div>
@@ -206,6 +263,7 @@
                                     <th scope="col" class="th-sm">Location</th>
                                     <th scope="col" class="th-sm">Start</th>
                                     <th scope="col" class="th-sm">End</th>
+                                    <th scope="col" class="th-sm">Actions</th>
                                 </tr>
                             </thead>
                         </table>
@@ -227,7 +285,8 @@
                 crossorigin="anonymous"></script>
 
         <!-- DataTables -->
-        <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/bs4/dt-1.10.21/datatables.min.css"/>
+        <link rel="stylesheet" type="text/css"
+              href="https://cdn.datatables.net/v/bs4/dt-1.10.21/datatables.min.css"/>
         <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.21/datatables.min.js"></script>
     </body>
 </html>

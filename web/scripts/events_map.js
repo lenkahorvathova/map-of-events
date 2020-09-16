@@ -30,36 +30,39 @@ function prepareEventData(event) {
     } else if (!event['has_default']) {
         location = event['municipality'] + ", " + event['district']
     }
+    event["table_location"] = location;
 
     let startDatetime = null;
     let startDatetimeString = event['start_date'];
     if (event['start_time'] != null) {
         startDatetimeString += " " + event['start_time'];
+        startDatetime = new Date(startDatetimeString).toLocaleString();
+    } else {
+        startDatetime = new Date(startDatetimeString).toLocaleDateString();
     }
-    startDatetime = new Date(startDatetimeString).toLocaleString();
+
+    event["table_start_datetime"] = startDatetime;
 
     let endDatetime = null;
     if (event['end_date'] != null) {
         let endDatetimeString = event['end_date'];
         if (event['end_time'] != null) {
             endDatetimeString += " " + event['end_time'];
+            endDatetime = new Date(endDatetimeString).toLocaleString();
+        } else {
+            endDatetime = new Date(endDatetimeString).toLocaleDateString();
         }
-        endDatetime = new Date(endDatetimeString).toLocaleString();
     }
+    event["table_end_datetime"] = endDatetime;
 
-    return {
-        "title": event['title'],
-        "location": location,
-        "start_datetime": startDatetime,
-        "end_datetime": endDatetime
-    }
+    return event
 }
 
 function filterEventsAndLoadMap(eventsData) {
     const dropRed = "https://api.mapy.cz/img/api/marker/drop-red.png";
     const dropBlue = "https://api.mapy.cz/img/api/marker/drop-blue.png"
 
-    let map = new SMap(document.getElementById('map'));
+    map = new SMap(document.getElementById('map'));
     map.addControl(new SMap.Control.Sync());
     map.addDefaultLayer(SMap.DEF_BASE).enable();
     let mouse = new SMap.Control.Mouse(SMap.MOUSE_PAN | SMap.MOUSE_WHEEL | SMap.MOUSE_ZOOM);
@@ -142,8 +145,12 @@ function filterEventsAndLoadMap(eventsData) {
             continue;
         }
 
-        if (eventsData[eventId]["gps"] != null) {
-            let dataCoordinates = eventsData[eventId]['gps'].split(',').map(coordinate => parseFloat(coordinate));
+        let eventGPS = eventsData[eventId]["gps"];
+        if (eventGPS === null) {
+            eventGPS = eventsData[eventId]["geocoded_gps"];
+        }
+        if (eventGPS != null) {
+            let dataCoordinates = eventGPS.split(',').map(coordinate => parseFloat(coordinate));
             let parsedCoordinates = SMap.Coords.fromWGS84(dataCoordinates[1], dataCoordinates[0]);
 
 
@@ -239,16 +246,11 @@ function addRowToGPSTable(tbody, number, item) {
 function geocodeCallback(geocoder) {
     let locationResults = geocoder.getResults()[0].results;
 
-    let oldTbody = document.querySelector('#js-gps-table > tbody');
-    if (oldTbody) oldTbody.remove();
-
-    let table = document.getElementById('js-gps-table');
-    let tbody = document.createElement('tbody');
-    table.appendChild(tbody);
+    removeOldTbodyFromGPSTable();
+    let tbody = createNewTbodyForGPSTable();
 
     if (!locationResults.length) {
-        let tr = tbody.insertRow();
-        tr.insertCell().outerHTML = `<td colspan="5" style="text-align: center;">The Specified location couldn't be geocoded!</td>`;
+        addRowToTbodyWithMessage(tbody, "The specified location couldn't be geocoded!")
     }
 
     for (let i = 0; i < locationResults.length; i++) {
@@ -257,9 +259,32 @@ function geocodeCallback(geocoder) {
     }
 }
 
+function removeOldTbodyFromGPSTable() {
+    let oldTbody = document.querySelector('#js-gps-table > tbody');
+    if (oldTbody) oldTbody.remove();
+}
+
+function createNewTbodyForGPSTable() {
+    let table = document.getElementById('js-gps-table');
+    let tbody = document.createElement('tbody');
+    table.appendChild(tbody);
+
+    return tbody;
+}
+
+function addRowToTbodyWithMessage(tbody, message) {
+    let tr = tbody.insertRow();
+    tr.insertCell().outerHTML = `<td colspan="5" style="text-align: center;">${message}</td>`;
+}
+
 function geocodeLocation() {
     let queryValue = document.getElementById('js-search-form__location__municipality').value;
     let tableTitle = document.getElementById('js-gps-table-title')
     tableTitle.innerHTML = `Value used for the search: <strong>"${queryValue}"</strong>`
+
+    removeOldTbodyFromGPSTable();
+    let tbody = createNewTbodyForGPSTable();
+    addRowToTbodyWithMessage(tbody, "Geocoding the specified location...")
+
     new SMap.Geocoder(queryValue, geocodeCallback);
 }
