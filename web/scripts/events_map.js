@@ -65,11 +65,10 @@ function filterEventsAndLoadMap(eventsData) {
     map = new SMap(document.getElementById('map'));
     map.addControl(new SMap.Control.Sync());
     map.addDefaultLayer(SMap.DEF_BASE).enable();
+    map.addDefaultControls();
+
     let mouse = new SMap.Control.Mouse(SMap.MOUSE_PAN | SMap.MOUSE_WHEEL | SMap.MOUSE_ZOOM);
     map.addControl(mouse);
-
-    let marks = [];
-    let coordinates = [];
 
     let onlineChecked = document.getElementById('js-search-form__location__options__online').checked;
     let gpsChecked = document.getElementById('js-search-form__location__options__gps').checked;
@@ -87,9 +86,16 @@ function filterEventsAndLoadMap(eventsData) {
             anchor: {left: 10, bottom: 1}
         };
 
+        let blueMarkLayer = new SMap.Layer.Marker();
         let mark = new SMap.Marker(specifiedCoordinates, null, specifiedCoordinatesOptions);
-        marks.push(mark);
-        coordinates.push(specifiedCoordinates);
+
+        let markerOptions = {
+            anchor: {left: 0.5, top: 0.5}
+        }
+        mark.decorate(SMap.Marker.Feature.RelativeAnchor, markerOptions);
+        blueMarkLayer.addMarker(mark);
+        map.addLayer(blueMarkLayer);
+        blueMarkLayer.enable();
 
         let geometryLayer = new SMap.Layer.Geometry();
         map.addLayer(geometryLayer);
@@ -122,6 +128,8 @@ function filterEventsAndLoadMap(eventsData) {
     endTime = (endDate !== null && endTime !== null) ? endTime : "23:59";
     let pickedEndDatetime = endDate !== null ? new Date(endDate + ' ' + endTime) : new Date(8640000000000000);
 
+    let marks = [];
+    let coordinates = [];
     let eventsDataArray = []
     for (let eventId in eventsData) {
         if (!eventsData.hasOwnProperty(eventId)) {
@@ -164,7 +172,8 @@ function filterEventsAndLoadMap(eventsData) {
             let options = {
                 url: dropRed,
                 title: eventsData[eventId]['title'],
-                anchor: {left: 10, bottom: 1}
+                anchor: {left: 10, bottom: 1},
+                eventId: eventId
             };
 
             let mark = new SMap.Marker(parsedCoordinates, null, options);
@@ -183,12 +192,70 @@ function filterEventsAndLoadMap(eventsData) {
         marks[0].decorate(SMap.Marker.Feature.RelativeAnchor, options);
     }
 
+    const MyCluster = JAK.ClassMaker.makeClass({
+        NAME: "MyCluster",
+        VERSION: "1.0",
+        EXTEND: SMap.Marker.Cluster
+    });
+
+    MyCluster.prototype.click = function (event, element) {
+        const max_zoom = 18;
+        const map = this.getMap();
+
+        if (map.getZoom() >= max_zoom) {
+            const card = new SMap.Card();
+
+            let cardTable = "";
+            for (let i = 0; i < this._markers.length; i++) {
+                cardTable += `
+                    <tr>
+                        <td>${this._markers[i]._options.title}</td>
+                        <td>
+                            <div style="text-align: center; white-space: nowrap">
+                                <button type="button" class="btn btn-secondary btn-sm"
+                                        data-toggle="modal" data-target="#eventDetails"
+                                        onclick="handleEventDetailsCard(${this._markers[i]._options.eventId})"
+                                        title="Show event's details.">
+                                    <i class="fa fa-info-circle"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>`;
+            }
+
+            card.getHeader().innerHTML = "<strong>Included Events</strong>";
+            card.getBody().innerHTML = `
+                <div class="table-responsive rounded">
+                    <table class="table table-bordered table-hover table-sm">
+                        <thead style="display: none">
+                            <tr>
+                                <th scope="col" class="th-sm">Title</th>
+                                <th scope="col" class="th-sm"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${cardTable}
+                        </tbody>
+                    </table>
+                </div>`;
+
+            map.addCard(card, this.getCoords());
+
+        } else {
+            this.$super(event, element);
+        }
+    }
+
     let layer = new SMap.Layer.Marker();
-    map.addLayer(layer);
-    layer.enable();
+    let clusterer = new SMap.Marker.Clusterer(map, 50, MyCluster);
+    layer.setClusterer(clusterer);
+
     for (let i = 0; i < marks.length; i++) {
         layer.addMarker(marks[i]);
     }
+
+    map.addLayer(layer);
+    layer.enable();
 
     if (coordinates.length === 0) {
         coordinates.push(SMap.Coords.fromWGS84("51°03′20″N 14°18′53″E"));

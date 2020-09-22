@@ -33,6 +33,7 @@ class GenerateHTML:
         # Copy Styles
         os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/'), exist_ok=True)
         shutil.copy2('web/styles/dashboard.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/dashboard.css'))
+        shutil.copy2('web/styles/index.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/index.css'))
 
     def get_events(self):
         query = '''SELECT ed.id, ed.title, ed.perex, ed.location, ed.gps, ed.organizer, ed.types, 
@@ -40,13 +41,13 @@ class GenerateHTML:
                           edg.online, edg.has_default, edg.gps, edg.location, edg.municipality, edg.district,
                           eu.url, c.url, c.downloaded_at
                    FROM event_data ed 
-                   INNER JOIN event_data_datetime edd ON ed.id == edd.event_data_id 
-                   INNER JOIN event_data_gps edg ON ed.id == edg.event_data_id 
-                   INNER JOIN event_html eh ON ed.event_html_id = eh.id
-                   INNER JOIN event_url eu ON eh.event_url_id = eu.id
-                   INNER JOIN calendar c ON eu.calendar_id = c.id
+                   LEFT OUTER JOIN event_data_datetime edd ON ed.id == edd.event_data_id 
+                   LEFT OUTER JOIN event_data_gps edg ON ed.id == edg.event_data_id 
+                   LEFT OUTER JOIN event_html eh ON ed.event_html_id = eh.id
+                   LEFT OUTER JOIN event_url eu ON eh.event_url_id = eu.id
+                   LEFT OUTER JOIN calendar c ON eu.calendar_id = c.id
                    WHERE  edd.start_date IS NOT NULL AND edd.start_date >= date('now')
-                   AND (edg.gps IS NOT NULL OR edg.online == 1);'''
+                   AND (ed.gps IS NOT NULL OR edg.gps IS NOT NULL OR edg.online == 1);'''
 
         cursor = self.connection.execute(query)
         events_tuples = cursor.fetchall()

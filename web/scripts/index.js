@@ -169,65 +169,81 @@ function reloadEventsTable(eventsData) {
     datatable.clear();
     datatable.rows.add(eventsData);
     datatable.draw();
-    addOnClickToEventsTable();
 }
 
-function showEventDetailsModal(event, element) {
+function handleEventDetailsModal(event, element) {
     let datatable = $('#js-events-table').DataTable();
-    let data = datatable.row($(element).parents('tr')).data();
+    let eventData = datatable.row($(element).parents('tr')).data();
+    showEventDetailsModal(eventData);
+}
 
-    if (data !== null) {
+function handleEventDetailsCard(eventId) {
+    let eventData = data[eventId];
+    showEventDetailsModal(eventData);
+}
+
+function showEventDetailsModal(eventData) {
+    if (eventData !== null) {
         let title = document.getElementById('event-title');
-        title.innerText = data['title'];
+        title.innerText = eventData['title'];
 
         let defaultLocation = document.getElementById('event-default-location');
         defaultLocation.hidden = true;
-        if (data['online']) {
+        if (eventData['online']) {
             defaultLocation.hidden = false;
             defaultLocation.outerHTML = `<i id="event-online" class="fa fa-check-circle text-primary"> ONLINE</i>`
         } else {
             defaultLocation.hidden = false;
-            defaultLocation.innerText = data['default_location'];
+            defaultLocation.innerText = eventData['default_location'];
         }
 
         let datetime = document.getElementById('event-datetime');
-        datetime.innerText = data['table_start_datetime'];
-        if (data['table_end_datetime']) {
-            datetime.innerText += ' - ' + data['table_end_datetime'];
+        datetime.innerText = eventData['table_start_datetime'];
+        if (eventData['table_end_datetime']) {
+            datetime.innerText += ' - ' + eventData['table_end_datetime'];
         }
 
         let perex = document.getElementById('event-perex');
-        perex.innerText = data['perex'];
+        perex.innerText = eventData['perex'];
 
         let location = document.getElementById('event-location');
-        if (data['location']) location.innerText = data['location'];
+        if (eventData['location']) {
+            location.innerText = eventData['location'];
+        } else {
+            location.innerHTML = `<i>unknown</i>`;
+        }
 
         let gps = document.getElementById('event-gps');
-        if (data['gps'] !== null) {
-            gps.innerText = data['gps'];
+        let geocoded = document.getElementById('event-geocoded');
+        if (eventData['gps'] !== null) {
+            gps.innerText = eventData['gps'];
+            geocoded.innerText = "";
         } else {
-            gps.innerText = data['geocoded_gps'];
+            gps.innerText = eventData['geocoded_gps'];
 
-            let geocoded = document.getElementById('event-geocoded');
-            if (data['has_default']) {
-                geocoded.innerText = '(' + data['default_location'] + ')';
+            if (eventData['has_default']) {
+                geocoded.innerText = '(' + eventData['default_location'] + ')';
             } else {
-                geocoded.innerText = '(' + data['municipality'] + ', ' + data['district'] + ')';
+                geocoded.innerText = '(' + eventData['municipality'] + ', ' + eventData['district'] + ')';
             }
         }
 
         let organizer = document.getElementById('event-organizer');
-        if (data['organizer']) organizer.innerText = data['organizer'];
+        if (eventData['organizer']) {
+            organizer.innerText = eventData['organizer'];
+        } else {
+            organizer.innerHTML = `<i>unknown</i>`;
+        }
 
         let source = document.getElementById('event-calendar-url');
-        source.href = data['calendar_url'];
-        source.innerText = data['calendar_url'];
+        source.href = eventData['calendar_url'];
+        source.innerText = eventData['calendar_url'];
 
         let fetchedAt = document.getElementById('event-downloaded-at');
-        fetchedAt.innerText = new Date(data['calendar_downloaded_at']).toLocaleString();
+        fetchedAt.innerText = new Date(eventData['calendar_downloaded_at']).toLocaleString();
 
         let eventButton = document.getElementById('event-url');
-        eventButton.href = data['event_url'];
+        eventButton.href = eventData['event_url'];
     }
 }
 
@@ -264,7 +280,7 @@ function setupEventsTable(eventsData) {
             "defaultContent": `
                 <div style="text-align: center; white-space: nowrap">
                     <button type="button" id="event-detail-btn" class="btn btn-secondary btn-sm"
-                            data-toggle="modal" data-target="#eventDetails" onclick="showEventDetailsModal(event, this)"
+                            data-toggle="modal" data-target="#eventDetails" onclick="handleEventDetailsModal(event, this)"
                             title="Show event's details.">
                         <i class="fa fa-info-circle"></i>
                     </button>
