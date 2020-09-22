@@ -1,5 +1,5 @@
 function degreesToRadians(degrees) {
-    return degrees * (Math.PI / 180)
+    return degrees * (Math.PI / 180);
 }
 
 function calculateDistanceInKilometers(coordinatesA, coordinatesB) {
@@ -13,10 +13,9 @@ function calculateDistanceInKilometers(coordinatesA, coordinatesB) {
     let latitudeDistance = degreesToRadians(latitudeB - latitudeA);
     let longitudeDistance = degreesToRadians(longitudeB - longitudeA);
 
-    let a =
-        Math.pow(Math.sin(latitudeDistance / 2), 2) +
-        Math.cos(degreesToRadians(latitudeA)) * Math.cos(degreesToRadians(latitudeB)) *
-        Math.pow(Math.sin(longitudeDistance / 2), 2);
+    let a = Math.pow(Math.sin(latitudeDistance / 2), 2) +
+            Math.cos(degreesToRadians(latitudeA)) * Math.cos(degreesToRadians(latitudeB)) *
+            Math.pow(Math.sin(longitudeDistance / 2), 2);
 
     return 2 * earthRadius * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
@@ -24,11 +23,11 @@ function calculateDistanceInKilometers(coordinatesA, coordinatesB) {
 function prepareEventData(event) {
     let location = null;
     if (event['location']) {
-        location = event['location']
+        location = event['location'];
     } else if (event['has_default']) {
-        location = event['default_location']
+        location = event['default_location'];
     } else if (!event['has_default']) {
-        location = event['municipality'] + ", " + event['district']
+        location = event['municipality'] + ", " + event['district'];
     }
     event["table_location"] = location;
 
@@ -55,12 +54,12 @@ function prepareEventData(event) {
     }
     event["table_end_datetime"] = endDatetime;
 
-    return event
+    return event;
 }
 
 function filterEventsAndLoadMap(eventsData) {
     const dropRed = "https://api.mapy.cz/img/api/marker/drop-red.png";
-    const dropBlue = "https://api.mapy.cz/img/api/marker/drop-blue.png"
+    const dropBlue = "https://api.mapy.cz/img/api/marker/drop-blue.png";
 
     map = new SMap(document.getElementById('map'));
     map.addControl(new SMap.Control.Sync());
@@ -91,7 +90,7 @@ function filterEventsAndLoadMap(eventsData) {
 
         let markerOptions = {
             anchor: {left: 0.5, top: 0.5}
-        }
+        };
         mark.decorate(SMap.Marker.Feature.RelativeAnchor, markerOptions);
         blueMarkLayer.addMarker(mark);
         map.addLayer(blueMarkLayer);
@@ -130,7 +129,7 @@ function filterEventsAndLoadMap(eventsData) {
 
     let marks = [];
     let coordinates = [];
-    let eventsDataArray = []
+    let eventsDataArray = [];
     for (let eventId in eventsData) {
         if (!eventsData.hasOwnProperty(eventId)) {
             continue;
@@ -140,7 +139,7 @@ function filterEventsAndLoadMap(eventsData) {
             continue;
         }
 
-        let eventsStartDate = eventsData[eventId]['start_date']
+        let eventsStartDate = eventsData[eventId]['start_date'];
         let eventsStartTime = eventsData[eventId]['start_time'] !== null ? eventsData[eventId]['start_time'] : "00:00";
         let eventsStartDatetime = new Date(eventsStartDate + ' ' + eventsStartTime);
 
@@ -149,7 +148,7 @@ function filterEventsAndLoadMap(eventsData) {
         let eventsEndDatetime = new Date(eventsEndDate + ' ' + eventsEndTime);
 
         if ((eventsStartDatetime < pickedStartDatetime || eventsStartDatetime > pickedEndDatetime)
-            && (eventsEndDatetime < pickedStartDatetime || eventsEndDatetime > pickedEndDatetime)) {
+                && (eventsEndDatetime < pickedStartDatetime || eventsEndDatetime > pickedEndDatetime)) {
             continue;
         }
 
@@ -160,7 +159,6 @@ function filterEventsAndLoadMap(eventsData) {
         if (eventGPS != null) {
             let dataCoordinates = eventGPS.split(',').map(coordinate => parseFloat(coordinate));
             let parsedCoordinates = SMap.Coords.fromWGS84(dataCoordinates[1], dataCoordinates[0]);
-
 
             if (gpsChecked && specifiedCoordinates !== null) {
                 let distance = calculateDistanceInKilometers(parsedCoordinates, specifiedCoordinates);
@@ -182,12 +180,12 @@ function filterEventsAndLoadMap(eventsData) {
         }
 
         let eventData = prepareEventData(eventsData[eventId]);
-        eventsDataArray.push(eventData)
+        eventsDataArray.push(eventData);
     }
 
     let options = {
         anchor: {left: 0.5, top: 0.5}
-    }
+    };
     if (marks.length !== 0) {
         marks[0].decorate(SMap.Marker.Feature.RelativeAnchor, options);
     }
@@ -244,7 +242,7 @@ function filterEventsAndLoadMap(eventsData) {
         } else {
             this.$super(event, element);
         }
-    }
+    };
 
     let layer = new SMap.Layer.Marker();
     let clusterer = new SMap.Marker.Clusterer(map, 50, MyCluster);
@@ -267,7 +265,7 @@ function filterEventsAndLoadMap(eventsData) {
     let centerZoom = map.computeCenterZoom(coordinates);
     map.setCenterZoom(centerZoom[0], centerZoom[1]);
 
-    return eventsDataArray
+    return eventsDataArray;
 }
 
 function copyGPSValueIntoForm(itemId) {
@@ -300,11 +298,11 @@ function addRowToGPSTable(tbody, number, item) {
 
     let td2 = tr.insertCell();
     td2.textContent = item['coords']['y'];
-    td2.id = `js-gps-table__${number}-latitude`
+    td2.id = `js-gps-table__${number}-latitude`;
 
     let td3 = tr.insertCell();
     td3.textContent = item['coords']['x'];
-    td3.id = `js-gps-table__${number}-longitude`
+    td3.id = `js-gps-table__${number}-longitude`;
 
     let td4 = tr.insertCell();
     td4.innerHTML = `<button type="button" class="btn btn-primary btn-block" onclick="copyGPSValueIntoForm(${number})">Use</button>`;
@@ -317,7 +315,7 @@ function geocodeCallback(geocoder) {
     let tbody = createNewTbodyForGPSTable();
 
     if (!locationResults.length) {
-        addRowToTbodyWithMessage(tbody, "The specified location couldn't be geocoded!")
+        addRowToTbodyWithMessage(tbody, "The specified location couldn't be geocoded!");
     }
 
     for (let i = 0; i < locationResults.length; i++) {
@@ -344,14 +342,16 @@ function addRowToTbodyWithMessage(tbody, message) {
     tr.insertCell().outerHTML = `<td colspan="5" style="text-align: center;">${message}</td>`;
 }
 
-function geocodeLocation() {
-    let queryValue = document.getElementById('js-search-form__location__municipality').value;
-    let tableTitle = document.getElementById('js-gps-table-title')
-    tableTitle.innerHTML = `Value used for the search: <strong>"${queryValue}"</strong>`
+function handleGeocodeFormSubmission(event) {
+    event.preventDefault();
+
+    let queryValue = document.getElementById('js-geocode-form__location__municipality').value;
+    let tableTitle = document.getElementById('js-gps-table-title');
+    tableTitle.innerHTML = `Value used for the search: <strong>"${queryValue}"</strong>`;
 
     removeOldTbodyFromGPSTable();
     let tbody = createNewTbodyForGPSTable();
-    addRowToTbodyWithMessage(tbody, "Geocoding the specified location...")
+    addRowToTbodyWithMessage(tbody, "Geocoding the specified location...");
 
     new SMap.Geocoder(queryValue, geocodeCallback);
 }

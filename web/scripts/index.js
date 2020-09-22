@@ -1,5 +1,5 @@
 function prefixWithZero(value) {
-    return ('0' + value).slice(-2)
+    return ('0' + value).slice(-2);
 }
 
 function getDateString(date) {
@@ -19,10 +19,10 @@ function getTimeString(date) {
 
 function setValuesOfDatetimePickers(startDate, startTime, endDate, endTime) {
     if (startDate && endDate && endDate < startDate) {
-        throw "end_date is before start_date!"
+        throw "end_date is before start_date!";
     }
     if (startDate && endDate && startTime && endTime && startDate === endDate && endTime < startTime) {
-        throw "end_time is before start_time on the same date!"
+        throw "end_time is before start_time on the same date!";
     }
 
     let startDatePicker = document.getElementById('js-search-form__datetime__start__date-picker');
@@ -158,10 +158,10 @@ function handleRadioButtonsForGPSInput() {
     radiusSpecification.disabled = gpsRadioButton.checked !== true;
 }
 
-function handleFormSubmission(event, data) {
+function handleSearchFormSubmission(event, data) {
     event.preventDefault();
     let eventsData = filterEventsAndLoadMap(data);
-    reloadEventsTable(eventsData)
+    reloadEventsTable(eventsData);
 }
 
 function reloadEventsTable(eventsData) {
@@ -191,7 +191,7 @@ function showEventDetailsModal(eventData) {
         defaultLocation.hidden = true;
         if (eventData['online']) {
             defaultLocation.hidden = false;
-            defaultLocation.outerHTML = `<i id="event-online" class="fa fa-check-circle text-primary"> ONLINE</i>`
+            defaultLocation.outerHTML = `<i id="event-online" class="fa fa-check-circle text-primary"> ONLINE</i>`;
         } else {
             defaultLocation.hidden = false;
             defaultLocation.innerText = eventData['default_location'];

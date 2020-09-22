@@ -8,9 +8,8 @@ body {
     vertical-align: text-bottom;
 }
 
-/*
- * Sidebar
- */
+
+/* Sidebar */
 
 .sidebar {
     position: fixed;
@@ -20,6 +19,7 @@ body {
     z-index: 100;
     padding: 48px 0 0;
     box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    min-width: 480px;
 }
 
 .sidebar-sticky {
@@ -62,9 +62,8 @@ body {
     text-transform: uppercase;
 }
 
-/*
- * Content
- */
+
+/* Content */
 
 [role="main"] {
     padding-top: 133px;
@@ -76,9 +75,8 @@ body {
     }
 }
 
-/*
- * Navbar
- */
+
+/* Navbar */
 
 .navbar-brand {
     padding-top: .75rem;

@@ -16,12 +16,12 @@
         <!-- Font Awesome Icons for Bootstrap -->
         <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet"/>
 
-        <!-- Custom styles for this template -->
+        <!-- Custom styles for the Bootstrap template (https://getbootstrap.com/docs/4.0/examples/dashboard/) -->
         <link href="styles/dashboard.css" rel="stylesheet">
 
         <!-- Mapy.cz API -->
         <script type="text/javascript" src="https://api.mapy.cz/loader.js"></script>
-        <script type="text/javascript">Loader.load()</script>
+        <script type="text/javascript">Loader.load();</script>
 
         <!-- Custom script with modified Mapy.cz functions -->
         <script type="text/javascript" src="scripts/events_map.js"></script>
@@ -39,17 +39,20 @@
 
     <body onload="handleFirstLoad(data)">
 
+        <!-- Top Navigation Bar-->
         <nav class="navbar navbar-dark fixed-top bg-dark flex-md-nowrap p-0 shadow">
             <a class="navbar-brand col-sm-3 col-md-2 mr-0">Map of Events</a>
         </nav>
 
+        <!-- Modal Windows -->
+        <!--    Modal for Geocoded Location into GPS -->
         <div id="locationTable" class="modal">
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Location Search Results</h4>
-                        <button type="button" id="modal-button-close" class="close" data-dismiss="modal">
-                            &times;
+                        <button type="button" id="modal-button-close" class="close"
+                                data-dismiss="modal">&times;
                         </button>
                     </div>
                     <div class="modal-body">
@@ -70,13 +73,14 @@
             </div>
         </div>
 
+        <!--    Modal for Event's Details -->
         <div id="eventDetails" class="modal">
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header card-header">
                         <h4 class="modal-title my-0 font-weight-normal">Event's Detail</h4>
-                        <button type="button" id="detail-button-close" class="close" data-dismiss="modal">
-                            &times;
+                        <button type="button" id="detail-button-close" class="close"
+                                data-dismiss="modal">&times;
                         </button>
                     </div>
                     <div class="modal-body">
@@ -116,32 +120,38 @@
                         <hr>
                         <a id="event-url" type="button" target="_blank"
                            class="btn btn-info btn-md mr-1 mb-2 float-right">
-                            <i class="fa fa-external-link-square"></i> Go to event's page
-                        </a>
+                            <i class="fa fa-external-link-square"></i> Go to event's page</a>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="row">
-            <nav id="sidebar" class="col-md-4 d-block bg-light sidebar px-4">
-                <div class="sidebar-sticky">
-                    <form id="js-search-form" onsubmit="return handleFormSubmission(event, data)">
-                        <h6 class="sidebar-heading d-flex mt-4 text-muted">Acquiring GPS</h6>
-                        <label for="search-form__location">Location:</label>
-                        <div id="search-form__location" class="form-group">
-                            <div class="form-group input-group">
-                                <input type="text" id="js-search-form__location__municipality" class="form-control"
-                                       placeholder="Search">
-                                <div class="input-group-append">
-                                    <button type="button" class="btn btn-outline-secondary"
-                                            data-toggle="modal" data-target="#locationTable"
-                                            onclick="geocodeLocation()">
-                                        <i class="fa fa-search"></i>
-                                    </button>
-                                </div>
-                            </div>
 
+            <!-- Side Bar -->
+            <div id="sidebar" class="col-sm-4 d-none d-sm-block bg-light sidebar px-4">
+                <div class="sidebar-sticky">
+
+                    <!-- Forms -->
+                    <!--    Form for Geocoding Location into GPS -->
+                    <form id="js-geocode-form" onsubmit="return handleGeocodeFormSubmission(event)">
+                        <h6 class="sidebar-heading d-flex mt-4 text-muted">Acquiring GPS</h6>
+                        <label for="js-geocode-form__location__municipality">Location:</label>
+                        <div class="form-group input-group">
+                            <input type="text" id="js-geocode-form__location__municipality" class="form-control"
+                                   placeholder="Search">
+                            <div class="input-group-append">
+                                <button type="submit" class="btn btn-outline-secondary"
+                                        data-toggle="modal" data-target="#locationTable">
+                                    <i class="fa fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <!--    Form for Editing Data for Filtering of Events -->
+                    <form id="js-search-form" onsubmit="return handleSearchFormSubmission(event, data)">
+                        <div id="search-form__location" class="form-group">
                             <h6 class="sidebar-heading d-flex mt-4 text-muted">Narrowing Location</h6>
                             <div id="search-form__location__options" class="form-group form-inline">
                                 <div class="form-check form-check-inline">
@@ -247,11 +257,15 @@
 
                         <button type="submit" class="btn btn-primary float-right">Search</button>
                     </form>
-                </div>
-            </nav>
 
-            <main id="content" role="main" class="col-md-8 ml-sm-auto px-4">
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <main id="content" role="main" class="col-sm-8 ml-sm-auto px-4">
                 <div class="container-fluid">
+
+                    <!-- Map -->
                     <div class="row">
                         <div class="col d-flex">
                             <div id="map" class="my-4 w-100 border border-light rounded"
@@ -259,6 +273,7 @@
                         </div>
                     </div>
 
+                    <!-- Table with Events -->
                     <h2>Events Found</h2>
                     <div class="row">
                         <div class="col table-responsive rounded">
@@ -275,23 +290,27 @@
                             </table>
                         </div>
                     </div>
+
                 </div>
             </main>
+
         </div>
 
         <!-- Optional JavaScript -->
-        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <!--    jQuery-->
         <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
                 integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
                 crossorigin="anonymous"></script>
+        <!--    Popper.js -->
         <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
                 integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
                 crossorigin="anonymous"></script>
+        <!--    Bootstrap JS -->
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
                 integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
                 crossorigin="anonymous"></script>
 
-        <!-- DataTables -->
+        <!--    DataTables -->
         <link rel="stylesheet" type="text/css"
               href="https://cdn.datatables.net/v/bs4/dt-1.10.21/datatables.min.css"/>
         <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.21/datatables.min.js"></script>
