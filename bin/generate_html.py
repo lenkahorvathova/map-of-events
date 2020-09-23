@@ -29,6 +29,7 @@ class GenerateHTML:
         os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/'), exist_ok=True)
         shutil.copy2('web/scripts/events_map.js', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/events_map.js'))
         shutil.copy2('web/scripts/index.js', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/index.js'))
+        shutil.copy2('web/scripts/datetime_pickers.js', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/datetime_pickers.js'))
 
         # Copy Styles
         os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/'), exist_ok=True)

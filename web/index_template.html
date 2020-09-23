@@ -10,7 +10,7 @@
         <meta name="author" content="Lenka Horvathova">
 
         <!-- Bootstrap -->
-        <!--    - Bootstrap Styles -->
+        <!--    - Bootstrap 4 Styles -->
         <link type="text/css" rel="stylesheet"
               href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
               integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
@@ -23,27 +23,25 @@
         <!--    - Custom styles for the template (https://getbootstrap.com/docs/4.0/examples/dashboard/) -->
         <link type="text/css" rel="stylesheet" href="styles/dashboard.css">
 
-        <!-- Mapy.cz API -->
-        <!--    - Loader Scripts -->
+        <!-- Mapy.cz API Scripts -->
         <script type="text/javascript" src="https://api.mapy.cz/loader.js"></script>
         <script type="text/javascript">Loader.load();</script>
-
-        <!--    - Customized Mapy.cz functions -->
-        <script type="text/javascript" src="scripts/events_map.js"></script>
 
         <!-- Custom -->
         <!--    - Scripts -->
         <script type="text/javascript">
-            let map;
-            const data = JSON.parse(`<<events_dataset>>`);
+            let GLB_MAP;
+            const GLB_EVENTS_DATASET = JSON.parse(`<<events_dataset>>`);
         </script>
         <script type="text/javascript" src="scripts/index.js"></script>
+        <script type="text/javascript" src="scripts/events_map.js"></script>
+        <script type="text/javascript" src="scripts/datetime_pickers.js"></script>
 
         <!--    - Styles -->
         <link type="text/css" rel="stylesheet" href="styles/index.css">
     </head>
 
-    <body onload="handleFirstLoad(data)">
+    <body onload="handleFirstLoad()">
 
         <!-- Top Navigation Bar-->
         <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
@@ -164,7 +162,7 @@
                                 <hr/>
 
                                 <!--    - Filtering Events -->
-                                <form id="js-search-form" onsubmit="return handleSearchFormSubmission(event, data)">
+                                <form id="js-search-form" onsubmit="return handleSearchFormSubmission(event)">
 
                                     <!--        -- Location -->
                                     <h6 class="sidebar-heading d-flex mt-4 text-muted">Narrowing Location</h6>
@@ -176,7 +174,7 @@
                                                 <input type="radio" id="js-search-form__location__options__all"
                                                        class="form-check-input"
                                                        name="locationOptions" value="allOption"
-                                                       onclick="handleRadioButtonsForGPSInput()" checked>
+                                                       onclick="handleLocationRadioButtonsClick()" checked>
                                                 <label for="js-search-form__location__options__all"
                                                        class="form-check-label">
                                                     ALL
@@ -186,7 +184,7 @@
                                                 <input type="radio" id="js-search-form__location__options__online"
                                                        class="form-check-input"
                                                        name="locationOptions" value="onlineOption"
-                                                       onclick="handleRadioButtonsForGPSInput()">
+                                                       onclick="handleLocationRadioButtonsClick()">
                                                 <label for="js-search-form__location__options__online"
                                                        class="form-check-label">
                                                     ONLINE
@@ -196,7 +194,7 @@
                                                 <input type="radio" id="js-search-form__location__options__gps"
                                                        class="form-check-input"
                                                        name="locationOptions" value="gpsRadiusOption"
-                                                       onclick="handleRadioButtonsForGPSInput()">
+                                                       onclick="handleLocationRadioButtonsClick()">
                                                 <label for="js-search-form__location__options__gps"
                                                        class="form-check-label">
                                                     GPS
@@ -263,11 +261,11 @@
                                                  class="form-group form-inline input-group sidebar-form-input-group">
                                                 <input type="date" id="js-search-form__datetime__start__date-picker"
                                                        class="form-control" style="margin-left: 37px;"
-                                                       onchange="handleOnChangeOfStartDatePicker(this)" required>
+                                                       onchange="handleStartDatePickerOnChange(this)" required>
 
                                                 <input type="time" id="js-search-form__datetime__start__time-picker"
                                                        class="form-control"
-                                                       onchange="handleOnChangeOfStartTimePicker(this)">
+                                                       onchange="handleStartTimePickerOnChange(this)">
                                             </div>
 
                                             <label for="js-search-form__datetime__end__checkbox">End:</label>
@@ -277,12 +275,12 @@
                                                     <div class="input-group-text">
                                                         <input type="checkbox"
                                                                id="js-search-form__datetime__end__checkbox"
-                                                               onclick="disableEndAndGetAllEventsFromStart()">
+                                                               onclick="handleEndDatetimeCheckboxClick(this)">
                                                     </div>
                                                 </div>
                                                 <input type="date" id="js-search-form__datetime__end__date-picker"
                                                        class="form-control"
-                                                       onchange="handleOnChangeOfEndDatePicker(this)" disabled>
+                                                       onchange="handleEndDatePickerOnChange(this)" disabled>
 
                                                 <input type="time" id="js-search-form__datetime__end__time-picker"
                                                        class="form-control" disabled>
