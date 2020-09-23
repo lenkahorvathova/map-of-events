@@ -1,11 +1,93 @@
-function copyGPSValueIntoSearchForm(itemId) {
-    const itemLatitude = document.getElementById(`js-gps-table__${itemId}-latitude`).innerText;
-    const itemLongitude = document.getElementById(`js-gps-table__${itemId}-longitude`).innerText;
+function handleFirstLoad() {
+    setFutureIntoDatetimePickers();
+    const filteredEventsData = filterEventsAndLoadMap();
+    initializeEventsTable(filteredEventsData);
+}
 
-    const gpsRadioButton = document.getElementById('js-search-form__location__options__gps');
-    const gpsLongitude = document.getElementById('js-search-form__location__gps-longitude');
-    const gpsLatitude = document.getElementById('js-search-form__location__gps-latitude');
-    const radius = document.getElementById('js-search-form__location__radius');
+function showEventDetailsModal(eventData) {
+    if (eventData === null) throw `'eventData' is undefined!`;
+
+    const title = document.getElementById('modal--event-details__title');
+    title.innerText = eventData['title'];
+
+    const defaultLocation = document.getElementById('modal--event-details__location--default');
+    defaultLocation.hidden = true;
+    if (eventData['online']) {
+        defaultLocation.hidden = false;
+        defaultLocation.outerHTML = `<i class="fa fa-check-circle text-primary"> ONLINE</i>`;
+    } else {
+        defaultLocation.hidden = false;
+        defaultLocation.innerText = eventData['default_location'];
+    }
+
+    const datetime = document.getElementById('modal--event-details__datetime');
+    datetime.innerText = eventData['table_start_datetime'];
+    if (eventData['table_end_datetime']) datetime.innerText += ' - ' + eventData['table_end_datetime'];
+
+    const perex = document.getElementById('modal--event-details__perex');
+    perex.innerText = eventData['perex'];
+
+    const location = document.getElementById('modal--event-details__location');
+    if (eventData['location']) {
+        location.innerText = eventData['location'];
+    } else {
+        location.innerHTML = `<i>unknown</i>`;
+    }
+
+    const gps = document.getElementById('modal--event-details__gps');
+    const geocodedLocation = document.getElementById('modal--event-details__location--geocoded');
+    if (eventData['gps'] !== null) {
+        gps.innerText = eventData['gps'];
+        geocodedLocation.innerText = "";
+    } else {
+        gps.innerText = eventData['geocoded_gps'];
+
+        if (eventData['has_default']) {
+            geocodedLocation.innerText = '(' + eventData['default_location'] + ')';
+        } else {
+            geocodedLocation.innerText = '(' + eventData['municipality'] + ', ' + eventData['district'] + ')';
+        }
+    }
+
+    const organizer = document.getElementById('modal--event-details__organizer');
+    if (eventData['organizer']) {
+        organizer.innerText = eventData['organizer'];
+    } else {
+        organizer.innerHTML = `<i>unknown</i>`;
+    }
+
+    const source = document.getElementById('modal--event-details__calendar--url');
+    source.href = eventData['calendar_url'];
+    source.innerText = eventData['calendar_url'];
+
+    const fetchedAt = document.getElementById('modal--event-details__calendar--downloaded-at');
+    fetchedAt.innerText = new Date(eventData['calendar_downloaded_at']).toLocaleString();
+
+    const eventButton = document.getElementById('modal--event-details__url');
+    eventButton.href = eventData['event_url'];
+}
+
+function handleLocationRadioButtonsClick() {
+    const gpsRadioButton = document.getElementById('sidebar__form--filter__location__options--gps');
+    const gpsLatitude = document.getElementById('sidebar__form--filter__location__gps--latitude');
+    const gpsLongitude = document.getElementById('sidebar__form--filter__location__gps--longitude');
+    const radius = document.getElementById('sidebar__form--filter__location__radius');
+
+    gpsLongitude.disabled = gpsRadioButton.checked !== true;
+    gpsLatitude.disabled = gpsRadioButton.checked !== true;
+    gpsLongitude.required = gpsRadioButton.checked === true;
+    gpsLatitude.required = gpsRadioButton.checked === true;
+    radius.disabled = gpsRadioButton.checked !== true;
+}
+
+function copyGPSValueIntoSearchForm(itemId) {
+    const itemLatitude = document.getElementById(`modal--gps-table__table__latitude--${itemId}`).innerText;
+    const itemLongitude = document.getElementById(`modal--gps-table__table__longitude--${itemId}`).innerText;
+
+    const gpsRadioButton = document.getElementById('sidebar__form--filter__location__options--gps');
+    const gpsLatitude = document.getElementById('sidebar__form--filter__location__gps--latitude');
+    const gpsLongitude = document.getElementById('sidebar__form--filter__location__gps--longitude');
+    const radius = document.getElementById('sidebar__form--filter__location__radius');
 
     gpsLatitude.disabled = false;
     gpsLatitude.required = true;
@@ -16,40 +98,40 @@ function copyGPSValueIntoSearchForm(itemId) {
     gpsLongitude.value = itemLongitude;
     radius.disabled = false;
 
-    document.getElementById('modal-button-close').click();
+    document.getElementById('modal--gps-table__close-button').click();
 }
 
-function addRowToGPSTable(number, item) {
-    const tbody = document.querySelector('#js-gps-table > tbody');
+function addRowToGPSTable(itemId, item) {
+    const tbody = document.querySelector('#modal--gps-table__table > tbody');
     const tr = tbody.insertRow();
-    tr.insertCell(0).outerHTML = `<th scope="row">${number}</th>`;
+    tr.insertCell(0).outerHTML = `<th scope="row">${itemId}</th>`;
 
     const td1 = tr.insertCell();
     td1.textContent = item['label'];
 
     const td2 = tr.insertCell();
     td2.textContent = item['coords']['y'];
-    td2.id = `js-gps-table__${number}-latitude`;
+    td2.id = `modal--gps-table__table__latitude--${itemId}`;
 
     const td3 = tr.insertCell();
     td3.textContent = item['coords']['x'];
-    td3.id = `js-gps-table__${number}-longitude`;
+    td3.id = `modal--gps-table__table__longitude--${itemId}`;
 
     const td4 = tr.insertCell();
-    td4.innerHTML = `<button type="button" class="btn btn-primary btn-block" onclick="copyGPSValueIntoSearchForm(${number})">Use</button>`;
+    td4.innerHTML = `<button type="button" class="btn btn-primary btn-block" onclick="copyGPSValueIntoSearchForm(${itemId})">Use</button>`;
 }
 
 function addMessageRowToGPSTable(message) {
-    const tbody = document.querySelector('#js-gps-table > tbody');
+    const tbody = document.querySelector('#modal--gps-table__table > tbody');
     const tr = tbody.insertRow();
-    tr.insertCell().outerHTML = `<td colspan="5" style="text-align: center;">${message}</td>`;
+    tr.insertCell().outerHTML = `<td colspan="5" class="centered-cell-content">${message}</td>`;
 }
 
 function clearTbodyOfGPSTable() {
-    const oldTbody = document.querySelector('#js-gps-table > tbody');
+    const oldTbody = document.querySelector('#modal--gps-table__table > tbody');
     if (oldTbody) oldTbody.remove();
 
-    const table = document.getElementById('js-gps-table');
+    const table = document.getElementById('modal--gps-table__table');
     const newTbody = document.createElement('tbody');
     table.appendChild(newTbody);
 }
@@ -72,8 +154,8 @@ function geocodeCallback(geocoder) {
 function handleGeocodeFormSubmission(event) {
     event.preventDefault();
 
-    const queryValue = document.getElementById('js-geocode-form__location__municipality').value;
-    const tableTitle = document.getElementById('js-gps-table-title');
+    const queryValue = document.getElementById('sidebar__form--geocode__location-query').value;
+    const tableTitle = document.getElementById('modal--gps-table__table__title');
     tableTitle.innerHTML = `Value used for the search: <strong>"${queryValue}"</strong>`;
 
     clearTbodyOfGPSTable();
@@ -83,13 +165,13 @@ function handleGeocodeFormSubmission(event) {
 }
 
 function showEventDetailsFromEventsTable(element) {
-    const eventsDatatable = $('#js-events-table').DataTable();
+    const eventsDatatable = $('#main-content__events-table').DataTable();
     const eventData = eventsDatatable.row($(element).parents('tr')).data();
     showEventDetailsModal(eventData);
 }
 
 function zoomToEventGPS(element) {
-    const eventData = $('#js-events-table').DataTable().row($(element).parents('tr')).data();
+    const eventData = $('#main-content__events-table').DataTable().row($(element).parents('tr')).data();
 
     let gps = eventData["gps"];
     if (gps === null) {
@@ -102,7 +184,7 @@ function zoomToEventGPS(element) {
 }
 
 function initializeEventsTable(eventsData) {
-    $('#js-events-table').DataTable({
+    $('#main-content__events-table').DataTable({
         "data": eventsData,
         columns: [
             {data: 'table_title'},
@@ -120,13 +202,13 @@ function initializeEventsTable(eventsData) {
             "orderable": false,
             "defaultContent":
                     `
-                        <div style="text-align: center; white-space: nowrap">
-                            <button type="button" id="event-detail-btn" class="btn btn-secondary btn-sm"
-                                    data-target="#eventDetails" onclick="showEventDetailsFromEventsTable(this)" data-toggle="modal"
+                        <div class="centered-cell-content">
+                            <button type="button" class="btn btn-secondary btn-sm"
+                                    data-target="#modal--event-details" onclick="showEventDetailsFromEventsTable(this)" data-toggle="modal"
                                     title="Show event's details.">
                                 <i class="fa fa-info-circle"></i>
                             </button>
-                            <button type="button" id="event-target-btn" class="btn btn-secondary btn-sm"
+                            <button type="button" class="btn btn-secondary btn-sm"
                                     title="Zoom event's location on the map." onclick="zoomToEventGPS(this)">
                                 <i class="fa fa-bullseye"></i>
                             </button>
@@ -139,7 +221,7 @@ function initializeEventsTable(eventsData) {
 }
 
 function reloadEventsTable(eventsData) {
-    const eventsDatatable = $('#js-events-table').DataTable();
+    const eventsDatatable = $('#main-content__events-table').DataTable();
     eventsDatatable.clear();
     eventsDatatable.rows.add(eventsData);
     eventsDatatable.draw();
@@ -150,86 +232,4 @@ function handleSearchFormSubmission(event) {
 
     const filteredEventsData = filterEventsAndLoadMap();
     reloadEventsTable(filteredEventsData);
-}
-
-function handleLocationRadioButtonsClick() {
-    const gpsRadioButton = document.getElementById('js-search-form__location__options__gps');
-    const gpsLongitude = document.getElementById('js-search-form__location__gps-longitude');
-    const gpsLatitude = document.getElementById('js-search-form__location__gps-latitude');
-    const radius = document.getElementById('js-search-form__location__radius');
-
-    gpsLongitude.disabled = gpsRadioButton.checked !== true;
-    gpsLatitude.disabled = gpsRadioButton.checked !== true;
-    gpsLongitude.required = gpsRadioButton.checked === true;
-    gpsLatitude.required = gpsRadioButton.checked === true;
-    radius.disabled = gpsRadioButton.checked !== true;
-}
-
-function showEventDetailsModal(eventData) {
-    if (eventData === null) throw `'eventData' is undefined!`;
-
-    const title = document.getElementById('event-title');
-    title.innerText = eventData['title'];
-
-    const defaultLocation = document.getElementById('event-default-location');
-    defaultLocation.hidden = true;
-    if (eventData['online']) {
-        defaultLocation.hidden = false;
-        defaultLocation.outerHTML = `<i id="event-online" class="fa fa-check-circle text-primary"> ONLINE</i>`;
-    } else {
-        defaultLocation.hidden = false;
-        defaultLocation.innerText = eventData['default_location'];
-    }
-
-    const datetime = document.getElementById('event-datetime');
-    datetime.innerText = eventData['table_start_datetime'];
-    if (eventData['table_end_datetime']) datetime.innerText += ' - ' + eventData['table_end_datetime'];
-
-    const perex = document.getElementById('event-perex');
-    perex.innerText = eventData['perex'];
-
-    const location = document.getElementById('event-location');
-    if (eventData['location']) {
-        location.innerText = eventData['location'];
-    } else {
-        location.innerHTML = `<i>unknown</i>`;
-    }
-
-    const gps = document.getElementById('event-gps');
-    const geocoded = document.getElementById('event-geocoded');
-    if (eventData['gps'] !== null) {
-        gps.innerText = eventData['gps'];
-        geocoded.innerText = "";
-    } else {
-        gps.innerText = eventData['geocoded_gps'];
-
-        if (eventData['has_default']) {
-            geocoded.innerText = '(' + eventData['default_location'] + ')';
-        } else {
-            geocoded.innerText = '(' + eventData['municipality'] + ', ' + eventData['district'] + ')';
-        }
-    }
-
-    const organizer = document.getElementById('event-organizer');
-    if (eventData['organizer']) {
-        organizer.innerText = eventData['organizer'];
-    } else {
-        organizer.innerHTML = `<i>unknown</i>`;
-    }
-
-    const source = document.getElementById('event-calendar-url');
-    source.href = eventData['calendar_url'];
-    source.innerText = eventData['calendar_url'];
-
-    const fetchedAt = document.getElementById('event-downloaded-at');
-    fetchedAt.innerText = new Date(eventData['calendar_downloaded_at']).toLocaleString();
-
-    const eventButton = document.getElementById('event-url');
-    eventButton.href = eventData['event_url'];
-}
-
-function handleFirstLoad() {
-    setFutureIntoDatetimePickers();
-    const filteredEventsData = filterEventsAndLoadMap();
-    initializeEventsTable(filteredEventsData);
 }

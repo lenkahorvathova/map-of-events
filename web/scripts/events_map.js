@@ -40,9 +40,9 @@ function createCustomCluster() {
                     <tr>
                         <td>${this._markers[i]._options.title}</td>
                         <td>
-                            <div style="text-align: center; white-space: nowrap">
+                            <div class="centered-cell-content">
                                 <button type="button" class="btn btn-secondary btn-sm"
-                                        data-toggle="modal" data-target="#eventDetails"
+                                        data-toggle="modal" data-target="#modal--event-details"
                                         onclick="showEventDetailsFromCard(${this._markers[i]._options.eventId})"
                                         title="Show event's details.">
                                     <i class="fa fa-info-circle"></i>
@@ -160,7 +160,7 @@ function addLayerForGPSMark(specifiedCoordinates) {
 }
 
 function initializeMap() {
-    GLB_MAP = new SMap(document.getElementById('map'));
+    GLB_MAP = new SMap(document.getElementById('main-content__map'));
     GLB_MAP.addControl(new SMap.Control.Sync());
     GLB_MAP.addDefaultLayer(SMap.DEF_BASE).enable();
     GLB_MAP.addDefaultControls();
@@ -172,16 +172,16 @@ function initializeMap() {
 function filterEventsAndLoadMap() {
     initializeMap();
 
-    const onlineChecked = document.getElementById('js-search-form__location__options__online').checked;
-    const gpsChecked = document.getElementById('js-search-form__location__options__gps').checked;
+    const onlineChecked = document.getElementById('sidebar__form--filter__location__options--online').checked;
+    const gpsChecked = document.getElementById('sidebar__form--filter__location__options--gps').checked;
 
     let specifiedRadius = null;
     let specifiedCoordinates = null;
     if (gpsChecked) {
-        specifiedRadius = document.getElementById('js-search-form__location__radius').value;
+        specifiedRadius = document.getElementById('sidebar__form--filter__location__radius').value;
 
-        const gpsLatitude = parseFloat(document.getElementById('js-search-form__location__gps-latitude').value);
-        const gpsLongitude = parseFloat(document.getElementById('js-search-form__location__gps-longitude').value);
+        const gpsLatitude = parseFloat(document.getElementById('sidebar__form--filter__location__gps--latitude').value);
+        const gpsLongitude = parseFloat(document.getElementById('sidebar__form--filter__location__gps--longitude').value);
         specifiedCoordinates = SMap.Coords.fromWGS84(gpsLongitude, gpsLatitude);
 
         addLayerForGPSMark(specifiedCoordinates);
@@ -190,13 +190,13 @@ function filterEventsAndLoadMap() {
         addLayerForRadiusCircle(specifiedRadius, specifiedCoordinates, circlePoint);
     }
 
-    const startDate = document.getElementById('js-search-form__datetime__start__date-picker').value;
-    let startTime = document.getElementById('js-search-form__datetime__start__time-picker').value;
+    const startDate = document.getElementById('sidebar__form--filter__datetime__start--date-picker').value;
+    let startTime = document.getElementById('sidebar__form--filter__datetime__start--time-picker').value;
     if (startTime === null) startTime = "00:00";
     const specifiedStartDatetime = new Date(startDate + ' ' + startTime);
 
-    const endDate = document.getElementById('js-search-form__datetime__end__date-picker').value;
-    let endTime = document.getElementById('js-search-form__datetime__end__time-picker').value;
+    const endDate = document.getElementById('sidebar__form--filter__datetime__end--date-picker').value;
+    let endTime = document.getElementById('sidebar__form--filter__datetime__end--time-picker').value;
     if (endTime === null) endTime = "23:59";
     let specifiedEndDatetime;
     if (endDate !== null) {
@@ -254,9 +254,9 @@ function filterEventsAndLoadMap() {
         const eventCard = new SMap.Card();
         eventCard.getHeader().innerHTML = `<strong>${GLB_EVENTS_DATASET[eventId]['title']}</strong>`;
         eventCard.getBody().innerHTML = `
-            <div style="text-align: center; white-space: nowrap">
+            <div class="centered-cell-content">
                 <button type="button" class="btn btn-secondary"
-                        data-toggle="modal" data-target="#eventDetails"
+                        data-toggle="modal" data-target="#modal--event-details"
                         onclick="showEventDetailsFromCard(${eventId})"
                         title="Show event's details.">
                     <i class="fa fa-info-circle"></i>
@@ -284,7 +284,7 @@ function filterEventsAndLoadMap() {
 
     const CustomCluster = createCustomCluster();
     const eventsMarksLayer = new SMap.Layer.Marker();
-    let clusterer = new SMap.Marker.Clusterer(GLB_MAP, 50, CustomCluster);
+    const clusterer = new SMap.Marker.Clusterer(GLB_MAP, 50, CustomCluster);
     eventsMarksLayer.setClusterer(clusterer);
 
     for (let i = 0; i < marks.length; i++) {

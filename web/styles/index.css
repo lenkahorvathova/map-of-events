@@ -5,3 +5,8 @@
 .sidebar-form-input-group {
     min-width: 300px;
 }
+
+.centered-cell-content {
+    text-align: center;
+    white-space: nowrap
+}

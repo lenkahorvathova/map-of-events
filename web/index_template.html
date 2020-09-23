@@ -50,18 +50,18 @@
 
         <!-- Modal Windows -->
         <!--    - Geo-coded Location into GPS -->
-        <div id="locationTable" class="modal">
+        <div id="modal--gps-table" class="modal">
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
                         <h4 class="modal-title">Location Search Results</h4>
-                        <button type="button" id="modal-button-close" class="close" data-dismiss="modal">
+                        <button type="button" id="modal--gps-table__close-button" class="close" data-dismiss="modal">
                             &times;
                         </button>
                     </div>
                     <div class="modal-body">
-                        <p id="js-gps-table-title"></p>
-                        <table id="js-gps-table" class="table table-bordered table-hover table-sm">
+                        <p id="modal--gps-table__table__title"></p>
+                        <table id="modal--gps-table__table" class="table table-bordered table-hover table-sm">
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
@@ -78,51 +78,54 @@
         </div>
 
         <!--    - Event's Details -->
-        <div id="eventDetails" class="modal">
+        <div id="modal--event-details" class="modal">
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header card-header">
-                        <h4 class="modal-title my-0 font-weight-normal">Event's Detail</h4>
-                        <button type="button" id="detail-button-close" class="close" data-dismiss="modal">
+                        <h4 class="modal-title my-0 font-weight-normal">Event's Details</h4>
+                        <button type="button" class="close" data-dismiss="modal">
                             &times;
                         </button>
                     </div>
                     <div class="modal-body">
                         <div class="text-center">
-                            <h5 id="event-title"></h5>
-                            <p id="event-default-location" class="mb-2 text-muted text-uppercase small" hidden></p>
-                            <p><span class="mr-1"><strong id="event-datetime"></strong></span></p>
+                            <h5 id="modal--event-details__title"></h5>
+                            <p id="modal--event-details__location--default" class="mb-2 text-muted text-uppercase small"
+                               hidden></p>
+                            <p><span class="mr-1"><strong id="modal--event-details__datetime"></strong></span></p>
                         </div>
-                        <p id="event-perex" class="pt-1"></p>
+                        <p id="modal--event-details__perex" class="pt-1"></p>
                         <div class="table-responsive">
                             <table class="table table-sm table-borderless mb-0">
                                 <tbody>
                                     <tr>
                                         <th class="pl-0 w-25" scope="row"><strong>Location</strong></th>
-                                        <td id="event-location"><i>unknown</i></td>
+                                        <td id="modal--event-details__location"><i>unknown</i></td>
                                     </tr>
                                     <tr>
                                         <th class="pl-0 w-25" scope="row"><strong>GPS</strong></th>
-                                        <td><span id="event-gps"></span>
-                                            <span id="event-geocoded" class="text-muted small"></span></td>
+                                        <td><span id="modal--event-details__gps"></span>
+                                            <span id="modal--event-details__location--geocoded"
+                                                  class="text-muted small"></span></td>
                                     </tr>
                                     <tr>
                                         <th class="pl-0 w-25" scope="row"><strong>Organizer</strong></th>
-                                        <td id="event-organizer"><i>unknown</i></td>
+                                        <td id="modal--event-details__organizer"><i>unknown</i></td>
                                     </tr>
                                     <tr>
                                         <th class="pl-0 w-25" scope="row"><strong>Source</strong></th>
-                                        <td><a id="event-calendar-url" target="_blank"></a></td>
+                                        <td><a id="modal--event-details__calendar--url" target="_blank"></a></td>
                                     </tr>
                                     <tr>
                                         <th class="pl-0 w-25" scope="row"><strong>Fetched at</strong></th>
-                                        <td id="event-downloaded-at"></td>
+                                        <td id="modal--event-details__calendar--downloaded-at"></td>
                                     </tr>
                                 </tbody>
                             </table>
                         </div>
                         <hr>
-                        <a type="button" id="event-url" class="btn btn-info btn-md mr-1 mb-2 float-right"
+                        <a type="button" id="modal--event-details__url"
+                           class="btn btn-info btn-md mr-1 mb-2 float-right"
                            target="_blank">
                             <i class="fa fa-external-link-square"></i> Go to event's page
                         </a>
@@ -143,15 +146,15 @@
 
                                 <!-- Forms -->
                                 <!--    - Geo-coding Location -->
-                                <form id="js-geocode-form" onsubmit="return handleGeocodeFormSubmission(event)">
+                                <form id="sidebar__form--geocode" onsubmit="return handleGeocodeFormSubmission(event)">
                                     <h6 class="sidebar-heading d-flex mt-4 text-muted">Acquiring GPS</h6>
-                                    <label for="js-geocode-form__location__municipality">Location:</label>
+                                    <label for="sidebar__form--geocode__location-query">Location:</label>
                                     <div class="form-group input-group sidebar-form-input-group">
-                                        <input type="text" id="js-geocode-form__location__municipality"
+                                        <input type="text" id="sidebar__form--geocode__location-query"
                                                class="form-control" placeholder="Search">
                                         <div class="input-group-append">
                                             <button type="submit" class="btn btn-outline-secondary"
-                                                    data-target="#locationTable" data-toggle="modal">
+                                                    data-target="#modal--gps-table" data-toggle="modal">
                                                 <i class="fa fa-search"></i>
                                             </button>
                                         </div>
@@ -162,40 +165,42 @@
                                 <hr/>
 
                                 <!--    - Filtering Events -->
-                                <form id="js-search-form" onsubmit="return handleSearchFormSubmission(event)">
+                                <form id="sidebar__form--filter" onsubmit="return handleSearchFormSubmission(event)">
 
                                     <!--        -- Location -->
                                     <h6 class="sidebar-heading d-flex mt-4 text-muted">Narrowing Location</h6>
-                                    <div id="search-form__location" class="form-group">
+                                    <div id="sidebar__form--filter__location" class="form-group">
 
                                         <!--            --- Radio Buttons -->
-                                        <div id="search-form__location__options" class="form-group form-inline">
+                                        <div id="sidebar__form--filter__location__options"
+                                             class="form-group form-inline">
                                             <div class="form-check form-check-inline">
-                                                <input type="radio" id="js-search-form__location__options__all"
+                                                <input type="radio" id="sidebar__form--filter__location__options--all"
                                                        class="form-check-input"
                                                        name="locationOptions" value="allOption"
                                                        onclick="handleLocationRadioButtonsClick()" checked>
-                                                <label for="js-search-form__location__options__all"
+                                                <label for="sidebar__form--filter__location__options--all"
                                                        class="form-check-label">
                                                     ALL
                                                 </label>
                                             </div>
                                             <div class="form-check form-check-inline">
-                                                <input type="radio" id="js-search-form__location__options__online"
+                                                <input type="radio"
+                                                       id="sidebar__form--filter__location__options--online"
                                                        class="form-check-input"
                                                        name="locationOptions" value="onlineOption"
                                                        onclick="handleLocationRadioButtonsClick()">
-                                                <label for="js-search-form__location__options__online"
+                                                <label for="sidebar__form--filter__location__options--online"
                                                        class="form-check-label">
                                                     ONLINE
                                                 </label>
                                             </div>
                                             <div class="form-check form-check-inline">
-                                                <input type="radio" id="js-search-form__location__options__gps"
+                                                <input type="radio" id="sidebar__form--filter__location__options--gps"
                                                        class="form-check-input"
                                                        name="locationOptions" value="gpsRadiusOption"
                                                        onclick="handleLocationRadioButtonsClick()">
-                                                <label for="js-search-form__location__options__gps"
+                                                <label for="sidebar__form--filter__location__options--gps"
                                                        class="form-check-label">
                                                     GPS
                                                 </label>
@@ -204,21 +209,21 @@
 
                                         <!--            --- GPS + Radius -->
                                         <div class="form-group">
-                                            <label for="js-search-form__location__gps">GPS:</label>
-                                            <div id="js-search-form__location__gps"
+                                            <label for="sidebar__form--filter__location__gps">GPS:</label>
+                                            <div id="sidebar__form--filter__location__gps"
                                                  class="form-group form-inline input-group sidebar-form-input-group">
-                                                <input type="text" id="js-search-form__location__gps-latitude"
+                                                <input type="text" id="sidebar__form--filter__location__gps--latitude"
                                                        class="form-control" placeholder="Latitude"
                                                        pattern="^(\+|-)?(?:90(?:(?:\.0{1,})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,})?))$"
                                                        title="(Use a decimal format of a coordinate.)" disabled>
-                                                <input type="text" id="js-search-form__location__gps-longitude"
+                                                <input type="text" id="sidebar__form--filter__location__gps--longitude"
                                                        class="form-control" placeholder="Longitude"
                                                        pattern="^(\+|-)?(?:180(?:(?:\.0{1,})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,})?))$"
                                                        title="(Use a decimal format of a coordinate.)" disabled>
                                             </div>
-                                            <label for="js-search-form__location__radius">Radius:</label>
+                                            <label for="sidebar__form--filter__location__radius">Radius:</label>
                                             <div class="form-group input-group sidebar-form-input-group">
-                                                <input type="number" id="js-search-form__location__radius"
+                                                <input type="number" id="sidebar__form--filter__location__radius"
                                                        class="form-control" value=20 min=0 disabled>
                                                 <div class="input-group-append">
                                                     <span class="input-group-text">km</span>
@@ -231,22 +236,26 @@
 
                                     <!--        -- Datetime -->
                                     <h6 class="sidebar-heading d-flex mt-4 text-muted">Specifying Dates</h6>
-                                    <div id="search-form__datetime" class="form-group">
+                                    <div id="sidebar__form--filter__datetime" class="form-group">
 
                                         <!--            --- Helper Buttons -->
-                                        <div id="search-form__datetime__buttons" class="form-group text-center">
+                                        <div id="sidebar__form--filter__datetime__helper-buttons"
+                                             class="form-group text-center">
                                             <div class="btn-group sidebar-form-input-group">
-                                                <button type="button" id="search-form__datetime__buttons__today"
+                                                <button type="button"
+                                                        id="sidebar__form--filter__datetime__helper-buttons--today"
                                                         class="btn btn-outline-dark"
                                                         onclick="setTodayIntoDatetimePickers()">
                                                     Today
                                                 </button>
-                                                <button type="button" id="search-form__datetime__buttons__tomorrow"
+                                                <button type="button"
+                                                        id="sidebar__form--filter__datetime__helper-buttons--tomorrow"
                                                         class="btn btn-outline-dark"
                                                         onclick="setTomorrowIntoDatetimePickers()">
                                                     Tomorrow
                                                 </button>
-                                                <button type="button" id="search-form__datetime__buttons__next-10-days"
+                                                <button type="button"
+                                                        id="sidebar__form--filter__datetime__helper-buttons--next-10-days"
                                                         class="btn btn-outline-dark"
                                                         onclick="setNext10DaysIntoDatetimePickers()">
                                                     Next 10 days
@@ -256,33 +265,37 @@
 
                                         <!--            --- Pickers -->
                                         <div class="form-group">
-                                            <label for="search-form__datetime__start">Start:</label>
-                                            <div id="search-form__datetime__start"
+                                            <label for="sidebar__form--filter__datetime__start">Start:</label>
+                                            <div id="sidebar__form--filter__datetime__start"
                                                  class="form-group form-inline input-group sidebar-form-input-group">
-                                                <input type="date" id="js-search-form__datetime__start__date-picker"
+                                                <input type="date"
+                                                       id="sidebar__form--filter__datetime__start--date-picker"
                                                        class="form-control" style="margin-left: 37px;"
                                                        onchange="handleStartDatePickerOnChange(this)" required>
 
-                                                <input type="time" id="js-search-form__datetime__start__time-picker"
+                                                <input type="time"
+                                                       id="sidebar__form--filter__datetime__start--time-picker"
                                                        class="form-control"
                                                        onchange="handleStartTimePickerOnChange(this)">
                                             </div>
 
-                                            <label for="js-search-form__datetime__end__checkbox">End:</label>
-                                            <div id="search-form__datetime__end"
+                                            <label for="sidebar__form--filter__datetime__end">End:</label>
+                                            <div id="sidebar__form--filter__datetime__end"
                                                  class="form-group form-inline input-group sidebar-form-input-group">
                                                 <div class="input-group-prepend">
                                                     <div class="input-group-text">
                                                         <input type="checkbox"
-                                                               id="js-search-form__datetime__end__checkbox"
+                                                               id="sidebar__form--filter__datetime__end--checkbox"
                                                                onclick="handleEndDatetimeCheckboxClick(this)">
                                                     </div>
                                                 </div>
-                                                <input type="date" id="js-search-form__datetime__end__date-picker"
+                                                <input type="date"
+                                                       id="sidebar__form--filter__datetime__end--date-picker"
                                                        class="form-control"
                                                        onchange="handleEndDatePickerOnChange(this)" disabled>
 
-                                                <input type="time" id="js-search-form__datetime__end__time-picker"
+                                                <input type="time"
+                                                       id="sidebar__form--filter__datetime__end--time-picker"
                                                        class="form-control" disabled>
                                             </div>
                                         </div>
@@ -290,7 +303,7 @@
 
                                     <br/>
 
-                                    <button type="submit" class="btn btn-primary float-right mb-20">Search</button>
+                                    <button type="submit" class="btn btn-primary float-right mb-2">Search</button>
                                 </form>
 
                             </div>
@@ -300,23 +313,23 @@
                 </div>
 
                 <!-- Main Content -->
-                <main id="content" class="col-md-7 col-lg-8 col-xl-9 ml-sm-auto pt-3 px-4" role="main">
+                <main id="main-content" class="col-md-7 col-lg-8 col-xl-9 ml-sm-auto pt-3 px-4" role="main">
                     <div>
 
                         <!-- Events Listing -->
-                        <!--    Map -->
+                        <!--    - Map -->
                         <div class="row">
                             <div class="col d-flex">
-                                <div id="map" class="my-4 w-100 border border-light rounded"
+                                <div id="main-content__map" class="my-4 w-100 border border-light rounded"
                                      style="height:400px;"></div>
                             </div>
                         </div>
 
-                        <!--    Table -->
+                        <!--    - Table -->
                         <h2>Events Found</h2>
                         <div class="row">
                             <div class="col table-responsive rounded">
-                                <table id="js-events-table"
+                                <table id="main-content__events-table"
                                        class="table table-bordered table-striped table-hover table-sm">
                                     <thead class="thead-dark">
                                         <tr>

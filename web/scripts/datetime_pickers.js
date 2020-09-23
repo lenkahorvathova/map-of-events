@@ -25,10 +25,10 @@ function setValuesOfDatetimePickers(startDate, startTime, endDate, endTime) {
         throw `'endTime'(${endTime}) is before 'startTime'(${startTime}) on the same date(${startDate})!`;
     }
 
-    const startDatePicker = document.getElementById('js-search-form__datetime__start__date-picker');
-    const startTimePicker = document.getElementById('js-search-form__datetime__start__time-picker');
-    const endDatePicker = document.getElementById('js-search-form__datetime__end__date-picker');
-    const endTimePicker = document.getElementById('js-search-form__datetime__end__time-picker');
+    const startDatePicker = document.getElementById('sidebar__form--filter__datetime__start--date-picker');
+    const startTimePicker = document.getElementById('sidebar__form--filter__datetime__start--time-picker');
+    const endDatePicker = document.getElementById('sidebar__form--filter__datetime__end--date-picker');
+    const endTimePicker = document.getElementById('sidebar__form--filter__datetime__end--time-picker');
 
     startDatePicker.value = startDate;
     startDatePicker.min = startDate;
@@ -49,9 +49,9 @@ function setFutureIntoDatetimePickers() {
 }
 
 function enableEnd() {
-    const endDatetimeCheckbox = document.getElementById('js-search-form__datetime__end__checkbox');
-    const endDatePicker = document.getElementById('js-search-form__datetime__end__date-picker');
-    const endTimePicker = document.getElementById('js-search-form__datetime__end__time-picker');
+    const endDatetimeCheckbox = document.getElementById('sidebar__form--filter__datetime__end--checkbox');
+    const endDatePicker = document.getElementById('sidebar__form--filter__datetime__end--date-picker');
+    const endTimePicker = document.getElementById('sidebar__form--filter__datetime__end--time-picker');
 
     endDatetimeCheckbox.checked = true;
     endDatePicker.disabled = false;
@@ -81,8 +81,8 @@ function setTomorrowIntoDatetimePickers() {
 function setNext10DaysIntoDatetimePickers() {
     enableEnd();
 
-    const startDate = document.getElementById('js-search-form__datetime__start__date-picker').value;
-    const startTime = document.getElementById('js-search-form__datetime__start__time-picker').value;
+    const startDate = document.getElementById('sidebar__form--filter__datetime__start--date-picker').value;
+    const startTime = document.getElementById('sidebar__form--filter__datetime__start--time-picker').value;
 
     const date = new Date(startDate + ' ' + (startTime !== null ? startTime : '00:00'));
     date.setDate(date.getDate() + 10);
@@ -92,29 +92,29 @@ function setNext10DaysIntoDatetimePickers() {
 }
 
 function handleEndDatetimeCheckboxClick(endDatetimeCheckbox) {
-    const startDate = document.getElementById('js-search-form__datetime__start__date-picker').value;
-    const startTime = document.getElementById('js-search-form__datetime__start__time-picker').value;
+    const startDate = document.getElementById('sidebar__form--filter__datetime__start--date-picker').value;
+    const startTime = document.getElementById('sidebar__form--filter__datetime__start--time-picker').value;
 
     setValuesOfDatetimePickers(startDate, startTime, null, null);
 
-    const endDatePicker = document.getElementById('js-search-form__datetime__end__date-picker');
-    const endTimePicker = document.getElementById('js-search-form__datetime__end__time-picker');
+    const endDatePicker = document.getElementById('sidebar__form--filter__datetime__end--date-picker');
+    const endTimePicker = document.getElementById('sidebar__form--filter__datetime__end--time-picker');
 
     endDatePicker.disabled = endDatetimeCheckbox.checked !== true;
     endTimePicker.disabled = endDatetimeCheckbox.checked !== true;
 }
 
 function setEndTimePickerMin(newMin) {
-    const endTimePicker = document.getElementById('js-search-form__datetime__end__time-picker');
+    const endTimePicker = document.getElementById('sidebar__form--filter__datetime__end--time-picker');
     endTimePicker.min = newMin;
 }
 
 function handleStartDatePickerOnChange(startDatePicker) {
-    const endDatePicker = document.getElementById('js-search-form__datetime__end__date-picker');
+    const endDatePicker = document.getElementById('sidebar__form--filter__datetime__end--date-picker');
     endDatePicker.min = startDatePicker.value;
 
     if (startDatePicker.value === endDatePicker.value) {
-        const startTimePicker = document.getElementById('js-search-form__datetime__start__time-picker');
+        const startTimePicker = document.getElementById('sidebar__form--filter__datetime__start--time-picker');
         setEndTimePickerMin(startTimePicker.value);
     } else {
         setEndTimePickerMin("");
@@ -122,8 +122,8 @@ function handleStartDatePickerOnChange(startDatePicker) {
 }
 
 function handleStartTimePickerOnChange(startTimePicker) {
-    const startDatePicker = document.getElementById('js-search-form__datetime__start__date-picker');
-    const endDatePicker = document.getElementById('js-search-form__datetime__end__date-picker');
+    const startDatePicker = document.getElementById('sidebar__form--filter__datetime__start--date-picker');
+    const endDatePicker = document.getElementById('sidebar__form--filter__datetime__end--date-picker');
 
     if (startDatePicker.value === endDatePicker.value) {
         setEndTimePickerMin(startTimePicker.value);
@@ -131,10 +131,10 @@ function handleStartTimePickerOnChange(startTimePicker) {
 }
 
 function handleEndDatePickerOnChange(endDatePicker) {
-    const startDatePicker = document.getElementById('js-search-form__datetime__start__date-picker');
+    const startDatePicker = document.getElementById('sidebar__form--filter__datetime__start--date-picker');
 
     if (startDatePicker.value === endDatePicker.value) {
-        const startTimePicker = document.getElementById('js-search-form__datetime__start__time-picker');
+        const startTimePicker = document.getElementById('sidebar__form--filter__datetime__start--time-picker');
         setEndTimePickerMin(startTimePicker.value);
     } else {
         setEndTimePickerMin("");
