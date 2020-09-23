@@ -1,3 +1,7 @@
 .smap .cluster div {
     box-sizing: content-box;
 }
+
+.sidebar-form-input-group {
+    min-width: 300px;
+}
