@@ -10,7 +10,7 @@ from lib.constants import MUNICIPALITIES_OF_CR_FILE
 
 
 class PrepareMunicipalitiesCSV:
-    CUZK_XML_FILE_PATH = "resources/20200630_ST_UZSZ.xml"
+    CUZK_XML_FILE_PATH = "resources/geocoding/20200630_ST_UZSZ.xml"
 
     SOURCE_EPSG = 5514  # Czechia
     TARGET_EPSG = 4326  # World

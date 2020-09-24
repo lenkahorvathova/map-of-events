@@ -22,7 +22,7 @@ class GetDefaultGPS:
     """
 
     OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "get_default_gps_output.json")
-    GEOCODING_TEMPLATE_HTML_FILE = "resources/research/geocoding_template.html"
+    GEOCODING_TEMPLATE_HTML_FILE = "resources/research/vismo_geocoding_template.html"
     GEOCODING_RESULT_HTML_FILE = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "geocoding_result.html")
     GEOCODING_OUTPUT_JSON_FILE = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "geocoding_output.json")
 
