@@ -16,7 +16,7 @@ function calculateDistanceInKilometers(coordinatesA, coordinatesB) {
     return 2 * EARTH_RADIUS * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
-function showEventDetailsFromCard(eventId) {
+function showEventDetailsFromMap(eventId) {
     const eventData = GLB_EVENTS_DATASET[eventId];
     showEventDetailsModal(eventData);
 }
@@ -43,7 +43,7 @@ function createCustomCluster() {
                             <div class="centered-cell-content">
                                 <button type="button" class="btn btn-secondary btn-sm"
                                         data-toggle="modal" data-target="#modal--event-details"
-                                        onclick="showEventDetailsFromCard(${this._markers[i]._options.eventId})"
+                                        onclick="showEventDetailsFromMap(${this._markers[i]._options.eventId})"
                                         title="Show event's details.">
                                     <i class="fa fa-info-circle"></i>
                                 </button>
@@ -116,6 +116,24 @@ function prepareEventDataForEventsTable(event) {
     return event;
 }
 
+function calculateDurationInWeeks(dateA, dateB) {
+    let furtherDate;
+    let closerDate;
+    if (dateA > dateB) {
+        furtherDate = dateA;
+        closerDate = dateB;
+    } else if (dateA < dateB) {
+        furtherDate = dateB;
+        closerDate = dateA;
+    } else {
+        return 0;
+    }
+
+    let diff = (furtherDate.getTime() - closerDate.getTime()) / 1000;
+    diff /= (60 * 60 * 24 * 7);
+    return Math.abs(Math.round(diff));
+}
+
 function addLayerForRadiusCircle(specifiedRadius, specifiedCoordinates, circlePoint) {
     const specifiedRadiusLayer = new SMap.Layer.Geometry();
     GLB_MAP.addLayer(specifiedRadiusLayer);
@@ -167,14 +185,21 @@ function initializeMap() {
 
     const mouse = new SMap.Control.Mouse(SMap.MOUSE_PAN | SMap.MOUSE_WHEEL | SMap.MOUSE_ZOOM);
     GLB_MAP.addControl(mouse);
+
+    GLB_MAP.getSignals().addListener(this, "marker-click", function (event) {
+        const target = event.target;
+        if (target.getActive().className === "marker") {
+            const eventId = target._options.eventId;
+            showEventDetailsFromMap(eventId);
+            $("#modal--event-details").modal();
+        }
+    });
 }
 
 function filterEventsAndLoadMap() {
     initializeMap();
 
-    const onlineChecked = document.getElementById('sidebar__form--filter__location__options--online').checked;
     const gpsChecked = document.getElementById('sidebar__form--filter__location__options--gps').checked;
-
     let specifiedRadius = null;
     let specifiedCoordinates = null;
     if (gpsChecked) {
@@ -191,18 +216,18 @@ function filterEventsAndLoadMap() {
     }
 
     const startDate = document.getElementById('sidebar__form--filter__datetime__start--date-picker').value;
-    let startTime = document.getElementById('sidebar__form--filter__datetime__start--time-picker').value;
-    if (startTime === null) startTime = "00:00";
-    const specifiedStartDatetime = new Date(startDate + ' ' + startTime);
+    let specifiedStartTime = document.getElementById('sidebar__form--filter__datetime__start--time-picker').value;
+    if (specifiedStartTime === "") specifiedStartTime = "00:00";
+    const specifiedStartDatetime = new Date(startDate + ' ' + specifiedStartTime);
 
     const endDate = document.getElementById('sidebar__form--filter__datetime__end--date-picker').value;
-    let endTime = document.getElementById('sidebar__form--filter__datetime__end--time-picker').value;
-    if (endTime === null) endTime = "23:59";
+    let specifiedEndTime = document.getElementById('sidebar__form--filter__datetime__end--time-picker').value;
+    if (specifiedEndTime === "") specifiedEndTime = "23:59";
     let specifiedEndDatetime;
-    if (endDate !== null) {
-        specifiedEndDatetime = new Date(endDate + ' ' + endTime);
-    } else {
+    if (endDate === "") {
         specifiedEndDatetime = new Date(8640000000000000);
+    } else {
+        specifiedEndDatetime = new Date(endDate + ' ' + specifiedEndTime);
     }
 
     const marks = [];
@@ -215,24 +240,43 @@ function filterEventsAndLoadMap() {
             continue;
         }
 
+        const onlineChecked = document.getElementById('sidebar__form--filter__location__options--online').checked;
         if (onlineChecked && !GLB_EVENTS_DATASET[eventId]['online']) {
             continue;
         }
 
+        const ongoingChecked = document.getElementById('sidebar__form--filter__datetime__including-checkboxes--ongoing').checked;
+
         const eventsStartDate = GLB_EVENTS_DATASET[eventId]['start_date'];
         let eventsStartTime = GLB_EVENTS_DATASET[eventId]['start_time'];
-        if (eventsStartTime === null) eventsStartTime = "00:00";
+        if (eventsStartTime === null) eventsStartTime = ongoingChecked ? "00:00" : specifiedStartTime;
         const eventsStartDatetime = new Date(eventsStartDate + ' ' + eventsStartTime);
 
         let eventsEndDate = GLB_EVENTS_DATASET[eventId]['end_date'];
         if (eventsEndDate === null) eventsEndDate = eventsStartDate;
         let eventsEndTime = GLB_EVENTS_DATASET[eventId]['end_time'];
-        if (eventsEndTime === null) eventsEndTime = "23:59";
+        if (eventsEndTime === null) eventsEndTime = ongoingChecked ? "23:59" : specifiedEndTime;
         const eventsEndDatetime = new Date(eventsEndDate + ' ' + eventsEndTime);
 
-        if ((eventsStartDatetime < specifiedStartDatetime && eventsEndDatetime < specifiedStartDatetime)
-                || (eventsStartDatetime > specifiedEndDatetime && eventsEndDatetime > specifiedEndDatetime)) {
-            continue;
+        const longTermChecked = document.getElementById('sidebar__form--filter__datetime__including-checkboxes--long-term').checked;
+        if (!longTermChecked) {
+            const longTermMinDuration = 3;
+            const eventDuration = calculateDurationInWeeks(eventsStartDatetime, eventsEndDatetime);
+            if (eventDuration >= longTermMinDuration) {
+                continue;
+            }
+        }
+
+        if (ongoingChecked) {
+            if ((eventsStartDatetime < specifiedStartDatetime && eventsEndDatetime < specifiedStartDatetime)
+                    || (eventsStartDatetime > specifiedEndDatetime && eventsEndDatetime > specifiedEndDatetime)) {
+                continue;
+            }
+        } else {
+            if (eventsStartDatetime < specifiedStartDatetime || eventsStartDatetime > specifiedEndDatetime
+                    || eventsEndDatetime < specifiedStartDatetime || eventsEndDatetime > specifiedEndDatetime) {
+                continue;
+            }
         }
 
         let eventGPS = GLB_EVENTS_DATASET[eventId]["gps"];
@@ -251,18 +295,6 @@ function filterEventsAndLoadMap() {
             }
         }
 
-        const eventCard = new SMap.Card();
-        eventCard.getHeader().innerHTML = `<strong>${GLB_EVENTS_DATASET[eventId]['title']}</strong>`;
-        eventCard.getBody().innerHTML = `
-            <div class="centered-cell-content">
-                <button type="button" class="btn btn-secondary"
-                        data-toggle="modal" data-target="#modal--event-details"
-                        onclick="showEventDetailsFromCard(${eventId})"
-                        title="Show event's details.">
-                    <i class="fa fa-info-circle"></i>
-                </button>
-            </div>`;
-
         const eventMarkOptions = {
             url: dropRed,
             title: GLB_EVENTS_DATASET[eventId]['title'],
@@ -270,7 +302,8 @@ function filterEventsAndLoadMap() {
             eventId: eventId
         };
         const eventMark = new SMap.Marker(sMapCoordinates, null, eventMarkOptions);
-        eventMark.decorate(SMap.Marker.Feature.Card, eventCard);
+        eventMark.getContainer()[SMap.LAYER_MARKER].style.cursor = "pointer";
+        eventMark.getContainer()[SMap.LAYER_MARKER].classList.add("marker");
         marks.push(eventMark);
         coordinates.push(sMapCoordinates);
 

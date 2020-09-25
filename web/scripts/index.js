@@ -80,6 +80,11 @@ function handleLocationRadioButtonsClick() {
     radius.disabled = gpsRadioButton.checked !== true;
 }
 
+function handleOngoingCheckboxClick(ongoingCheckbox) {
+    const longTermCheckbox = document.getElementById('sidebar__form--filter__datetime__including-checkboxes--long-term');
+    longTermCheckbox.disabled = ongoingCheckbox.checked !== true;
+}
+
 function copyGPSValueIntoSearchForm(itemId) {
     const itemLatitude = document.getElementById(`modal--gps-table__table__latitude--${itemId}`).innerText;
     const itemLongitude = document.getElementById(`modal--gps-table__table__longitude--${itemId}`).innerText;
