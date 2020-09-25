@@ -1,24 +1,6 @@
-function degreesToRadians(degrees) {
-    return degrees * (Math.PI / 180);
-}
-
-function calculateDistanceInKilometers(coordinatesA, coordinatesB) {
-    const latitudeA = coordinatesA.y;
-    const longitudeA = coordinatesA.x;
-    const latitudeB = coordinatesB.y;
-    const longitudeB = coordinatesB.x;
-
-    const EARTH_RADIUS = 6371;
-    const a = Math.pow(Math.sin(degreesToRadians(latitudeB - latitudeA) / 2), 2) +
-            Math.cos(degreesToRadians(latitudeA)) * Math.cos(degreesToRadians(latitudeB)) *
-            Math.pow(Math.sin(degreesToRadians(longitudeB - longitudeA) / 2), 2);
-
-    return 2 * EARTH_RADIUS * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-}
-
 function showEventDetailsFromMap(eventId) {
     const eventData = GLB_EVENTS_DATASET[eventId];
-    showEventDetailsModal(eventData);
+    prepareEventDetailsModal(eventData);
 }
 
 function createCustomCluster() {
@@ -114,6 +96,24 @@ function prepareEventDataForEventsTable(event) {
     event["table_end_datetime"] = endDatetime;
 
     return event;
+}
+
+function degreesToRadians(degrees) {
+    return degrees * (Math.PI / 180);
+}
+
+function calculateDistanceInKilometers(coordinatesA, coordinatesB) {
+    const latitudeA = coordinatesA.y;
+    const longitudeA = coordinatesA.x;
+    const latitudeB = coordinatesB.y;
+    const longitudeB = coordinatesB.x;
+
+    const EARTH_RADIUS = 6371;
+    const a = Math.pow(Math.sin(degreesToRadians(latitudeB - latitudeA) / 2), 2) +
+            Math.cos(degreesToRadians(latitudeA)) * Math.cos(degreesToRadians(latitudeB)) *
+            Math.pow(Math.sin(degreesToRadians(longitudeB - longitudeA) / 2), 2);
+
+    return 2 * EARTH_RADIUS * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 }
 
 function calculateDurationInWeeks(dateA, dateB) {

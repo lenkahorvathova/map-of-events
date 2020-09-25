@@ -1,72 +1,3 @@
-function handleFirstLoad() {
-    setFutureIntoDatetimePickers();
-    const filteredEventsData = filterEventsAndLoadMap();
-    initializeEventsTable(filteredEventsData);
-}
-
-function showEventDetailsModal(eventData) {
-    if (eventData === null) throw `'eventData' is undefined!`;
-
-    const title = document.getElementById('modal--event-details__title');
-    title.innerText = eventData['title'];
-
-    const defaultLocation = document.getElementById('modal--event-details__location--default');
-    defaultLocation.hidden = true;
-    if (eventData['online']) {
-        defaultLocation.hidden = false;
-        defaultLocation.outerHTML = `<i class="fa fa-check-circle text-primary"> ONLINE</i>`;
-    } else {
-        defaultLocation.hidden = false;
-        defaultLocation.innerText = eventData['default_location'];
-    }
-
-    const datetime = document.getElementById('modal--event-details__datetime');
-    datetime.innerText = eventData['table_start_datetime'];
-    if (eventData['table_end_datetime']) datetime.innerText += ' - ' + eventData['table_end_datetime'];
-
-    const perex = document.getElementById('modal--event-details__perex');
-    perex.innerText = eventData['perex'];
-
-    const location = document.getElementById('modal--event-details__location');
-    if (eventData['location']) {
-        location.innerText = eventData['location'];
-    } else {
-        location.innerHTML = `<i>unknown</i>`;
-    }
-
-    const gps = document.getElementById('modal--event-details__gps');
-    const geocodedLocation = document.getElementById('modal--event-details__location--geocoded');
-    if (eventData['gps'] !== null) {
-        gps.innerText = eventData['gps'];
-        geocodedLocation.innerText = "";
-    } else {
-        gps.innerText = eventData['geocoded_gps'];
-
-        if (eventData['has_default']) {
-            geocodedLocation.innerText = '(' + eventData['default_location'] + ')';
-        } else {
-            geocodedLocation.innerText = '(' + eventData['municipality'] + ', ' + eventData['district'] + ')';
-        }
-    }
-
-    const organizer = document.getElementById('modal--event-details__organizer');
-    if (eventData['organizer']) {
-        organizer.innerText = eventData['organizer'];
-    } else {
-        organizer.innerHTML = `<i>unknown</i>`;
-    }
-
-    const source = document.getElementById('modal--event-details__calendar--url');
-    source.href = eventData['calendar_url'];
-    source.innerText = eventData['calendar_url'];
-
-    const fetchedAt = document.getElementById('modal--event-details__calendar--downloaded-at');
-    fetchedAt.innerText = new Date(eventData['calendar_downloaded_at']).toLocaleString();
-
-    const eventButton = document.getElementById('modal--event-details__url');
-    eventButton.href = eventData['event_url'];
-}
-
 function handleLocationRadioButtonsClick() {
     const gpsRadioButton = document.getElementById('sidebar__form--filter__location__options--gps');
     const gpsLatitude = document.getElementById('sidebar__form--filter__location__gps--latitude');
@@ -169,10 +100,18 @@ function handleGeocodeFormSubmission(event) {
     new SMap.Geocoder(queryValue, geocodeCallback);
 }
 
-function showEventDetailsFromEventsTable(element) {
+function reloadEventsTable(eventsData) {
     const eventsDatatable = $('#main-content__events-table').DataTable();
-    const eventData = eventsDatatable.row($(element).parents('tr')).data();
-    showEventDetailsModal(eventData);
+    eventsDatatable.clear();
+    eventsDatatable.rows.add(eventsData);
+    eventsDatatable.draw();
+}
+
+function handleSearchFormSubmission(event) {
+    event.preventDefault();
+
+    const filteredEventsData = filterEventsAndLoadMap();
+    reloadEventsTable(filteredEventsData);
 }
 
 function zoomToEventGPS(element) {
@@ -186,6 +125,75 @@ function zoomToEventGPS(element) {
     const sMapCoordinates = SMap.Coords.fromWGS84(coordinatesArray[1], coordinatesArray[0]);
 
     GLB_MAP.setCenterZoom(sMapCoordinates, 18);
+}
+
+function prepareEventDetailsModal(eventData) {
+    if (eventData === null) throw `'eventData' is undefined!`;
+
+    const title = document.getElementById('modal--event-details__title');
+    title.innerText = eventData['title'];
+
+    const defaultLocation = document.getElementById('modal--event-details__location--default');
+    defaultLocation.hidden = true;
+    if (eventData['online']) {
+        defaultLocation.hidden = false;
+        defaultLocation.outerHTML = `<i class="fa fa-check-circle text-primary"> ONLINE</i>`;
+    } else {
+        defaultLocation.hidden = false;
+        defaultLocation.innerText = eventData['default_location'];
+    }
+
+    const datetime = document.getElementById('modal--event-details__datetime');
+    datetime.innerText = eventData['table_start_datetime'];
+    if (eventData['table_end_datetime']) datetime.innerText += ' - ' + eventData['table_end_datetime'];
+
+    const perex = document.getElementById('modal--event-details__perex');
+    perex.innerText = eventData['perex'];
+
+    const location = document.getElementById('modal--event-details__location');
+    if (eventData['location']) {
+        location.innerText = eventData['location'];
+    } else {
+        location.innerHTML = `<i>unknown</i>`;
+    }
+
+    const gps = document.getElementById('modal--event-details__gps');
+    const geocodedLocation = document.getElementById('modal--event-details__location--geocoded');
+    if (eventData['gps'] !== null) {
+        gps.innerText = eventData['gps'];
+        geocodedLocation.innerText = "";
+    } else {
+        gps.innerText = eventData['geocoded_gps'];
+
+        if (eventData['has_default']) {
+            geocodedLocation.innerText = '(' + eventData['default_location'] + ')';
+        } else {
+            geocodedLocation.innerText = '(' + eventData['municipality'] + ', ' + eventData['district'] + ')';
+        }
+    }
+
+    const organizer = document.getElementById('modal--event-details__organizer');
+    if (eventData['organizer']) {
+        organizer.innerText = eventData['organizer'];
+    } else {
+        organizer.innerHTML = `<i>unknown</i>`;
+    }
+
+    const source = document.getElementById('modal--event-details__calendar--url');
+    source.href = eventData['calendar_url'];
+    source.innerText = eventData['calendar_url'];
+
+    const fetchedAt = document.getElementById('modal--event-details__calendar--downloaded-at');
+    fetchedAt.innerText = new Date(eventData['calendar_downloaded_at']).toLocaleString();
+
+    const eventButton = document.getElementById('modal--event-details__url');
+    eventButton.href = eventData['event_url'];
+}
+
+function showEventDetailsFromEventsTable(element) {
+    const eventsDatatable = $('#main-content__events-table').DataTable();
+    const eventData = eventsDatatable.row($(element).parents('tr')).data();
+    prepareEventDetailsModal(eventData);
 }
 
 function initializeEventsTable(eventsData) {
@@ -225,16 +233,8 @@ function initializeEventsTable(eventsData) {
     $('.dataTables_length').addClass('bs-select');
 }
 
-function reloadEventsTable(eventsData) {
-    const eventsDatatable = $('#main-content__events-table').DataTable();
-    eventsDatatable.clear();
-    eventsDatatable.rows.add(eventsData);
-    eventsDatatable.draw();
-}
-
-function handleSearchFormSubmission(event) {
-    event.preventDefault();
-
+function handleFirstLoad() {
+    setFutureIntoDatetimePickers();
     const filteredEventsData = filterEventsAndLoadMap();
-    reloadEventsTable(filteredEventsData);
+    initializeEventsTable(filteredEventsData);
 }
