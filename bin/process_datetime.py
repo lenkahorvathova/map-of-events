@@ -44,11 +44,16 @@ class ProcessDatetime:
 
     def load_events(self) -> list:
         print("Loading input events...")
-        query = '''SELECT ed.id, ed.datetime, eu.url, c.url FROM event_data ed
-                   INNER JOIN event_html eh on ed.event_html_id = eh.id 
-                   INNER JOIN event_url eu ON eh.event_url_id = eu.id 
-                   INNER JOIN calendar c ON eu.calendar_id = c.id 
-                   WHERE 1==1'''
+        query = '''
+                    SELECT ed.id, ed.datetime, 
+                           eu.url, 
+                           c.url
+                    FROM event_data ed
+                         INNER JOIN event_html eh ON ed.event_html_id = eh.id
+                         INNER JOIN event_url eu ON eh.event_url_id = eu.id
+                         INNER JOIN calendar c ON eu.calendar_id = c.id
+                    WHERE 1 == 1
+                '''
 
         if not self.args.process_all:
             query += ''' AND ed.id NOT IN (SELECT DISTINCT event_data_id FROM event_data_datetime)'''
@@ -140,8 +145,10 @@ class ProcessDatetime:
                     print("...{:.0f} % inserted".format(milestones[0]))
                     milestones = milestones[1:]
 
-                query = '''INSERT INTO event_data_datetime(start_date, start_time, end_date, end_time, event_data_id)
-                           VALUES {}'''.format(tuples_to_insert)
+                query = '''
+                            INSERT INTO event_data_datetime(start_date, start_time, end_date, end_time, event_data_id)
+                            VALUES {}
+                        '''.format(tuples_to_insert)
 
                 try:
                     self.connection.execute(query)

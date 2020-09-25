@@ -59,10 +59,14 @@ class DownloadEvents:
 
     def load_input_events(self) -> list:
         print("Loading input events...")
-        query = '''SELECT eu.id, eu.url, c.url FROM event_url eu
-                   LEFT OUTER JOIN event_html eh ON eu.id = eh.event_url_id
-                   INNER JOIN calendar c ON eu.calendar_id = c.id
-                   WHERE 1==1'''
+        query = '''
+                    SELECT eu.id, eu.url,
+                           c.url
+                    FROM event_url eu
+                         LEFT OUTER JOIN event_html eh ON eu.id = eh.event_url_id
+                         INNER JOIN calendar c ON eu.calendar_id = c.id
+                    WHERE 1 == 1
+                '''
 
         if self.args.domain:
             website_base = utils.get_base_by_domain(self.args.domain)
@@ -139,8 +143,10 @@ class DownloadEvents:
                 continue
 
             if not dry_run:
-                query = '''INSERT INTO event_html(html_file_path, downloaded_at, event_url_id)
-                           VALUES(?, ?, ?)'''
+                query = '''
+                            INSERT INTO event_html(html_file_path, downloaded_at, event_url_id)
+                            VALUES(?, ?, ?)
+                        '''
                 values = (html_file_path, downloaded_at, event_url_id)
 
                 try:

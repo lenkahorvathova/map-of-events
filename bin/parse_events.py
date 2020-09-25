@@ -54,9 +54,15 @@ class ParseEvents:
 
     def load_input_events(self) -> list:
         print("Loading input events...")
-        query = '''SELECT eh.id, eh.html_file_path, eu.url, c.url FROM event_html eh 
-                   INNER JOIN event_url eu ON eh.event_url_id = eu.id 
-                   INNER JOIN calendar c ON eu.calendar_id = c.id WHERE 1==1'''
+        query = '''
+                    SELECT eh.id, eh.html_file_path, 
+                           eu.url, 
+                           c.url
+                    FROM event_html eh
+                         INNER JOIN event_url eu ON eh.event_url_id = eu.id
+                         INNER JOIN calendar c ON eu.calendar_id = c.id
+                    WHERE 1 == 1
+                '''
 
         if self.args.domain:
             website_base = utils.get_base_by_domain(self.args.domain)
@@ -174,8 +180,10 @@ class ParseEvents:
                 continue
 
             if not dry_run:
-                query = '''INSERT INTO event_data(title, perex, datetime, location, gps, organizer, types, event_html_id)
-                           VALUES (?, ?, ?, ?, ?, ?, ?, ?)'''
+                query = '''
+                            INSERT INTO event_data(title, perex, datetime, location, gps, organizer, types, event_html_id)
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                        '''
                 values = (data_dict.get("title"), data_dict.get("perex", None), data_dict.get("datetime"),
                           data_dict.get("location", None), data_dict.get("gps", None), data_dict.get("organizer", None),
                           data_dict.get("types", None), event_html_id)
@@ -214,9 +222,11 @@ class ParseEvents:
         print("Updating DB...")
 
         input_ids = [event[0] for event in input_events]
-        query = '''UPDATE event_html
-                   SET is_parsed = 1
-                   WHERE id IN ({})'''.format(",".join(['"{}"'.format(calendar_id) for calendar_id in input_ids]))
+        query = '''
+                    UPDATE event_html
+                    SET is_parsed = 1
+                    WHERE id IN ({})
+                '''.format(",".join(['"{}"'.format(calendar_id) for calendar_id in input_ids]))
 
         try:
             self.connection.execute(query)

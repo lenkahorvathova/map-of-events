@@ -53,7 +53,11 @@ class ParseCalendars:
 
     def load_input_calendars(self) -> list:
         print("Loading input calendars...")
-        query = '''SELECT id, url, html_file_path FROM calendar WHERE 1==1'''
+        query = '''
+                    SELECT id, url, html_file_path 
+                    FROM calendar 
+                    WHERE 1 == 1
+                '''
 
         if self.args.domain:
             website_base = utils.get_base_by_domain(self.args.domain)
@@ -131,13 +135,18 @@ class ParseCalendars:
     def store_to_database(self, events_to_insert: list) -> None:
         print("Inserting into DB...")
 
-        count_query = '''SELECT count(*) FROM event_url'''
+        count_query = '''
+                          SELECT count(*) 
+                          FROM event_url
+                      '''
         cursor = self.connection.execute(count_query)
         events_count_before = int(cursor.fetchone()[0])
 
         for url, parsed_at, calendar_id in events_to_insert:
-            query = '''INSERT OR IGNORE INTO event_url(url, parsed_at, calendar_id)
-                       VALUES(?, ?, ?)'''
+            query = '''
+                        INSERT OR IGNORE INTO event_url(url, parsed_at, calendar_id)
+                        VALUES(?, ?, ?)
+                    '''
             values = (url, parsed_at, calendar_id)
 
             try:
@@ -157,9 +166,11 @@ class ParseCalendars:
 
         input_ids = [website[0] for website in input_websites]
 
-        query = '''UPDATE calendar
-                   SET is_parsed = 1
-                   WHERE id IN ({})'''.format(",".join(['"{}"'.format(calendar_id) for calendar_id in input_ids]))
+        query = '''
+                    UPDATE calendar
+                    SET is_parsed = 1
+                    WHERE id IN ({})
+                '''.format(",".join(['"{}"'.format(calendar_id) for calendar_id in input_ids]))
 
         try:
             self.connection.execute(query)

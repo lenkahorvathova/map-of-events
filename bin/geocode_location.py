@@ -45,13 +45,15 @@ class GeocodeLocation:
     def load_events(self) -> list:
         print("Loading events...")
 
-        query = '''SELECT ed.id, ed.title, ed.perex, ed.location, c.url
-                   FROM event_data ed 
-                   JOIN event_html eh ON ed.event_html_id = eh.id
-                   JOIN event_url eu ON eh.event_url_id = eu.id
-                   JOIN calendar c ON eu.calendar_id = c.id
-                   WHERE ed.gps IS NULL 
-                   AND ed.id NOT IN (SELECT DISTINCT event_data_id FROM event_data_gps)'''
+        query = '''
+                    SELECT ed.id, ed.title, ed.perex, ed.location, 
+                           c.url
+                    FROM event_data ed
+                         INNER JOIN event_html eh ON ed.event_html_id = eh.id
+                         INNER JOIN event_url eu ON eh.event_url_id = eu.id
+                         INNER JOIN calendar c ON eu.calendar_id = c.id
+                    WHERE ed.gps IS NULL AND ed.id NOT IN (SELECT DISTINCT event_data_id FROM event_data_gps)
+                '''
 
         if self.args.events_ids:
             query += ''' AND ed.id IN ({})'''.format(",".join(["{}".format(event_id)
@@ -328,9 +330,10 @@ class GeocodeLocation:
             if dry_run:
                 data_to_insert.append(values)
             else:
-                query = '''INSERT INTO event_data_gps(online, has_default, gps, 
-                                                      location, municipality, district, event_data_id)
-                           VALUES (?, ?, ?, ?, ?, ?, ?)'''
+                query = '''
+                            INSERT INTO event_data_gps(online, has_default, gps, location, municipality, district, event_data_id)
+                            VALUES (?, ?, ?, ?, ?, ?, ?)
+                        '''
 
                 try:
                     self.connection.execute(query, values)

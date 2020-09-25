@@ -37,45 +37,44 @@ class GenerateHTML:
         shutil.copy2('web/styles/index.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/index.css'))
 
     def get_events(self):
-        query = '''SELECT ed.id, ed.title, ed.perex, ed.location, ed.gps, ed.organizer, ed.types, 
-                          edd.start_date, edd.start_time, edd.end_date, edd.end_time,
-                          edg.online, edg.has_default, edg.gps, edg.location, edg.municipality, edg.district,
-                          eu.url, c.url, c.downloaded_at
-                   FROM event_data ed 
-                   LEFT OUTER JOIN event_data_datetime edd ON ed.id == edd.event_data_id 
-                   LEFT OUTER JOIN event_data_gps edg ON ed.id == edg.event_data_id 
-                   LEFT OUTER JOIN event_html eh ON ed.event_html_id = eh.id
-                   LEFT OUTER JOIN event_url eu ON eh.event_url_id = eu.id
-                   LEFT OUTER JOIN calendar c ON eu.calendar_id = c.id
-                   WHERE  edd.start_date IS NOT NULL AND edd.start_date >= date('now')
-                   AND (ed.gps IS NOT NULL OR edg.gps IS NOT NULL OR edg.online == 1);'''
+        query = '''
+                    SELECT calendar__url, calendar__downloaded_at,
+                           event_url__url,
+                           event_data__id, event_data__title, event_data__perex, event_data__location, event_data__gps, event_data__organizer, event_data__types,
+                           event_data_datetime__start_date, event_data_datetime__start_time, event_data_datetime__end_date, event_data_datetime__end_time,
+                           event_data_gps__online, event_data_gps__has_default, event_data_gps__gps, event_data_gps__location, event_data_gps__municipality, event_data_gps__district
+                    FROM event_data_view
+                    WHERE event_data_datetime__start_date IS NOT NULL 
+                      AND (event_data_datetime__start_date >= date('now') OR (event_data_datetime__end_date IS NOT NULL AND event_data_datetime__end_date >= date('now')))
+                      AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1))
+                '''
 
         cursor = self.connection.execute(query)
         events_tuples = cursor.fetchall()
 
         events_jsons = {}
         for event in events_tuples:
-            event_id = event[0]
+            event_id = event[3]
             event_dict = {
-                "title": self.sanitize_string(event[1]),
-                "perex": self.sanitize_string(event[2]),
-                "location": self.sanitize_string(event[3]),
-                "gps": event[4],
-                "organizer": self.sanitize_string(event[5]),
-                "types": json.loads(event[6]) if event[6] else [],
-                "start_date": event[7],
-                "start_time": event[8],
-                "end_date": event[9],
-                "end_time": event[10],
-                "online": event[11] == 1,
-                "has_default": event[12] == 1,
-                "geocoded_gps": event[13],
-                "default_location": event[14],
-                "municipality": event[15],
-                "district": event[16],
-                "event_url": event[17],
-                "calendar_url": event[18],
-                "calendar_downloaded_at": event[19]
+                "event_url": event[2],
+                "title": self.sanitize_string(event[4]),
+                "perex": self.sanitize_string(event[5]),
+                "location": self.sanitize_string(event[6]),
+                "gps": event[7],
+                "organizer": self.sanitize_string(event[8]),
+                "types": json.loads(event[9]) if event[9] else [],
+                "start_date": event[10],
+                "start_time": event[11],
+                "end_date": event[12],
+                "end_time": event[13],
+                "online": event[14] == 1,
+                "has_default": event[15] == 1,
+                "geocoded_gps": event[16],
+                "default_location": event[17],
+                "municipality": event[18],
+                "district": event[19],
+                "calendar_url": event[0],
+                "calendar_downloaded_at": event[1]
             }
             events_jsons[event_id] = event_dict
 

@@ -103,8 +103,10 @@ class DownloadCalendars:
                 continue
 
             if not dry_run:
-                query = '''INSERT INTO calendar(url, html_file_path, downloaded_at)
-                           VALUES (?, ?, ?)'''
+                query = '''
+                            INSERT INTO calendar(url, html_file_path, downloaded_at)
+                            VALUES (?, ?, ?)
+                        '''
                 values = (url, html_file_path, downloaded_at)
 
                 try:

@@ -10,7 +10,7 @@ class SetupDB:
         self.connection = utils.create_connection()
 
     def run(self) -> None:
-        self.connection.execute("PRAGMA foreign_keys = ON")
+        self.connection.execute('''PRAGMA foreign_keys = ON''')
 
         with open(self.SCHEMA_PATH, 'r', encoding="utf-8") as schema_file:
             schema = schema_file.read().split(";")
