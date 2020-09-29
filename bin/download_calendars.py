@@ -22,7 +22,7 @@ class DownloadCalendars:
         if not self.args.dry_run:
             if not os.path.isfile(INPUT_SITES_BASE_FILE_PATH):
                 raise Exception("Missing an input base file: '{}'".format(INPUT_SITES_BASE_FILE_PATH))
-            missing_tables = utils.check_db(self.connection, ["calendar"])
+            missing_tables = utils.check_db_tables(self.connection, ["calendar"])
             if len(missing_tables) != 0:
                 raise Exception("Missing tables in the DB: {}".format(missing_tables))
 

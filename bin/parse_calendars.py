@@ -25,7 +25,7 @@ class ParseCalendars:
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
-            missing_tables = utils.check_db(self.connection, ["calendar", "event_url"])
+            missing_tables = utils.check_db_tables(self.connection, ["calendar", "event_url"])
             if len(missing_tables) != 0:
                 raise Exception("Missing tables in the DB: {}".format(missing_tables))
 

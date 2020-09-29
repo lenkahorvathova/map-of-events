@@ -13,6 +13,10 @@ class GenerateHTML:
     def __init__(self):
         self.connection = utils.create_connection()
 
+        missing_views = utils.check_db_views(self.connection, ["event_data_view"])
+        if len(missing_views) != 0:
+            raise Exception("Missing views in the DB: {}".format(missing_views))
+
     def run(self):
         events = self.get_events()
 

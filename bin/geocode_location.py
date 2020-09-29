@@ -4,6 +4,7 @@ import json
 import multiprocessing
 import re
 import sqlite3
+import sys
 
 from lib import utils
 from lib.constants import MUNICIPALITIES_OF_CR_FILE
@@ -11,15 +12,16 @@ from lib.constants import MUNICIPALITIES_OF_CR_FILE
 
 class GeocodeLocation:
     ONLINE_PATTERN = r'\b(online|Online|ONLINE|On-line|on-line|ON-LINE|Virtuálně|virtuálně)\b'
-    OUTPUT_FILE_PATH = "data/tmp/geocode_location_output.json"
+    OUTPUT_FILE_PATH = "data/tmp/geocode_location_output_2.json"
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
-            missing_tables = utils.check_db(self.connection, ["calendar", "event_url", "event_html", "event_data",
-                                                              "event_data_gps"])
+            missing_tables = utils.check_db_tables(self.connection,
+                                                   ["calendar", "event_url", "event_html", "event_data",
+                                                    "event_data_gps"])
             if len(missing_tables) != 0:
                 raise Exception("Missing tables in the DB: {}".format(missing_tables))
 
@@ -27,10 +29,10 @@ class GeocodeLocation:
     def _parse_arguments() -> argparse.Namespace:
         parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 
-        parser.add_argument('--dry-run', action='store_true', default=False,
+        parser.add_argument('--dry-run', required='--events-ids' in sys.argv, action='store_true', default=False,
                             help="don't store any output and print to stdout")
         parser.add_argument('--events-ids', type=int, nargs="*",
-                            help="geocode locations only of the specified events' IDs")
+                            help="geocode locations only of the specified events' IDs (possible only in 'dry-run' mode)")
 
         return parser.parse_args()
 
@@ -52,12 +54,14 @@ class GeocodeLocation:
                          INNER JOIN event_html eh ON ed.event_html_id = eh.id
                          INNER JOIN event_url eu ON eh.event_url_id = eu.id
                          INNER JOIN calendar c ON eu.calendar_id = c.id
-                    WHERE ed.gps IS NULL AND ed.id NOT IN (SELECT DISTINCT event_data_id FROM event_data_gps)
+                    WHERE ed.gps IS NULL
                 '''
 
         if self.args.events_ids:
             query += ''' AND ed.id IN ({})'''.format(",".join(["{}".format(event_id)
                                                                for event_id in self.args.events_ids]))
+        else:
+            query += ''' AND ed.id NOT IN (SELECT DISTINCT event_data_id FROM event_data_gps)'''
 
         cursor = self.connection.execute(query)
         return cursor.fetchall()
@@ -108,7 +112,7 @@ class GeocodeLocation:
     @staticmethod
     def geocode_events(events_to_geocode: list, municipalities: list) -> list:
         input_tuples = []
-        calendars_with_default_gps = {base_dict["url"]: base_dict for base_dict in utils.get_base_by("default_gps")}
+        calendars_with_default_gps = {base_dict["url"]: base_dict for base_dict in utils.get_base_with_default_gps()}
 
         for index, event in enumerate(events_to_geocode):
             input_tuples.append((index + 1, len(events_to_geocode), event, municipalities, calendars_with_default_gps))

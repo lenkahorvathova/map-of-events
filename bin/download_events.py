@@ -24,7 +24,7 @@ class DownloadEvents:
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
-            missing_tables = utils.check_db(self.connection, ["calendar", "event_url", "event_html"])
+            missing_tables = utils.check_db_tables(self.connection, ["calendar", "event_url", "event_html"])
             if len(missing_tables) != 0:
                 raise Exception("Missing tables in the DB: {}".format(missing_tables))
 
@@ -140,7 +140,6 @@ class DownloadEvents:
 
             if html_file_path is None:
                 failed_url_ids.append(event_url_id)
-                continue
 
             if not dry_run:
                 query = '''

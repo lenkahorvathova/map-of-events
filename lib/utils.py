@@ -54,7 +54,7 @@ def get_base_by(attr: str, value: str = None) -> list:
     """ Gets a base information for the specified value of the specified attribute.
 
     :param attr: a key to search by
-    :param value: a value for the key
+    :param value: a value for the key; if None fetches dict containing the 'attr' key
     :return: a list of dictionaries with the base
     """
     result = []
@@ -67,6 +67,10 @@ def get_base_by(attr: str, value: str = None) -> list:
             result.append(obj)
 
     return result
+
+
+def get_base_with_default_gps() -> [dict]:
+    return get_base_by("default_gps")
 
 
 def get_base_by_domain(value: str) -> Optional[dict]:
@@ -129,27 +133,40 @@ def store_to_json_file(output: Union[list, dict], file_path: str) -> None:
         output_file.write(json.dumps(output, indent=4, ensure_ascii=False))
 
 
-def check_db(connection: sqlite3.Connection, tables: list) -> list:
-    """Checks if specified tables exist in the database.
+def check_db(db_type: str, connection: sqlite3.Connection, names: list) -> list:
+    """Checks if specified views or tables exist in the database.
 
+    :param db_type: table or view
     :param connection: connection to the desired database
-    :param tables: names of tables
-    :return: list of missing tables (empty, if all specified tables exist)
+    :param names: names of tables/views
+    :return: list of missing tables/views (empty, if all specified tables/views exist)
     """
-    tables_count = len(tables)
-    if tables_count == 0:
-        return []
-    elif tables_count == 1:
-        tables_value = "('{}')".format(tables[0])
-    else:
-        tables_value = "({})".format(",".join("'{}'".format(tbl) for tbl in tables))
+    possible_types = ['table', 'view']
+    if db_type not in possible_types:
+        raise Exception("Unknown type: '{}' - must be one of {}".format(db_type, possible_types))
 
-    query = '''SELECT name FROM sqlite_master WHERE type='table' AND name IN {}'''.format(tables_value)
+    names_count = len(names)
+    if names_count == 0:
+        return []
+    elif names_count == 1:
+        names_value = "('{}')".format(names[0])
+    else:
+        names_value = "({})".format(",".join("'{}'".format(name) for name in names))
+
+    query = '''SELECT name FROM sqlite_master WHERE type='{}' AND name IN {}'''.format(db_type, names_value)
     cursor = connection.execute(query)
-    db_tables = [row[0] for row in cursor.fetchall()]
+    db_names = [row[0] for row in cursor.fetchall()]
 
-    if len(db_tables) == len(tables):
+    if len(db_names) == len(names):
         return []
     else:
-        missing_tables = [table for table in tables if table not in db_tables]
-        return missing_tables
+        missing_names = [name for name in names if name not in db_names]
+        return missing_names
+
+
+def check_db_views(connection: sqlite3.Connection, views: list) -> list:
+    return check_db("view", connection, views)
+
+
+def check_db_tables(connection: sqlite3.Connection, tables: list) -> list:
+    return check_db("table", connection, tables)
