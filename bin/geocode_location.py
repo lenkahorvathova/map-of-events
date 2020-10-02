@@ -12,7 +12,7 @@ from lib.constants import MUNICIPALITIES_OF_CR_FILE
 
 class GeocodeLocation:
     ONLINE_PATTERN = r'\b(online|Online|ONLINE|On-line|on-line|ON-LINE|Virtuálně|virtuálně)\b'
-    OUTPUT_FILE_PATH = "data/tmp/geocode_location_output_2.json"
+    OUTPUT_FILE_PATH = "data/tmp/geocode_location_output.json"
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()

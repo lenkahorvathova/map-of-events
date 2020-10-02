@@ -31,7 +31,7 @@
         <!--    - Scripts -->
         <script type="text/javascript">
             let GLB_MAP;
-            const GLB_EVENTS_DATASET = JSON.parse(`<<events_dataset>>`);
+            const GLB_EVENTS_DATASET = JSON.parse(`{{events_dataset}}`);
         </script>
         <script type="text/javascript" src="scripts/index.js"></script>
         <script type="text/javascript" src="scripts/events_map.js"></script>
@@ -43,9 +43,23 @@
 
     <body onload="handleFirstLoad()">
 
-        <!-- Top Navigation Bar-->
-        <nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
-            <a class="navbar-brand col-4 col-md-5 col-lg-4 col-xl-3 mr-0" href="#">Map of Events</a>
+        <!-- Top Navigation Bar -->
+        <nav class="navbar navbar-expand-md navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+            <a class="navbar-brand col-auto col-md-5 col-lg-4 col-xl-3 mr-0">Map of Events</a>
+            <button class="navbar-toggler mx-3" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                    aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse mx-3" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./crawler_status.html">Crawler Status</a>
+                    </li>
+                </ul>
+            </div>
         </nav>
 
         <!-- Modal Windows -->
@@ -337,37 +351,34 @@
                 </div>
 
                 <!-- Main Content -->
-                <main id="main-content" class="col-md-7 col-lg-8 col-xl-9 ml-sm-auto pt-3 px-4" role="main">
-                    <div>
+                <main id="main-content" class="col-md-7 col-lg-8 col-xl-9 ml-sm-auto px-4" role="main">
 
-                        <!-- Events Listing -->
-                        <!--    - Map -->
-                        <div class="row">
-                            <div class="col d-flex">
-                                <div id="main-content__map" class="my-4 w-100 border border-light rounded"
-                                     style="height:400px;"></div>
-                            </div>
+                    <!-- Events Listing -->
+                    <!--    - Map -->
+                    <div class="row">
+                        <div class="col d-flex">
+                            <div id="main-content__map" class="my-4 w-100 border border-light rounded"
+                                 style="height:400px;"></div>
                         </div>
+                    </div>
 
-                        <!--    - Table -->
-                        <h2>Events Found</h2>
-                        <div class="row">
-                            <div class="col table-responsive rounded">
-                                <table id="main-content__events-table"
-                                       class="table table-bordered table-striped table-hover table-sm">
-                                    <thead class="thead-dark">
-                                        <tr>
-                                            <th scope="col" class="th-sm">Title</th>
-                                            <th scope="col" class="th-sm">Location</th>
-                                            <th scope="col" class="th-sm">Start</th>
-                                            <th scope="col" class="th-sm">End</th>
-                                            <th scope="col" class="th-sm">Actions</th>
-                                        </tr>
-                                    </thead>
-                                </table>
-                            </div>
+                    <!--    - Table -->
+                    <h2>Events Found</h2>
+                    <div class="row">
+                        <div class="col table-responsive rounded">
+                            <table id="main-content__events-table"
+                                   class="table table-bordered table-striped table-hover table-sm">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col" class="th-sm">Title</th>
+                                        <th scope="col" class="th-sm">Location</th>
+                                        <th scope="col" class="th-sm">Start</th>
+                                        <th scope="col" class="th-sm">End</th>
+                                        <th scope="col" class="th-sm">Actions</th>
+                                    </tr>
+                                </thead>
+                            </table>
                         </div>
-
                     </div>
                 </main>
 

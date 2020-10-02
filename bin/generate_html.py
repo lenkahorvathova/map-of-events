@@ -1,46 +1,34 @@
 import json
 import os
 import shutil
+from typing import Optional
 
 from lib import utils
 
 
 class GenerateHTML:
-    INDEX_TEMPLATE_HTML_FILE_PATH = "web/index_template.html"
     TEMP_WEB_FOLDER = "data/tmp/web"
+    INDEX_TEMPLATE_HTML_FILE_PATH = "web/index_template.html"
     INDEX_GENERATED_HTML_FILE_PATH = os.path.join(TEMP_WEB_FOLDER, "index.html")
+    CRAWLER_STATUS_INFO_JSON_FILE = "data/tmp/crawler_status_info.json"
+    CRAWLER_STATUS_TEMPLATE_HTML_FILE_PATH = "web/crawler_status_template.html"
+    CRAWLER_STATUS_GENERATED_HTML_FILE_PATH = os.path.join(TEMP_WEB_FOLDER, "crawler_status.html")
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.connection = utils.create_connection()
 
         missing_views = utils.check_db_views(self.connection, ["event_data_view"])
         if len(missing_views) != 0:
             raise Exception("Missing views in the DB: {}".format(missing_views))
 
-    def run(self):
-        events = self.get_events()
+    def run(self) -> None:
+        events_dataset = self.get_events()
+        self.complete_index_template(events_dataset)
+        status_info = self.get_crawler_status_info()
+        self.complete_crawler_status_template(status_info)
+        self.copy_other_files()
 
-        with open(GenerateHTML.INDEX_TEMPLATE_HTML_FILE_PATH, 'r') as template_html_file:
-            file = template_html_file.read()
-            data = json.dumps(events, indent=4, ensure_ascii=True)
-            file = file.replace('<<events_dataset>>', data)
-
-        os.makedirs(GenerateHTML.TEMP_WEB_FOLDER, exist_ok=True)
-        with open(GenerateHTML.INDEX_GENERATED_HTML_FILE_PATH, 'w') as generated_html_file:
-            generated_html_file.write(file)
-
-        # Copy Scripts
-        os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/'), exist_ok=True)
-        shutil.copy2('web/scripts/events_map.js', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/events_map.js'))
-        shutil.copy2('web/scripts/index.js', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/index.js'))
-        shutil.copy2('web/scripts/datetime_pickers.js', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/datetime_pickers.js'))
-
-        # Copy Styles
-        os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/'), exist_ok=True)
-        shutil.copy2('web/styles/dashboard.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/dashboard.css'))
-        shutil.copy2('web/styles/index.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/index.css'))
-
-    def get_events(self):
+    def get_events(self) -> dict:
         query = '''
                     SELECT calendar__url, calendar__downloaded_at,
                            event_url__url,
@@ -56,7 +44,7 @@ class GenerateHTML:
         cursor = self.connection.execute(query)
         events_tuples = cursor.fetchall()
 
-        events_jsons = {}
+        events_dataset = {}
         for event in events_tuples:
             event_id = event[3]
             event_dict = {
@@ -80,15 +68,94 @@ class GenerateHTML:
                 "calendar_url": event[0],
                 "calendar_downloaded_at": event[1]
             }
-            events_jsons[event_id] = event_dict
+            events_dataset[event_id] = event_dict
 
-        return events_jsons
+        return events_dataset
 
     @staticmethod
-    def sanitize_string(input_string):
+    def sanitize_string(input_string: str) -> Optional[str]:
         if not input_string:
             return None
         return input_string.replace('\n', '\\n').replace('\t', '\\t').replace('"', '\\"').replace('`', '\'')
+
+    @staticmethod
+    def complete_index_template(events_dataset: dict) -> None:
+        with open(GenerateHTML.INDEX_TEMPLATE_HTML_FILE_PATH, 'r') as index_template_file:
+            file = index_template_file.read()
+            data = json.dumps(events_dataset, indent=4, ensure_ascii=True)
+            file = file.replace('{{events_dataset}}', data)
+
+        os.makedirs(GenerateHTML.TEMP_WEB_FOLDER, exist_ok=True)
+        with open(GenerateHTML.INDEX_GENERATED_HTML_FILE_PATH, 'w') as index_generated_file:
+            index_generated_file.write(file)
+
+    @staticmethod
+    def get_crawler_status_info() -> dict:
+        with open(GenerateHTML.CRAWLER_STATUS_INFO_JSON_FILE, 'r') as status_json_file:
+            crawler_status_dict = json.load(status_json_file)
+
+        return crawler_status_dict
+
+    @staticmethod
+    def complete_crawler_status_template(status_info: dict) -> None:
+        with open(GenerateHTML.CRAWLER_STATUS_TEMPLATE_HTML_FILE_PATH, 'r') as crawler_status_template_file:
+            file = crawler_status_template_file.read()
+        file = file.replace('{{all_events_count}}', str(status_info['statistics']['total_count'])) \
+            .replace('{{future_events_count}}', str(status_info['statistics']['future_count'])) \
+            .replace('{{events_per_week}}',
+                     json.dumps(status_info['statistics']['count_per_week'], indent=4, ensure_ascii=True)) \
+            .replace('{{events_per_calendar}}',
+                     json.dumps(status_info['statistics']['count_per_calendar'], indent=4, ensure_ascii=True)) \
+            .replace('{{events_per_parser}}',
+                     json.dumps(status_info['statistics']['count_per_parser'], indent=4, ensure_ascii=True))
+
+        per_day_table_tbody = ""
+        for item in status_info['statistics']['count_per_day']:
+            per_day_table_tbody += "<tr>\n" \
+                                   "\t<td>{}</td>\n" \
+                                   "\t<td>{}</td>\n" \
+                                   "</tr>\n".format(item['day'], str(item['count']))
+        file = file.replace('{{counts_per_day}}', per_day_table_tbody)
+
+        failing_calendars_table_tbody = ""
+        for index, calendar_url in enumerate(status_info['failures']['failed_calendars']):
+            failing_calendars_table_tbody += '<tr>\n' \
+                                             '<th scope="row">{}</th>' \
+                                             '\t<td><a href="{}">{}</a></td>\n' \
+                                             '</tr>\n'.format(index + 1, calendar_url, calendar_url)
+        file = file.replace('{{failing_calendars}}', failing_calendars_table_tbody)
+
+        empty_calendars_table_tbody = ""
+        always_empty_calendars = status_info['failures']['always_empty_calendars']
+        for index, calendar_url in enumerate(status_info['failures']['newly_empty_calendars']):
+            always_empty = ''
+            if calendar_url in always_empty_calendars:
+                always_empty += ' *'
+            empty_calendars_table_tbody += '<tr>\n' \
+                                           '<th scope="row">{}</th>' \
+                                           '\t<td><a href="{}">{}</a>{}</td>\n' \
+                                           '</tr>\n'.format(index + 1, calendar_url, calendar_url, always_empty)
+        file = file.replace('{{empty_calendars}}', empty_calendars_table_tbody)
+
+        os.makedirs(GenerateHTML.TEMP_WEB_FOLDER, exist_ok=True)
+        with open(GenerateHTML.CRAWLER_STATUS_GENERATED_HTML_FILE_PATH, 'w') as crawler_status_generated_file:
+            crawler_status_generated_file.write(file)
+
+    @staticmethod
+    def copy_other_files() -> None:
+        os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/'), exist_ok=True)
+        shutil.copy2('web/scripts/events_map.js', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/events_map.js'))
+        shutil.copy2('web/scripts/index.js', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/index.js'))
+        shutil.copy2('web/scripts/datetime_pickers.js',
+                     os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/datetime_pickers.js'))
+        shutil.copy2('web/scripts/crawler_status.js',
+                     os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/crawler_status.js'))
+        shutil.copy2('web/scripts/statistics_graphs.js',
+                     os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/statistics_graphs.js'))
+
+        os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/'), exist_ok=True)
+        shutil.copy2('web/styles/dashboard.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/dashboard.css'))
+        shutil.copy2('web/styles/index.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/index.css'))
 
 
 if __name__ == '__main__':

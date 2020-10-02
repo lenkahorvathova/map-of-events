@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="cs">
+    <head>
+        <title>Map of Events - Crawler Status</title>
+
+        <!-- Meta Data -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="Website for the Master's Thesis.">
+        <meta name="author" content="Lenka Horvathova">
+
+        <!-- Bootstrap -->
+        <!--    - Bootstrap 4 Styles -->
+        <link type="text/css" rel="stylesheet"
+              href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+              integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+              crossorigin="anonymous">
+
+        <!--    - Font Awesome Icons -->
+        <link type="text/css" rel="stylesheet"
+              href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
+
+        <!--    - Custom styles for the template (https://getbootstrap.com/docs/4.0/examples/dashboard/) -->
+        <link type="text/css" rel="stylesheet" href="styles/dashboard.css">
+
+        <!-- D3.js -->
+        <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
+        <!--    - Color scale -->
+        <script type="text/javascript" src="https://d3js.org/d3-scale-chromatic.v1.min.js"></script>
+
+        <!-- Custom -->
+        <!--    - Scripts -->
+        <script type="text/javascript">
+            const GLB_EVENTS_PER_WEEK = JSON.parse(`{{events_per_week}}`);
+            const GLB_EVENTS_PER_CALENDAR = JSON.parse(`{{events_per_calendar}}`);
+            const GLB_EVENTS_PER_PARSER = JSON.parse(`{{events_per_parser}}`);
+        </script>
+        <script type="text/javascript" src="scripts/crawler_status.js"></script>
+        <script type="text/javascript" src="scripts/statistics_graphs.js"></script>
+    </head>
+
+    <body onload="handleFirstLoad()">
+
+        <!-- Top Navigation Bar -->
+        <nav class="navbar navbar-expand-md navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
+            <a class="navbar-brand col-auto col-md-5 col-lg-4 col-xl-3 mr-0">Map of Events</a>
+            <button class="navbar-toggler mx-3" type="button" data-toggle="collapse" data-target="#navbarCollapse"
+                    aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse mx-3" id="navbarCollapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="./index.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Crawler Status</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <div class="container-fluid p-4">
+
+            <!-- Statistics -->
+            <h4>Statistics</h4>
+
+            <!--    - One Line Counts -->
+            <div class="row">
+                <div class="col-auto col-md-5 col-lg-4 col-xl-3">
+                    <div class="table-responsive">
+                        <table class="table table-sm table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">All Events</th>
+                                    <td><i>{{all_events_count}}</i></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Future Events</th>
+                                    <td><i>{{future_events_count}}</i></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <!--    - Per Day Counts (Table) -->
+                <div class="col-lg-4">
+                    <span><strong>Events per Day</strong> <i>(last 2 weeks)</i></span>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Count</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{counts_per_day}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!--    - Per Week Counts (Bar Chart) -->
+                <div class="col-lg-4">
+                    <span><strong>Events per Week</strong> <i>(last year)</i></span>
+                    <div id="statistics__graph__events_per_week" class="text-center"></div>
+                </div>
+
+                <!--    - Per Calendar And Parser Counts (Pie Chart) -->
+                <div class="col-lg-4">
+                    <div>
+                        <span><strong>Events </strong></span>
+                        <button type="button" onclick="loadEventsPerCalendarAndParserGraph(GLB_EVENTS_PER_CALENDAR)">
+                            per Calendar
+                        </button>
+                        <button type="button" onclick="loadEventsPerCalendarAndParserGraph(GLB_EVENTS_PER_PARSER)">
+                            per Parser
+                        </button>
+                    </div>
+                    <div id="statistics__graph__events_per_calendar_or_parser"></div>
+                </div>
+            </div>
+
+            <!-- Failures -->
+            <h4>Failures</h4>
+            <div class="row">
+
+                <!--    - Failing Calendars (Table) -->
+                <div class="col-lg-4">
+                    <span><strong>Failing Calendars</strong></span>
+                    <p>- download of these calendars is failing for at least last 3 days</p>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Calendar URL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{failing_calendars}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!--    - Empty Calendars (Table) -->
+                <div class="col-lg-4">
+                    <span><strong>Empty Calendars</strong></span>
+                    <p>- no events were acquired from these calendars for at least 7 days <br>
+                       * calendars that so far produced no events at all</p>
+                    <div class="table-responsive">
+                        <table class="table table-sm">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">Calendar URL</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {{empty_calendars}}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Optional -->
+        <!--    jQuery Script -->
+        <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
+                integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
+                crossorigin="anonymous"></script>
+
+        <!--    Popper Script -->
+        <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+                integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+                crossorigin="anonymous"></script>
+
+        <!--    Bootstrap Script -->
+        <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
+                integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
+                crossorigin="anonymous"></script>
+    </body>
+</html>
