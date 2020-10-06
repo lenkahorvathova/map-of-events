@@ -73,27 +73,15 @@ function prepareEventDataForEventsTable(event) {
     }
     event["table_location"] = location;
 
-    let startDatetime;
-    let startDatetimeString = event['start_date'];
-    if (event['start_time'] != null) {
-        startDatetimeString += " " + event['start_time'];
-        startDatetime = new Date(startDatetimeString).toLocaleString();
-    } else {
-        startDatetime = new Date(startDatetimeString).toLocaleDateString();
-    }
-    event["table_start_datetime"] = startDatetime;
+    event["table_start_datetime"] = {
+        'date': event['start_date'],
+        'time': event['start_time']
+    };
 
-    let endDatetime = null;
-    if (event['end_date'] != null) {
-        let endDatetimeString = event['end_date'];
-        if (event['end_time'] != null) {
-            endDatetimeString += " " + event['end_time'];
-            endDatetime = new Date(endDatetimeString).toLocaleString();
-        } else {
-            endDatetime = new Date(endDatetimeString).toLocaleDateString();
-        }
-    }
-    event["table_end_datetime"] = endDatetime;
+    event["table_end_datetime"] = {
+        'date': event['end_date'],
+        'time': event['end_time']
+    };
 
     return event;
 }

@@ -196,9 +196,33 @@ function showEventDetailsFromEventsTable(element) {
     prepareEventDetailsModal(eventData);
 }
 
+function prepareDatetimeDisplayForEventsTable(date, time) {
+    if (date == null) {
+        return null;
+    } else {
+        if (time == null) {
+            return new Date(date).toLocaleDateString();
+        } else {
+            return new Date(date + ' ' + time).toLocaleString();
+        }
+    }
+}
+
+function prepareDatetimeFilterForEventsTable(date, time) {
+    if (date == null) {
+        return null;
+    } else {
+        if (time == null) {
+            return new Date(date);
+        } else {
+            return new Date(date + ' ' + time);
+        }
+    }
+}
+
 function initializeEventsTable(eventsData) {
     $('#main-content__events-table').DataTable({
-        "data": eventsData,
+        data: eventsData,
         columns: [
             {data: 'table_title'},
             {data: 'table_location'},
@@ -206,15 +230,36 @@ function initializeEventsTable(eventsData) {
             {data: 'table_end_datetime'},
             {data: null}
         ],
-        "order": [[2, "asc"]],
-        "responsive": true,
-        "select": true,
-        "columnDefs": [{
-            "targets": -1,
-            "data": null,
-            "orderable": false,
-            "defaultContent":
-                    `
+        order: [[2, "asc"]],
+        responsive: true,
+        select: true,
+        columnDefs: [
+            {
+                targets: 2,
+                orderable: true,
+                render: function (data, type) {
+                    if (type === 'display')
+                        return prepareDatetimeDisplayForEventsTable(data['date'], data['time']);
+                    else
+                        return prepareDatetimeFilterForEventsTable(data['date'], data['time']);
+                }
+            },
+            {
+                targets: 3,
+                orderable: true,
+                render: function (data, type) {
+                    if (type === 'display')
+                        return prepareDatetimeDisplayForEventsTable(data['date'], data['time']);
+                    else
+                        return prepareDatetimeFilterForEventsTable(data['date'], data['time']);
+                }
+            },
+            {
+                targets: -1,
+                data: null,
+                orderable: false,
+                defaultContent:
+                        `
                         <div class="centered-cell-content">
                             <button type="button" class="btn btn-secondary btn-sm"
                                     data-target="#modal--event-details" onclick="showEventDetailsFromEventsTable(this)" data-toggle="modal"
@@ -227,7 +272,8 @@ function initializeEventsTable(eventsData) {
                             </button>
                         </div>
                     `
-        }]
+            }
+        ]
     });
 
     $('.dataTables_length').addClass('bs-select');
