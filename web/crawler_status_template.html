@@ -113,14 +113,17 @@
 
                 <!--    - Per Calendar And Parser Counts (Pie Chart) -->
                 <div class="col-lg-4">
-                    <div>
-                        <span><strong>Events </strong></span>
-                        <button type="button" onclick="loadEventsPerCalendarAndParserGraph(GLB_EVENTS_PER_CALENDAR)">
+                    <span><strong>Events </strong></span>
+                    <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-outline-secondary btn-sm active">
+                            <input type="radio" onclick="loadEventsPerCalendarAndParserGraph(GLB_EVENTS_PER_CALENDAR)"
+                                   checked>
                             per Calendar
-                        </button>
-                        <button type="button" onclick="loadEventsPerCalendarAndParserGraph(GLB_EVENTS_PER_PARSER)">
+                        </label>
+                        <label class="btn btn-outline-secondary btn-sm active">
+                            <input type="radio" onclick="loadEventsPerCalendarAndParserGraph(GLB_EVENTS_PER_PARSER)">
                             per Parser
-                        </button>
+                        </label>
                     </div>
                     <div id="statistics__graph__events_per_calendar_or_parser"></div>
                 </div>
