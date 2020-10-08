@@ -73,6 +73,10 @@ def get_base_with_default_gps() -> [dict]:
     return get_base_by("default_gps")
 
 
+def get_base_with_default_location() -> [dict]:
+    return get_base_by("default_location")
+
+
 def get_base_by_domain(value: str) -> Optional[dict]:
     base_list = get_base_by("domain", value)
 

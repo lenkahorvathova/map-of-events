@@ -54,7 +54,8 @@ function addRowToGPSTable(itemId, item) {
     td3.id = `modal--gps-table__table__longitude--${itemId}`;
 
     const td4 = tr.insertCell();
-    td4.innerHTML = `<button type="button" class="btn btn-primary btn-block" onclick="copyGPSValueIntoSearchForm(${itemId})">Use</button>`;
+    td4.innerHTML = `<button type="button" class="btn btn-primary btn-block btn-sm" 
+                             onclick="copyGPSValueIntoSearchForm(${itemId})">Use</button>`;
 }
 
 function addMessageRowToGPSTable(message) {
@@ -117,14 +118,35 @@ function handleSearchFormSubmission(event) {
 function zoomToEventGPS(element) {
     const eventData = $('#main-content__events-table').DataTable().row($(element).parents('tr')).data();
 
-    let gps = eventData["gps"];
-    if (gps === null) {
-        gps = eventData["geocoded_gps"];
-    }
-    const coordinatesArray = gps.split(',').map(coordinate => parseFloat(coordinate));
-    const sMapCoordinates = SMap.Coords.fromWGS84(coordinatesArray[1], coordinatesArray[0]);
+    if (eventData['online']) {
+        alert("You can't zoom to this event as it is being held online.");
+    } else {
+        let gps = eventData['gps'];
+        if (gps === null) {
+            gps = eventData['geocoded_gps'];
+        }
+        const coordinatesArray = gps.split(',').map(coordinate => parseFloat(coordinate));
+        const sMapCoordinates = SMap.Coords.fromWGS84(coordinatesArray[1], coordinatesArray[0]);
 
-    GLB_MAP.setCenterZoom(sMapCoordinates, 18);
+        GLB_MAP.setCenterZoom(sMapCoordinates, 18);
+    }
+}
+
+function parseDatetime(datetimeDict) {
+    const dateString = datetimeDict['date'];
+    const timeString = datetimeDict['time'];
+
+    let datetime = null;
+    if (dateString != null) {
+        let datetimeString = dateString;
+        if (timeString != null) {
+            datetimeString += " " + timeString;
+            datetime = new Date(datetimeString).toLocaleString();
+        } else {
+            datetime = new Date(datetimeString).toLocaleDateString();
+        }
+    }
+    return datetime;
 }
 
 function prepareEventDetailsModal(eventData) {
@@ -137,15 +159,16 @@ function prepareEventDetailsModal(eventData) {
     defaultLocation.hidden = true;
     if (eventData['online']) {
         defaultLocation.hidden = false;
-        defaultLocation.outerHTML = `<i class="fa fa-check-circle text-primary"> ONLINE</i>`;
-    } else {
+        defaultLocation.innerHTML = `<i class="fa fa-check-circle text-primary"> ONLINE</i>`;
+    } else if (eventData['default_location']) {
         defaultLocation.hidden = false;
         defaultLocation.innerText = eventData['default_location'];
     }
 
     const datetime = document.getElementById('modal--event-details__datetime');
-    datetime.innerText = eventData['table_start_datetime'];
-    if (eventData['table_end_datetime']) datetime.innerText += ' - ' + eventData['table_end_datetime'];
+    datetime.innerText = parseDatetime(eventData['table_start_datetime']);
+    const endDatetime = parseDatetime(eventData['table_end_datetime']);
+    if (endDatetime) datetime.innerText += ' - ' + endDatetime;
 
     const perex = document.getElementById('modal--event-details__perex');
     perex.innerText = eventData['perex'];
@@ -154,21 +177,33 @@ function prepareEventDetailsModal(eventData) {
     if (eventData['location']) {
         location.innerText = eventData['location'];
     } else {
-        location.innerHTML = `<i>unknown</i>`;
+        if (eventData['online']) {
+            location.innerHTML = `<i>online</i>`;
+        } else {
+            location.innerHTML = `<i>unknown</i>`;
+        }
     }
 
     const gps = document.getElementById('modal--event-details__gps');
     const geocodedLocation = document.getElementById('modal--event-details__location--geocoded');
-    if (eventData['gps'] !== null) {
-        gps.innerText = eventData['gps'];
+    if (eventData['online']) {
+        gps.innerText = `online`;
+        gps.style = `font-style: italic;`;
         geocodedLocation.innerText = "";
     } else {
-        gps.innerText = eventData['geocoded_gps'];
+        if (eventData['gps'] !== null) {
+            gps.innerText = eventData['gps'];
+            gps.style = `font-style: normal;`;
+            geocodedLocation.innerText = "";
+        } else if (eventData['geocoded_gps'] !== null) {
+            gps.innerText = eventData['geocoded_gps'];
+            gps.style = `font-style: normal;`;
 
-        if (eventData['has_default']) {
-            geocodedLocation.innerText = '(' + eventData['default_location'] + ')';
-        } else {
-            geocodedLocation.innerText = '(' + eventData['municipality'] + ', ' + eventData['district'] + ')';
+            if (eventData['has_default']) {
+                geocodedLocation.innerText = '(' + eventData['default_location'] + ')';
+            } else {
+                geocodedLocation.innerText = '(' + eventData['municipality'] + ', ' + eventData['district'] + ')';
+            }
         }
     }
 

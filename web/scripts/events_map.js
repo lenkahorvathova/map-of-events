@@ -229,7 +229,8 @@ function filterEventsAndLoadMap() {
         }
 
         const onlineChecked = document.getElementById('sidebar__form--filter__location__options--online').checked;
-        if (onlineChecked && !GLB_EVENTS_DATASET[eventId]['online']) {
+        if ((onlineChecked && !GLB_EVENTS_DATASET[eventId]['online'])
+                || (!onlineChecked && GLB_EVENTS_DATASET[eventId]['online'])) {
             continue;
         }
 
@@ -267,33 +268,35 @@ function filterEventsAndLoadMap() {
             }
         }
 
-        let eventGPS = GLB_EVENTS_DATASET[eventId]["gps"];
-        if (eventGPS === null) eventGPS = GLB_EVENTS_DATASET[eventId]["geocoded_gps"];
-        if (eventGPS === null) {
-            throw `'eventGPS' for the event(${eventId}) is null!`;
-        }
-
-        const coordinatesArray = eventGPS.split(',').map(coordinate => parseFloat(coordinate));
-        const sMapCoordinates = SMap.Coords.fromWGS84(coordinatesArray[1], coordinatesArray[0]);
-
-        if (gpsChecked && specifiedCoordinates !== null) {
-            const distance = calculateDistanceInKilometers(sMapCoordinates, specifiedCoordinates);
-            if (distance >= specifiedRadius) {
-                continue;
+        if (!onlineChecked) {
+            let eventGPS = GLB_EVENTS_DATASET[eventId]["gps"];
+            if (eventGPS === null) eventGPS = GLB_EVENTS_DATASET[eventId]["geocoded_gps"];
+            if (!onlineChecked && eventGPS === null) {
+                throw `'eventGPS' for the event(${eventId}) is null!`;
             }
-        }
 
-        const eventMarkOptions = {
-            url: dropRed,
-            title: GLB_EVENTS_DATASET[eventId]['title'],
-            anchor: {left: 10, bottom: 1},
-            eventId: eventId
-        };
-        const eventMark = new SMap.Marker(sMapCoordinates, null, eventMarkOptions);
-        eventMark.getContainer()[SMap.LAYER_MARKER].style.cursor = "pointer";
-        eventMark.getContainer()[SMap.LAYER_MARKER].classList.add("marker");
-        marks.push(eventMark);
-        coordinates.push(sMapCoordinates);
+            const coordinatesArray = eventGPS.split(',').map(coordinate => parseFloat(coordinate));
+            const sMapCoordinates = SMap.Coords.fromWGS84(coordinatesArray[1], coordinatesArray[0]);
+
+            if (gpsChecked && specifiedCoordinates !== null) {
+                const distance = calculateDistanceInKilometers(sMapCoordinates, specifiedCoordinates);
+                if (distance >= specifiedRadius) {
+                    continue;
+                }
+            }
+
+            const eventMarkOptions = {
+                url: dropRed,
+                title: GLB_EVENTS_DATASET[eventId]['title'],
+                anchor: {left: 10, bottom: 1},
+                eventId: eventId
+            };
+            const eventMark = new SMap.Marker(sMapCoordinates, null, eventMarkOptions);
+            eventMark.getContainer()[SMap.LAYER_MARKER].style.cursor = "pointer";
+            eventMark.getContainer()[SMap.LAYER_MARKER].classList.add("marker");
+            marks.push(eventMark);
+            coordinates.push(sMapCoordinates);
+        }
 
         const eventData = prepareEventDataForEventsTable(GLB_EVENTS_DATASET[eventId]);
         filteredEventsData.push(eventData);

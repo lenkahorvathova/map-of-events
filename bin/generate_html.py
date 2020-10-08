@@ -44,9 +44,14 @@ class GenerateHTML:
         cursor = self.connection.execute(query)
         events_tuples = cursor.fetchall()
 
+        calendars_with_default_location = {}
+        for calendar in utils.get_base_with_default_location():
+            calendars_with_default_location[calendar['url']] = calendar['default_location']
+
         events_dataset = {}
         for event in events_tuples:
             event_id = event[3]
+            calendar_url = event[0]
             event_dict = {
                 "event_url": event[2],
                 "title": self.sanitize_string(event[4]),
@@ -62,10 +67,12 @@ class GenerateHTML:
                 "online": event[14] == 1,
                 "has_default": event[15] == 1,
                 "geocoded_gps": event[16],
-                "default_location": event[17],
+                "default_location": calendars_with_default_location[calendar_url]
+                if calendar_url in calendars_with_default_location
+                else event[17],
                 "municipality": event[18],
                 "district": event[19],
-                "calendar_url": event[0],
+                "calendar_url": calendar_url,
                 "calendar_downloaded_at": event[1]
             }
             events_dataset[event_id] = event_dict
