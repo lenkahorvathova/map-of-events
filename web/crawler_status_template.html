@@ -34,9 +34,16 @@
             const GLB_EVENTS_PER_WEEK = JSON.parse(`{{events_per_week}}`);
             const GLB_EVENTS_PER_CALENDAR = JSON.parse(`{{events_per_calendar}}`);
             const GLB_EVENTS_PER_PARSER = JSON.parse(`{{events_per_parser}}`);
+            const GLB_FAILING_CALENDARS = JSON.parse(`{{failing_calendars}}`);
+            const GLB_EMPTY_CALENDARS = JSON.parse(`{{empty_calendars}}`);
+            const GLB_CALENDARS_WITH_FAILED_EVENTS = JSON.parse(`{{calendars_with_failed_events}}`);
+            const GLB_FAILED_EVENTS = JSON.parse(`{{failed_events}}`);
         </script>
         <script type="text/javascript" src="scripts/crawler_status.js"></script>
         <script type="text/javascript" src="scripts/statistics_graphs.js"></script>
+
+        <!--    - Styles -->
+        <link type="text/css" rel="stylesheet" href="styles/crawler_status.css">
     </head>
 
     <body onload="handleFirstLoad()">
@@ -61,23 +68,25 @@
         </nav>
 
         <!-- Main Content -->
-        <div class="container-fluid p-4">
+        <div class="container-fluid pb-4">
 
             <!-- Statistics -->
-            <h4>Statistics</h4>
+            <div class="row justify-content-center stats-header">
+                <h3 class="m-4">Counts</h3>
+            </div>
 
             <!--    - One Line Counts -->
-            <div class="row">
-                <div class="col-auto col-md-5 col-lg-4 col-xl-3">
+            <div class="row justify-content-center">
+                <div class="col-xl-6">
                     <div class="table-responsive">
                         <table class="table table-sm table-borderless">
                             <tbody>
                                 <tr>
-                                    <th scope="row">All Events</th>
+                                    <th scope="row" class="part-title one-liner">All Events</th>
                                     <td><i>{{all_events_count}}</i></td>
                                 </tr>
                                 <tr>
-                                    <th scope="row">Future Events</th>
+                                    <th scope="row" class="part-title one-liner">Future Events</th>
                                     <td><i>{{future_events_count}}</i></td>
                                 </tr>
                             </tbody>
@@ -86,16 +95,18 @@
                 </div>
             </div>
 
-            <div class="row">
-                <!--    - Per Day Counts (Table) -->
-                <div class="col-lg-4">
-                    <span><strong>Events per Day</strong> <i>(last 2 weeks)</i></span>
+            <hr/>
+
+            <!--    - Per Day Counts (Table) -->
+            <div class="row justify-content-center">
+                <div class="col-xl-6">
+                    <div class="part"><span class="part-title">Events per Day</span> <i>(last 2 weeks)</i></div>
                     <div class="table-responsive">
-                        <table class="table table-sm">
+                        <table class="table table-bordered table-striped table-sm">
                             <thead class="thead-light">
                                 <tr>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">Count</th>
+                                    <th scope="col" class="th-sm">Date</th>
+                                    <th scope="col" class="th-sm">Count</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -104,16 +115,24 @@
                         </table>
                     </div>
                 </div>
+            </div>
 
-                <!--    - Per Week Counts (Bar Chart) -->
-                <div class="col-lg-4">
-                    <span><strong>Events per Week</strong> <i>(last year)</i></span>
+            <hr/>
+
+            <!--    - Per Week Counts (Bar Chart) -->
+            <div class="row justify-content-center">
+                <div class="col-xl-6">
+                    <div class="part"><span class="part-title">Events per Week</span> <i>(last year)</i></div>
                     <div id="statistics__graph__events_per_week" class="text-center"></div>
                 </div>
+            </div>
 
-                <!--    - Per Calendar And Parser Counts (Pie Chart) -->
-                <div class="col-lg-4">
-                    <span><strong>Events </strong></span>
+            <hr/>
+
+            <!--    - Per Calendar And Parser Counts (Pie Chart) -->
+            <div class="row justify-content-center">
+                <div class="col-xl-6">
+                    <div class="part"><span class="part-title">Events </span></div>
                     <div class="btn-group btn-group-toggle" data-toggle="buttons">
                         <label class="btn btn-outline-secondary btn-sm active">
                             <input type="radio" onclick="loadEventsPerCalendarAndParserGraph(GLB_EVENTS_PER_CALENDAR)"
@@ -130,44 +149,136 @@
             </div>
 
             <!-- Failures -->
-            <h4>Failures</h4>
-            <div class="row">
+            <div class="row justify-content-center stats-header">
+                <h3 class="m-4">Failures</h3>
+            </div>
 
-                <!--    - Failing Calendars (Table) -->
-                <div class="col-lg-4">
-                    <span><strong>Failing Calendars</strong></span>
+            <!--    - Failing Calendars (Table) -->
+            <div class="row justify-content-center">
+                <div class="col-xl-6">
+                    <div class="part"><span class="part-title">Failing Calendars</span></div>
                     <p>- download of these calendars is failing for at least last 3 days</p>
                     <div class="table-responsive">
-                        <table class="table table-sm">
+                        <table id="failures__calendars--failing__table"
+                               class="table table-bordered table-striped table-sm">
                             <thead class="thead-light">
                                 <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Calendar URL</th>
+                                    <th scope="col" class="th-sm">#</th>
+                                    <th scope="col" class="th-sm">Calendar URL</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {{failing_calendars}}
-                            </tbody>
                         </table>
                     </div>
                 </div>
+            </div>
 
-                <!--    - Empty Calendars (Table) -->
-                <div class="col-lg-4">
-                    <span><strong>Empty Calendars</strong></span>
-                    <p>- no events were acquired from these calendars for at least 7 days <br>
-                       * calendars that so far produced no events at all</p>
-                    <div class="table-responsive">
-                        <table class="table table-sm">
+            <hr/>
+
+            <!--    - Empty Calendars (Table) -->
+            <div class="row justify-content-center">
+                <div id="failures__calendars--empty" class="col-xl-6">
+                    <div class="part"><span class="part-title">Empty Calendars</span></div>
+                    <p>- no events were acquired from these calendars for at least a last week </p>
+                    <div id="failures__calendars--empty__checkbox" class="form-group form-inline">
+                        <label for="failures__calendars--empty__checkbox"
+                               style="margin-right: 15px; font-weight: bold">Filter out:</label>
+                        <div class="form-check-inline">
+                            <label for="failures__calendars--empty__checkbox--vismo" class="form-check-label"
+                                   title="Filters out calendars using 'vismo' parser.">
+                                <input class="form-check-input" type="checkbox"
+                                       id="failures__calendars--empty__checkbox--vismo"> Vismo
+                                <i class="fa fa-question" title="Filters out calendars using 'vismo' parser."
+                                   style="color: gray"></i>
+                            </label>
+                        </div>
+                        <div class="form-check-inline">
+                            <label for="failures__calendars--empty__checkbox--always-empty" class="form-check-label"
+                                   title="Filters out calendars that produced no events so far.">
+                                <input class="form-check-input" type="checkbox"
+                                       id="failures__calendars--empty__checkbox--always-empty"> Always Empty
+                                <i class="fa fa-question" title="Filters out calendars that produced no events so far."
+                                   style="color: gray"></i>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="table-responsive rounded">
+                        <table id="failures__calendars--empty__table"
+                               class="table table-bordered table-striped table-sm">
                             <thead class="thead-light">
                                 <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Calendar URL</th>
+                                    <th scope="col" class="th-sm">#</th>
+                                    <th scope="col" class="th-sm">Calendar URL</th>
+                                    <th scope="col" class="th-sm">Parser</th>
+                                    <th scope="col" class="th-sm">Always</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                {{empty_calendars}}
-                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <hr/>
+
+            <!--    - Calendars With Failed Events (Table) -->
+            <div class="row justify-content-center">
+                <div class="col-xl-6">
+                    <div class="part"><span class="part-title">Calendars with Failed Events</span> <i>(more than
+                                                                                                      10%)</i></div>
+                    <p>- a substantial part of the events from these calendars fails</p>
+                    <div class="table-responsive">
+                        <table id="failures__calendars--failed-events__table"
+                               class="table table-bordered table-striped table-sm">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col" class="th-sm">#</th>
+                                    <th scope="col" class="th-sm">Calendar URL</th>
+                                    <th scope="col" class="th-sm">Failure Rate</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <hr/>
+
+            <!--    - Failed Events (Table) -->
+            <div class="row justify-content-center">
+                <div class="col-xl-6">
+                    <div class="part"><span class="part-title">Failed Events</span> <i>(last week)</i></div>
+                    <p>- events that couldn't be parsed and a cause of such a failure</p>
+                    <div>
+                        What does Cause of Failure code stands for?
+                        <ul>
+                            <li><strong>event_html_not_downloaded</strong>
+                                - failed to download event's HTML content
+                                <span class="text-muted">(probably faulty event's URL)</span>
+                            </li>
+                            <li><strong>event_data_not_parsed</strong>
+                                - failed to parse data from event's HTML
+                                <span class="text-muted">(probably missing title or date)</span>
+                            </li>
+                            <li><strong>event_datetime_not_processed</strong>
+                                - failed to process event's date
+                                <span class="text-muted">(probably doesn't match format for its parser)</span>
+                            </li>
+                            <li><strong>event_gps_not_acquired</strong>
+                                - failed to acquire event's GPS
+                                <span class="text-muted">(probably missing or ambiguous location)</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="table-responsive">
+                        <table id="failures__events--failed__table"
+                               class="table table-bordered table-striped table-sm">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col" class="th-sm">#</th>
+                                    <th scope="col" class="th-sm">Event URL</th>
+                                    <th scope="col" class="th-sm">Cause of Failure</th>
+                                    <th scope="col" class="th-sm">event_url.id</th>
+                                </tr>
+                            </thead>
                         </table>
                     </div>
                 </div>
@@ -190,5 +301,11 @@
         <script type="text/javascript" src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"
                 integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6"
                 crossorigin="anonymous"></script>
+
+        <!--    DataTables -->
+        <!--        - Script -->
+        <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.21/datatables.min.js"></script>
+        <!--        - Style -->
+        <link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/v/bs4/dt-1.10.21/datatables.min.css"/>
     </body>
 </html>

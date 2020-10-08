@@ -30,6 +30,7 @@ class PrepareCrawlerStatus:
         return parser.parse_args()
 
     def run(self):
+        print('Preparing Crawler Status...')
         crawler_status_dict = self.prepare_crawler_status_dict()
         if self.args.dry_run:
             print(json.dumps(crawler_status_dict, indent=4, ensure_ascii=False))
@@ -48,8 +49,7 @@ class PrepareCrawlerStatus:
             },
             'failures': {
                 'failed_calendars': self.get_failed_calendars(3),
-                'always_empty_calendars': self.get_empty_calendars(None),
-                'newly_empty_calendars': self.get_empty_calendars(7),
+                'empty_calendars': self.get_empty_calendars(),
                 'failed_events_errors': self.get_failed_events_errors(7),
                 'failure_percentage_per_calendar': []
             },
@@ -159,9 +159,21 @@ class PrepareCrawlerStatus:
         downloaded_calendars = [calendar[0] for calendar in cursor.fetchall()]
         base_calendars = [base['url'] for base in self.base]
 
-        return [calendar for calendar in base_calendars if calendar not in downloaded_calendars]
+        return [{
+            'calendar_url': calendar
+        } for calendar in base_calendars if calendar not in downloaded_calendars]
 
-    def get_empty_calendars(self, consecutive_last_n: Optional[int]) -> list:
+    def get_empty_calendars(self) -> list:
+        last_week_empty_calendars = self.get_empty_calendars_helper(7)
+        always_empty_calendars = self.get_empty_calendars_helper(None)
+
+        always_empty_calendars_list = [calendar['calendar_url'] for calendar in always_empty_calendars]
+        for calendar_dict in last_week_empty_calendars:
+            calendar_dict['always'] = calendar_dict['calendar_url'] in always_empty_calendars_list
+
+        return last_week_empty_calendars
+
+    def get_empty_calendars_helper(self, consecutive_last_n: Optional[int]) -> list:
         query_last_n = ""
         if consecutive_last_n is not None:
             query_last_n = '''WHERE download_date > date('now', '-{} day')'''.format(consecutive_last_n)
@@ -184,7 +196,14 @@ class PrepareCrawlerStatus:
                 '''.format(query_last_n)
         cursor = self.connection.execute(query)
 
-        return [calendar[0] for calendar in cursor.fetchall()]
+        base_dict = {}
+        for calendar in self.base:
+            base_dict[calendar['url']] = calendar
+
+        return [{
+            'calendar_url': calendar[0],
+            'parser': base_dict[calendar[0]]['parser']
+        } for calendar in cursor.fetchall()]
 
     def get_failed_events_errors(self, last_n: int) -> list:
         failed_events_dict = {}
@@ -235,7 +254,11 @@ class PrepareCrawlerStatus:
         failed_events = []
         for error, event_list in failed_events_dict.items():
             for event_url_id, event_url in event_list:
-                failed_events.append((event_url_id, event_url, error))
+                failed_events.append({
+                    'event_url': event_url,
+                    'event_url_id': event_url_id,
+                    'error': error
+                })
 
         return failed_events
 
@@ -256,14 +279,21 @@ class PrepareCrawlerStatus:
             failure_percentage = (failed_events_count / all_events_count) * 100
 
             if failure_percentage >= failure_threshold:
-                calendars_over_failure_treshold.append((calendar, failure_percentage))
+                calendars_over_failure_treshold.append({
+                    'calendar_url': calendar,
+                    'events_failure': {
+                        'all_events_count': all_events_count,
+                        'failed_events_count': failed_events_count,
+                        'failure_percentage': failure_percentage
+                    }
+                })
 
         return calendars_over_failure_treshold
 
     def get_related_events_info(self, list_with_event_url_ids: list) -> dict:
         events_url_ids = []
-        for event_tuple in list_with_event_url_ids:
-            event_url_id = event_tuple[0]
+        for event_dict in list_with_event_url_ids:
+            event_url_id = event_dict['event_url_id']
             events_url_ids.append(event_url_id)
 
         query = '''

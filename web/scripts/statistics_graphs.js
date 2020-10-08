@@ -39,10 +39,6 @@ function loadEventsPerCalendarAndParserGraph(data) {
                   });
     const data_ready = pie(d3.entries(data));
 
-    // function midAngle(d) {
-    //     return d.startAngle + (d.endAngle - d.startAngle) / 2;
-    // }
-
     svg.select(".slices").selectAll("path.slice")
        .data(data_ready)
        .enter()
@@ -54,41 +50,6 @@ function loadEventsPerCalendarAndParserGraph(data) {
        .attr("class", "slice")
        .style("opacity", 1)
        .on("mouseover", function (d, i) {
-           // // show polyline with text
-           // svg.select(".lines")
-           //    .append("polyline")
-           //    .style("fill", "none")
-           //    .attr("stroke", "black")
-           //    .attr("stroke-width", 1)
-           //    .attr("points", function () {
-           //        const posA = arc.centroid(d);
-           //        const posB = outerArc.centroid(d);
-           //        const posC = outerArc.centroid(d);
-           //        const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-           //        posC[0] = radius * 0.95 * (midangle < Math.PI ? 1 : -1);
-           //        return [posA, posB, posC];
-           //    })
-           //    .attr("class", "mouseoutHide");
-           //
-           // svg.select(".labels")
-           //    .append("text")
-           //    .attr("dy", ".35em")
-           //    .text(function () {
-           //        return d.data.key + " (" + d.data.value.toLocaleString() + ")";
-           //    })
-           //    .attr("transform", function () {
-           //        const pos = outerArc.centroid(d);
-           //        const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-           //        pos[0] = radius * 0.99 * (midangle < Math.PI ? 1 : -1);
-           //        return 'translate(' + pos + ')';
-           //    })
-           //    .style("text-anchor", function () {
-           //        const midangle = d.startAngle + (d.endAngle - d.startAngle) / 2;
-           //        return (midangle < Math.PI ? 'start' : 'end');
-           //    })
-           //    .attr("class", "mouseoutHide");
-
-           // show text under chart
            labelTextGroup.append("text")
                          .style("text-anchor", "middle")
                          .style("font-size", labelTextFontSize)

@@ -114,7 +114,16 @@ class GenerateHTML:
             .replace('{{events_per_calendar}}',
                      json.dumps(status_info['statistics']['count_per_calendar'], indent=4, ensure_ascii=True)) \
             .replace('{{events_per_parser}}',
-                     json.dumps(status_info['statistics']['count_per_parser'], indent=4, ensure_ascii=True))
+                     json.dumps(status_info['statistics']['count_per_parser'], indent=4, ensure_ascii=True)) \
+            .replace('{{failing_calendars}}',
+                     json.dumps(status_info['failures']['failed_calendars'], indent=4, ensure_ascii=True)) \
+            .replace('{{empty_calendars}}',
+                     json.dumps(status_info['failures']['empty_calendars'], indent=4, ensure_ascii=True)) \
+            .replace('{{calendars_with_failed_events}}',
+                     json.dumps(status_info['failures']['failure_percentage_per_calendar'],
+                                indent=4, ensure_ascii=True)) \
+            .replace('{{failed_events}}',
+                     json.dumps(status_info['failures']['failed_events_errors'], indent=4, ensure_ascii=True))
 
         per_day_table_tbody = ""
         for item in status_info['statistics']['count_per_day']:
@@ -123,26 +132,6 @@ class GenerateHTML:
                                    "\t<td>{}</td>\n" \
                                    "</tr>\n".format(item['day'], str(item['count']))
         file = file.replace('{{counts_per_day}}', per_day_table_tbody)
-
-        failing_calendars_table_tbody = ""
-        for index, calendar_url in enumerate(status_info['failures']['failed_calendars']):
-            failing_calendars_table_tbody += '<tr>\n' \
-                                             '<th scope="row">{}</th>' \
-                                             '\t<td><a href="{}">{}</a></td>\n' \
-                                             '</tr>\n'.format(index + 1, calendar_url, calendar_url)
-        file = file.replace('{{failing_calendars}}', failing_calendars_table_tbody)
-
-        empty_calendars_table_tbody = ""
-        always_empty_calendars = status_info['failures']['always_empty_calendars']
-        for index, calendar_url in enumerate(status_info['failures']['newly_empty_calendars']):
-            always_empty = ''
-            if calendar_url in always_empty_calendars:
-                always_empty += ' *'
-            empty_calendars_table_tbody += '<tr>\n' \
-                                           '<th scope="row">{}</th>' \
-                                           '\t<td><a href="{}">{}</a>{}</td>\n' \
-                                           '</tr>\n'.format(index + 1, calendar_url, calendar_url, always_empty)
-        file = file.replace('{{empty_calendars}}', empty_calendars_table_tbody)
 
         os.makedirs(GenerateHTML.TEMP_WEB_FOLDER, exist_ok=True)
         with open(GenerateHTML.CRAWLER_STATUS_GENERATED_HTML_FILE_PATH, 'w') as crawler_status_generated_file:
@@ -163,6 +152,8 @@ class GenerateHTML:
         os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/'), exist_ok=True)
         shutil.copy2('web/styles/dashboard.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/dashboard.css'))
         shutil.copy2('web/styles/index.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/index.css'))
+        shutil.copy2('web/styles/crawler_status.css',
+                     os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/crawler_status.css'))
 
 
 if __name__ == '__main__':
