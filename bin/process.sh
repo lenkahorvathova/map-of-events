@@ -1,21 +1,26 @@
-PROJECT_DIR="/nlp/projekty/event_map/repository"
-PYTHON_ENV="venv/bin/activate"
+PROJECT_DIR="/nlp/projekty/event_map"
+REPOSITORY_DIR="${PROJECT_DIR}/repository"
+PYTHON_ENV_SCRIPTS_DIR="venv/bin"
+LOG_DATA_DIR="data/log"
+WEBSITE_DATA_DIR="data/tmp/web"
+PUBLIC_HTML_DIR="${PROJECT_DIR}/public_html"
 
-(ls "$PROJECT_DIR" >>/dev/null 2>&1) || (
-  echo ">>> ${PROJECT_DIR} doesn't exist!"
+(ls "${REPOSITORY_DIR}" >>/dev/null 2>&1) || (
+  echo ">>> '${REPOSITORY_DIR}' doesn't exist!"
   exit
 )
-cd "$PROJECT_DIR" || exit
-export PYTHONPATH=$PROJECT_DIR
+cd "${REPOSITORY_DIR}" || exit
+export PYTHONPATH="${REPOSITORY_DIR}"
 
-(ls "$PYTHON_ENV" >>/dev/null 2>&1) || (
-  echo ">>> ${PROJECT_DIR}/${PYTHON_ENV} doesn't exist!"
+(ls "${PYTHON_ENV_SCRIPTS_DIR}/activate" >>/dev/null 2>&1) || (
+  echo ">>> '${REPOSITORY_DIR}/${PYTHON_ENV_SCRIPTS_DIR}/activate' doesn't exist!"
   exit
 )
-source "$PYTHON_ENV" || exit
+# shellcheck source=./activate
+source "${PYTHON_ENV_SCRIPTS_DIR}/activate" || exit
+
 current_time=$(date "+%Y-%m-%d_%H-%M-%S")
-mkdir -p data/log/
-
+mkdir -p "${LOG_DATA_DIR}"
 {
   echo "====================$current_time====================="
 
@@ -48,4 +53,21 @@ mkdir -p data/log/
   echo "GEOCODE EVENTS' LOCATION:"
   echo "============================================================"
   python3 -u bin/geocode_location.py
-} 2>&1 | tee -a data/log/cron_process_"$current_time".txt
+
+  echo "============================================================"
+  echo "PREPARE CRAWLER'S STATUS:"
+  echo "============================================================"
+  python3 -u bin/prepare_crawler_status.py
+
+  echo "============================================================"
+  echo "GENERATE WEBSITE'S HTML:"
+  echo "============================================================"
+  python3 -u bin/generate_html.py
+
+} 2>&1 | tee -a "data/log/cron_process_${current_time}.txt"
+
+mkdir -p "${PUBLIC_HTML_DIR}"
+(cp -rpf "${WEBSITE_DATA_DIR}/." "${PUBLIC_HTML_DIR}" >>/dev/null 2>&1) || (
+  echo ">>> couldn't copy data from '${WEBSITE_DATA_DIR}/.' to '${PUBLIC_HTML_DIR}'!"
+  exit
+)

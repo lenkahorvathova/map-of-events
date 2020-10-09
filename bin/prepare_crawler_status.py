@@ -30,12 +30,13 @@ class PrepareCrawlerStatus:
         return parser.parse_args()
 
     def run(self):
-        print('Preparing Crawler Status...')
+        print('Preparing Crawler Status...', end="")
         crawler_status_dict = self.prepare_crawler_status_dict()
         if self.args.dry_run:
             print(json.dumps(crawler_status_dict, indent=4, ensure_ascii=False))
         else:
             utils.store_to_json_file(crawler_status_dict, PrepareCrawlerStatus.OUTPUT_FILE_PATH)
+        print("DONE")
 
     def prepare_crawler_status_dict(self) -> dict:
         crawler_status = {

@@ -22,11 +22,13 @@ class GenerateHTML:
             raise Exception("Missing views in the DB: {}".format(missing_views))
 
     def run(self) -> None:
+        print("Generating HTML...", end="")
         events_dataset = self.get_events()
         self.complete_index_template(events_dataset)
         status_info = self.get_crawler_status_info()
         self.complete_crawler_status_template(status_info)
         self.copy_other_files()
+        print("DONE")
 
     def get_events(self) -> dict:
         query = '''
