@@ -299,7 +299,7 @@ class Parser:
 
         datetime_formats.add(self.DEFAULT_DATE_FORMAT)
 
-        return datetime_formats
+        return set([self._remove_whitespaces(dt_format) for dt_format in datetime_formats])
 
     def _reorder_date_time(self, datetime_str: str, range_delimiter: str = None) -> str:
         date_str, _, time_str = datetime_str.partition(self.DATE_TIME_DELIMITER)
@@ -352,25 +352,28 @@ class Parser:
             range_match = re.search(self.RANGE_MATCH_REGEX, dt_format)
 
             if range_match:
-                start_format = range_match.group(1).strip()
-                delimiter = range_match.group(2)
-                end_format = range_match.group(3).strip()
+                start_format = self._remove_whitespaces(range_match.group(1))
+                delimiter = self._remove_whitespaces(range_match.group(2))
+                end_format = self._remove_whitespaces(range_match.group(3))
 
                 start_str, _, end_str = datetime_str.partition(delimiter)
+                start_str = self._remove_whitespaces(start_str)
+                end_str = self._remove_whitespaces(end_str)
 
                 try:
-                    start_datetime = datetime.strptime(start_str.strip(), start_format)
+                    start_datetime = datetime.strptime(start_str, start_format)
                     start_date = self._get_date(start_datetime, start_format)
                     start_time = self._get_time(start_datetime, start_format)
 
-                    end_datetime = datetime.strptime(end_str.strip(), end_format)
+                    end_datetime = datetime.strptime(end_str, end_format)
                     end_date = self._get_date(end_datetime, end_format)
                     end_time = self._get_time(end_datetime, end_format)
                 except ValueError:
                     pass
             else:
+                datetime_str = self._remove_whitespaces(datetime_str)
                 try:
-                    start_datetime = datetime.strptime(datetime_str.strip(), dt_format.strip())
+                    start_datetime = datetime.strptime(datetime_str, dt_format)
                     start_date = self._get_date(start_datetime, dt_format)
                     start_time = self._get_time(start_datetime, dt_format)
                 except ValueError:
@@ -385,3 +388,7 @@ class Parser:
     def _get_time(self, input_datetime: datetime, used_format: str):
         time_match = re.search(self.CONTAINS_TIME_REGEX, used_format)
         return input_datetime.time().__str__() if time_match else None
+
+    @staticmethod
+    def _remove_whitespaces(string: str) -> str:
+        return "".join(string.split())
