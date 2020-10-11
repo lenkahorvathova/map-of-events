@@ -1,10 +1,12 @@
 CREATE TABLE IF NOT EXISTS calendar
 (
-    id             INTEGER PRIMARY KEY AUTOINCREMENT,
-    url            TEXT NOT NULL,
-    html_file_path TEXT NOT NULL,
-    is_parsed      INTEGER   DEFAULT 0,
-    downloaded_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id                  INTEGER PRIMARY KEY AUTOINCREMENT,
+    url                 TEXT NOT NULL,
+    html_file_path      TEXT NOT NULL,
+    is_parsed           INTEGER   DEFAULT 0,
+    all_event_url_count INTEGER   DEFAULT 0,
+    new_event_url_count INTEGER   DEFAULT 0,
+    downloaded_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE IF NOT EXISTS event_url

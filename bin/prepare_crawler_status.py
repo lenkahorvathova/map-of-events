@@ -12,7 +12,7 @@ class PrepareCrawlerStatus:
         self.args = self._parse_arguments()
         self.connection = utils.create_connection()
 
-        missing_tables = utils.check_db_tables(self.connection, ["calendar", "event_url"])
+        missing_tables = utils.check_db_tables(self.connection, ["calendar"])
         if len(missing_tables) != 0:
             raise Exception("Missing tables in the DB: {}".format(missing_tables))
         missing_views = utils.check_db_views(self.connection, ["event_data_view"])
@@ -164,14 +164,14 @@ class PrepareCrawlerStatus:
         } for calendar in base_calendars if calendar not in downloaded_calendars]
 
     def get_empty_calendars(self) -> list:
-        last_week_empty_calendars = self.get_empty_calendars_helper(7)
+        last_2_weeks_empty_calendars = self.get_empty_calendars_helper(14)
         always_empty_calendars = self.get_empty_calendars_helper(None)
 
         always_empty_calendars_list = [calendar['calendar_url'] for calendar in always_empty_calendars]
-        for calendar_dict in last_week_empty_calendars:
+        for calendar_dict in last_2_weeks_empty_calendars:
             calendar_dict['always'] = calendar_dict['calendar_url'] in always_empty_calendars_list
 
-        return last_week_empty_calendars
+        return last_2_weeks_empty_calendars
 
     def get_empty_calendars_helper(self, consecutive_last_n: Optional[int]) -> list:
         query_last_n = ""
@@ -183,10 +183,9 @@ class PrepareCrawlerStatus:
                              SELECT calendar_url, sum(events_count) AS events_sum
                              FROM (
                                       SELECT date(c.downloaded_at)  AS download_date,
-                                             c.url                  AS calendar_url,
-                                             count(DISTINCT eu.url) AS events_count
+                                             c.url                  AS calendar_url,                 
+                                             c.all_event_url_count  AS events_count
                                       FROM calendar c
-                                           LEFT OUTER JOIN event_url eu ON c.id = eu.calendar_id
                                       {}
                                       GROUP BY download_date, calendar_url
                                   )
