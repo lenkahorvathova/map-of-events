@@ -63,10 +63,16 @@ def get_base_by(attr: str, value: str = None) -> list:
         if value is None:
             if attr in obj:
                 result.append(obj)
-        elif obj.get(attr, None) == value:
-            result.append(obj)
+        else:
+            attr_value = obj.get(attr, None)
+            if attr_value is not None and (attr_value == value or value in attr_value):
+                result.append(obj)
 
     return result
+
+
+def get_active_base() -> list:
+    return get_base_by('url')
 
 
 def get_base_with_default_gps() -> [dict]:
@@ -92,11 +98,30 @@ def get_base_by_url(value: str) -> Optional[dict]:
     base_list = get_base_by("url", value)
 
     if len(base_list) == 0:
+        base_list = get_base_by("old_urls", value)
+
+    if len(base_list) == 0:
         return None
     elif len(base_list) == 1:
         return base_list[0]
     else:
         raise Exception("Specified URL is not unique: {}".format(value))
+
+
+def get_base_dict_per_url(base: list = None) -> dict:
+    if base is None:
+        base = load_base()
+
+    base_dict = {}
+    for calendar_base in base:
+        calendar_url = calendar_base.get('url', None)
+        if calendar_url:
+            base_dict[calendar_url] = calendar_base
+        calendar_urls = calendar_base.get('old_urls', [])
+        for calendar_url in calendar_urls:
+            base_dict[calendar_url] = calendar_base
+
+    return base_dict
 
 
 def download_html_content(url: str, html_file_path: str, encoding: str = None, dry_run: bool = False) -> str:

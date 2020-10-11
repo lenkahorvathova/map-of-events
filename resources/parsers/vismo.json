@@ -11,7 +11,7 @@
         "event_url": {
             "xpath": {
                 "selectors": [
-                    ".//div[@class=\"dok\"]/ul/li/strong/a/@href"
+                    ".//div[@class=\"dok\"]/ul/li//strong/a/@href"
                 ]
             }
         }

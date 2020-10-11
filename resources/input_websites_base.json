@@ -778,7 +778,10 @@
     },
     {
         "domain": "krnov_cz",
-        "url": "http://www.krnov.cz/ap",
+        "url": "https://www.krnov.cz/vismo/kalendar.asp",
+        "old_urls": [
+            "http://www.krnov.cz/ap"
+        ],
         "parser": "vismo",
         "default_gps": "50.08976333333334, 17.70343388888889",
         "default_location": "Město Krnov"
@@ -1002,7 +1005,10 @@
     },
     {
         "domain": "mesto_polna_cz",
-        "url": "http://mesto-polna.cz/ap",
+        "url": "https://infocentrumpolna.cz/vismo/kalendar-akci.asp",
+        "old_urls": [
+            "http://mesto-polna.cz/ap"
+        ],
         "parser": "vismo",
         "default_gps": "49.486375, 15.720708611111112",
         "default_location": "Město Polná"
@@ -1037,7 +1043,10 @@
     },
     {
         "domain": "mestohradek_ro_cz",
-        "url": "http://www.mestohradek-ro.cz/ap",
+        "url": "https://www.mestohradek-ro.cz/aktualne/kalendar-akci/",
+        "old_urls": [
+            "http://www.mestohradek-ro.cz/ap"
+        ],
         "parser": "vismo",
         "default_gps": "49.710730833333336, 13.648265",
         "default_location": "Město Hrádek"
@@ -1086,7 +1095,10 @@
     },
     {
         "domain": "mestoplumlov_cz",
-        "url": "http://www.mestoplumlov.cz/ap",
+        "url": "https://www.mestoplumlov.cz/index.php/volny-cas/volny-cas-kulturni-akce",
+        "old_urls": [
+            "http://www.mestoplumlov.cz/ap"
+        ],
         "parser": "vismo",
         "default_gps": "49.464325, 17.01679222222222",
         "default_location": "Město Plumlov"
@@ -1401,7 +1413,9 @@
     },
     {
         "domain": "obec_dobra_voda_cz",
-        "url": "http://www.obec-dobra-voda.cz/ap",
+        "old_urls": [
+            "http://www.obec-dobra-voda.cz/ap"
+        ],
         "parser": "vismo",
         "default_gps": "49.35737694444445, 15.270207222222224",
         "default_location": "Obec Dobrá Voda"
@@ -1506,7 +1520,9 @@
     },
     {
         "domain": "obecbrezovice_cz",
-        "url": "http://www.obecbrezovice.cz/ap",
+        "old_urls": [
+            "http://www.obecbrezovice.cz/ap"
+        ],
         "parser": "vismo",
         "default_gps": "50.47057166666667, 14.732438611111112",
         "default_location": "Obec Březovice"
@@ -1632,7 +1648,10 @@
     },
     {
         "domain": "obecptice_cz",
-        "url": "http://www.obecptice.cz/ap",
+        "url": "https://www.obecptice.cz/kultura-a-volny-cas/ds-1086",
+        "old_urls": [
+            "http://www.obecptice.cz/ap"
+        ],
         "parser": "vismo",
         "default_gps": "50.052281666666666, 14.166865",
         "default_location": "Obec Ptice"
@@ -1922,7 +1941,8 @@
         "url": "http://www.putimov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.41587083333333, 15.265521944444444",
-        "default_location": "Obec Putimov"
+        "default_location": "Obec Putimov",
+        "note": "faulty URL present on their page"
     },
     {
         "domain": "repin_cz",
@@ -2010,10 +2030,14 @@
     },
     {
         "domain": "sezemice_cz",
-        "url": "http://www.sezemice.cz/ap",
+        "url": "https://sezemice.cz/akce/",
+        "old_urls": [
+            "http://www.sezemice.cz/ap"
+        ],
         "parser": "vismo",
         "default_gps": "50.06650638888889, 15.852698333333333",
-        "default_location": "Město Sezemice"
+        "default_location": "Město Sezemice",
+        "note": "xpaths differ from ones in vismo parser"
     },
     {
         "domain": "skalsko_cz",
@@ -2111,7 +2135,8 @@
         "url": "http://www.stitna-popov.cz/ap",
         "parser": "vismo",
         "default_gps": "49.06924138888889, 17.976934444444442",
-        "default_location": "Obec Štítná nad Vláří - Popov"
+        "default_location": "Obec Štítná nad Vláří - Popov",
+        "note": "faulty URL present on their page"
     },
     {
         "domain": "stoky_cz",
@@ -2409,7 +2434,10 @@
     },
     {
         "domain": "vyskov_mesto_cz",
-        "url": "http://www.vyskov-mesto.cz/ap",
+        "url": "https://www.ticvyskov.cz/ap",
+        "old_urls": [
+            "http://www.vyskov-mesto.cz/ap"
+        ],
         "parser": "vismo",
         "default_gps": "49.2772675, 16.998987222222222",
         "default_location": "Město Vyškov"

@@ -112,7 +112,7 @@ class GeocodeLocation:
     @staticmethod
     def geocode_events(events_to_geocode: list, municipalities: list) -> list:
         input_tuples = []
-        calendars_with_default_gps = {base_dict["url"]: base_dict for base_dict in utils.get_base_with_default_gps()}
+        calendars_with_default_gps = utils.get_base_dict_per_url(utils.get_base_with_default_gps())
 
         for index, event in enumerate(events_to_geocode):
             input_tuples.append((index + 1, len(events_to_geocode), event, municipalities, calendars_with_default_gps))

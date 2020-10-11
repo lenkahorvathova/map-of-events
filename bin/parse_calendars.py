@@ -63,7 +63,9 @@ class ParseCalendars:
             website_base = utils.get_base_by_domain(self.args.domain)
             if website_base is None:
                 sys.exit("Unknown domain '{}'!".format(self.args.domain))
-            calendar_url = website_base["url"]
+            calendar_url = website_base.get('url', None)
+            if calendar_url is None:
+                sys.exit("Specified domain '{}' is no longer active!".format(self.args.domain))
             query += ''' AND url == "{}"'''.format(calendar_url)
 
         if not self.args.parse_all:

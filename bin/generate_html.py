@@ -46,9 +46,10 @@ class GenerateHTML:
         cursor = self.connection.execute(query)
         events_tuples = cursor.fetchall()
 
+        calendars_with_default_location_base = utils.get_base_dict_per_url(utils.get_base_with_default_location())
         calendars_with_default_location = {}
-        for calendar in utils.get_base_with_default_location():
-            calendars_with_default_location[calendar['url']] = calendar['default_location']
+        for calendar_url, calendar_base in calendars_with_default_location_base.items():
+            calendars_with_default_location[calendar_url] = calendar_base['default_location']
 
         events_dataset = {}
         for event in events_tuples:

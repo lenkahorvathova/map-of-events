@@ -50,10 +50,13 @@ class DownloadCalendars:
             website_base = utils.get_base_by_domain(self.args.domain)
             if website_base is None:
                 sys.exit("Unknown domain '{}'!".format(self.args.domain))
+            calendar_url = website_base.get('url', None)
+            if calendar_url is None:
+                sys.exit("Specified domain '{}' is no longer active!".format(self.args.domain))
 
             return [website_base]
 
-        base_list = utils.load_base()
+        base_list = utils.get_active_base()
         return base_list
 
     def download_calendars(self, base_list: list) -> list:

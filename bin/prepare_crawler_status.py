@@ -11,7 +11,6 @@ class PrepareCrawlerStatus:
     def __init__(self) -> None:
         self.args = self._parse_arguments()
         self.connection = utils.create_connection()
-        self.base = utils.load_base()
 
         missing_tables = utils.check_db_tables(self.connection, ["calendar", "event_url"])
         if len(missing_tables) != 0:
@@ -158,7 +157,7 @@ class PrepareCrawlerStatus:
         cursor = self.connection.execute(query)
 
         downloaded_calendars = [calendar[0] for calendar in cursor.fetchall()]
-        base_calendars = [base['url'] for base in self.base]
+        base_calendars = [base['url'] for base in utils.get_active_base()]
 
         return [{
             'calendar_url': calendar
@@ -197,9 +196,7 @@ class PrepareCrawlerStatus:
                 '''.format(query_last_n)
         cursor = self.connection.execute(query)
 
-        base_dict = {}
-        for calendar in self.base:
-            base_dict[calendar['url']] = calendar
+        base_dict = utils.get_base_dict_per_url()
 
         return [{
             'calendar_url': calendar[0],
@@ -326,11 +323,9 @@ class PrepareCrawlerStatus:
 
         return events_dict
 
-    def get_related_calendars_info(self) -> dict:
-        base_dict = {}
-        for calendar_base in self.base:
-            calendar_url = calendar_base['url']
-            base_dict[calendar_url] = calendar_base
+    @staticmethod
+    def get_related_calendars_info() -> dict:
+        base_dict = utils.get_base_dict_per_url()
 
         return base_dict
 

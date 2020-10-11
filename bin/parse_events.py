@@ -22,7 +22,7 @@ class ParseEvents:
     def __init__(self) -> None:
         self.args = self._parse_arguments()
         self.connection = utils.create_connection()
-        self.base = utils.load_base()
+        self.base = utils.get_active_base()
 
         if not self.args.dry_run:
             missing_tables = utils.check_db_tables(self.connection,
@@ -69,7 +69,9 @@ class ParseEvents:
             website_base = utils.get_base_by_domain(self.args.domain)
             if website_base is None:
                 sys.exit("Unknown domain '{}'!".format(self.args.domain))
-            calendar_url = website_base["url"]
+            calendar_url = website_base.get('url', None)
+            if calendar_url is None:
+                sys.exit("Specified domain '{}' is no longer active!".format(self.args.domain))
             query += ''' AND c.url = "{}"'''.format(calendar_url)
 
         if self.args.event_url:
