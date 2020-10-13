@@ -142,9 +142,6 @@ class Parser:
         values_to_ignore = self.metadata["event"][data_key]["xpath"].get("ignore", [])
         sanitized_values = filter(lambda x: x not in values_to_ignore, sanitized_values)
 
-        seen = set()
-        sanitized_values = [x for x in sanitized_values if not (x in seen or seen.add(x))]
-
         return list(sanitized_values)
 
     def _format_xpath_event_data(self, data_key: str, xpath_values: list) -> list:
@@ -263,6 +260,7 @@ class Parser:
         locale.setlocale(locale.LC_TIME, "cs_CZ")
         for db_datetime in db_datetimes:
             db_datetime = self._replace_months(db_datetime)
+            db_datetime = self._replace_hyphen_to_dash(db_datetime)
 
             dt_delimiter_match = re.search(self.DATE_TIME_DELIMITER, db_datetime)
             if dt_delimiter_match:
@@ -299,7 +297,8 @@ class Parser:
 
         datetime_formats.add(self.DEFAULT_DATE_FORMAT)
 
-        return set([self._remove_whitespaces(dt_format) for dt_format in datetime_formats])
+        return set([self._replace_hyphen_to_dash(self._remove_whitespaces(dt_format))
+                    for dt_format in datetime_formats])
 
     def _reorder_date_time(self, datetime_str: str, range_delimiter: str = None) -> str:
         date_str, _, time_str = datetime_str.partition(self.DATE_TIME_DELIMITER)
@@ -392,3 +391,7 @@ class Parser:
     @staticmethod
     def _remove_whitespaces(string: str) -> str:
         return "".join(string.split())
+
+    @staticmethod
+    def _replace_hyphen_to_dash(string: str) -> str:
+        return string.replace('–', '-')
