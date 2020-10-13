@@ -28,7 +28,7 @@
         "title": {
             "xpath": {
                 "selectors": [
-                    ".//div[contains(@class, \"detail\")]/div/h1[contains(@class, \"title\")]/text()"
+                    ".//div[contains(@class, \"detail\")]//h1[contains(@class, \"title\")]/text()"
                 ],
                 "match": "FIRST"
             }
@@ -36,7 +36,7 @@
         "perex": {
             "xpath": {
                 "selectors": [
-                    ".//div[contains(@class, \"detail\")]/div/div[contains(@class, \"annotation\")]/text()"
+                    ".//div[contains(@class, \"detail\")]//div[contains(@class, \"annotation\")]/text()"
                 ],
                 "match": "FIRST"
             }
@@ -44,7 +44,7 @@
         "datetime": {
             "xpath": {
                 "selectors": [
-                    ".//div[contains(@class, \"detail\")]/div/div/span[@class=\"date-info\"]//text()[normalize-space()]"
+                    ".//div[contains(@class, \"detail\")]//span[@class=\"date-info\"]//text()[normalize-space()]"
                 ],
                 "join_separator": " "
             },
@@ -58,7 +58,7 @@
         "location": {
             "xpath": {
                 "selectors": [
-                    ".//div[@class=\"information-cols\"]/div/div[@class=\"place-info\"]/div/dl/dd/span/a/text()"
+                    ".//div[@class=\"information-cols\"]//div[@class=\"place-info\"]/div/dl/dd/span/a/text()"
                 ],
                 "join_separator": ", "
             }
@@ -92,7 +92,7 @@
         "types": {
             "xpath": {
                 "selectors": [
-                    ".//div[contains(@class, \"detail\")]/div/div/span[contains(@class, \"type\")]/text()"
+                    ".//div[contains(@class, \"detail\")]//span[contains(@class, \"type\")]/text()"
                 ]
             }
         }

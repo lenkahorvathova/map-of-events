@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS event_data_gps
     FOREIGN KEY (event_data_id) REFERENCES event_data (id)
 );
 
-CREATE VIEW event_data_view AS
+CREATE VIEW IF NOT EXISTS event_data_view AS
     SELECT c.id              AS calendar__id,
            c.url             AS calendar__url,
            c.html_file_path  AS calendar__html_file_path,
