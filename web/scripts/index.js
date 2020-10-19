@@ -293,20 +293,18 @@ function initializeEventsTable(eventsData) {
                 targets: -1,
                 data: null,
                 orderable: false,
-                defaultContent:
-                        `
-                        <div class="centered-cell-content">
-                            <button type="button" class="btn btn-secondary btn-sm"
-                                    data-target="#modal--event-details" onclick="showEventDetailsFromEventsTable(this)" data-toggle="modal"
-                                    title="Show event's details.">
-                                <i class="fa fa-info-circle"></i>
-                            </button>
-                            <button type="button" class="btn btn-secondary btn-sm"
-                                    title="Zoom event's location on the map." onclick="zoomToEventGPS(this)">
-                                <i class="fa fa-bullseye"></i>
-                            </button>
-                        </div>
-                    `
+                defaultContent: `
+                    <div class="centered-cell-content">
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                data-target="#modal--event-details" onclick="showEventDetailsFromEventsTable(this)" data-toggle="modal"
+                                title="Show event's details.">
+                            <i class="fa fa-info-circle"></i>
+                        </button>
+                        <button type="button" class="btn btn-secondary btn-sm"
+                                title="Zoom event's location on the map." onclick="zoomToEventGPS(this)">
+                            <i class="fa fa-bullseye"></i>
+                        </button>
+                    </div>`
             }
         ]
     });

@@ -22,7 +22,7 @@ function loadEventsPerCalendarAndParserGraph(data) {
     const labelTextFontSize = 15;
     const labelTextGroup = svg.append("g")
                               .attr("class", "labelText")
-                              .attr("transform", "translate(" + 0 + ", " + ((height / 2) - labelTextFontSize) + ")");
+                              .attr("transform", "translate(" + 0 + ", " + ((height / 2) - labelTextFontSize * 3 + 10) + ")");
 
     const all_keys = [...Object.keys(GLB_EVENTS_PER_CALENDAR), ...Object.keys(GLB_EVENTS_PER_PARSER)];
     const color = d3.scaleOrdinal().domain(all_keys).range(d3.schemeDark2);
@@ -111,7 +111,7 @@ function loadEventsPerCalendarAndParserGraph(data) {
 }
 
 function loadEventsPerWeekGraph() {
-    const margin = {top: 10, right: 10, bottom: 40, left: 40};
+    const margin = {top: 20, right: 10, bottom: 40, left: 40};
     const width = document.getElementById('statistics__graph__events_per_week').clientWidth - margin.left - margin.right;
     const height = (width / 2) - margin.top - margin.bottom;
 
@@ -143,7 +143,7 @@ function loadEventsPerWeekGraph() {
     svg.append("g")
        .call(d3.axisLeft(y));
 
-    svg.selectAll("mybar")
+    svg.selectAll("bar")
        .data(GLB_EVENTS_PER_WEEK)
        .enter()
        .append("rect")
@@ -157,5 +157,27 @@ function loadEventsPerWeekGraph() {
        .attr("height", function (d) {
            return height - y(d.count);
        })
-       .attr("fill", "#69b3a2");
+       .attr("fill", "#69b3a2")
+       .on("mouseover", function (d, i) {
+           svg.append("text")
+              .style("font-size", 15)
+              .style("fill", function () {
+                  return "black";
+              })
+              .attr("class", "barCount")
+              .attr("dy", ".75em")
+              .attr("y", function () {
+                  return y(d.count) - 16;
+              })
+              .attr("x", function () {
+                  return x(d.week) + x.bandwidth() / 2;
+              })
+              .attr("text-anchor", "middle")
+              .text(function () {
+                  return d.count;
+              });
+       })
+       .on("mouseout", function () {
+           svg.selectAll(".barCount").remove();
+       });
 }

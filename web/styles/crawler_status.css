@@ -18,3 +18,33 @@
 .part {
     margin-bottom: 1rem;
 }
+
+#failures__events--failed__table {
+    table-layout: fixed;
+    width: 98% !important;
+}
+
+#failures__events--failed__table > tbody > tr > td {
+    border-spacing: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+td.details-control {
+    cursor: pointer;
+}
+
+.btn-outline-secondary {
+    color: lightgrey;
+    border-color: lightgrey;
+}
+
+.btn-outline-secondary:hover {
+    background-color: lightgrey;
+}
+
+.btn-outline-secondary:not(:disabled):not(.disabled).active {
+    color: black;
+    background-color: lightgrey;
+}

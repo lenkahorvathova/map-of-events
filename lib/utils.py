@@ -199,3 +199,9 @@ def check_db_views(connection: sqlite3.Connection, views: list) -> list:
 
 def check_db_tables(connection: sqlite3.Connection, tables: list) -> list:
     return check_db("table", connection, tables)
+
+
+def sanitize_string_for_html(input_string: str) -> Optional[str]:
+    if not input_string:
+        return None
+    return input_string.replace('\n', '\\n').replace('\t', '\\t').replace('"', '\\"').replace('`', '\'')

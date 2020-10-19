@@ -206,7 +206,7 @@ class PrepareCrawlerStatus:
         failed_events_dict = {}
 
         query = '''
-                    SELECT event_url__id, event_url__url
+                    SELECT event_url__id, event_url__url, calendar__downloaded_at
                     FROM event_data_view
                     WHERE event_url__url IS NOT NULL
                       AND date(calendar__downloaded_at)  > date('now', '-{} day')
@@ -216,7 +216,7 @@ class PrepareCrawlerStatus:
         failed_events_dict['event_html_not_downloaded'] = cursor.fetchall()
 
         query = '''
-                    SELECT event_url__id, event_url__url
+                    SELECT event_url__id, event_url__url, calendar__downloaded_at
                     FROM event_data_view
                     WHERE date(calendar__downloaded_at) > date('now','-{} day')
                       AND event_html__html_file_path IS NOT NULL
@@ -226,7 +226,7 @@ class PrepareCrawlerStatus:
         failed_events_dict['event_data_not_parsed'] = cursor.fetchall()
 
         query = '''
-                    SELECT event_url__id, event_url__url
+                    SELECT event_url__id, event_url__url, calendar__downloaded_at
                     FROM event_data_view
                     WHERE  date(calendar__downloaded_at) > date('now','-{} day')
                       AND event_html__html_file_path IS NOT NULL
@@ -237,7 +237,7 @@ class PrepareCrawlerStatus:
         failed_events_dict['event_datetime_not_processed'] = cursor.fetchall()
 
         query = '''
-                    SELECT event_url__id, event_url__url
+                    SELECT event_url__id, event_url__url, calendar__downloaded_at
                     FROM event_data_view
                     WHERE  date(calendar__downloaded_at) > date('now','-{} day')
                       AND event_html__html_file_path IS NOT NULL
@@ -250,10 +250,11 @@ class PrepareCrawlerStatus:
 
         failed_events = []
         for error, event_list in failed_events_dict.items():
-            for event_url_id, event_url in event_list:
+            for event_url_id, event_url, downloaded_at in event_list:
                 failed_events.append({
                     'event_url': event_url,
                     'event_url_id': event_url_id,
+                    'downloaded_at': downloaded_at,
                     'error': error
                 })
 
@@ -311,13 +312,13 @@ class PrepareCrawlerStatus:
                 'event_url__url': event_tuple[1],
                 'event_html__html_file_path': event_tuple[2],
                 'event_data__id': event_tuple[3],
-                'event_data__title': event_tuple[4],
-                'event_data__perex': event_tuple[5],
-                'event_data__datetime': event_tuple[6],
-                'event_data__location': event_tuple[7],
+                'event_data__title': utils.sanitize_string_for_html(event_tuple[4]),
+                'event_data__perex': utils.sanitize_string_for_html(event_tuple[5]),
+                'event_data__datetime': json.loads(event_tuple[6]) if event_tuple[6] else [],
+                'event_data__location': utils.sanitize_string_for_html(event_tuple[7]),
                 'event_data__gps': event_tuple[8],
-                'event_data__organizer': event_tuple[9],
-                'event_data__types': event_tuple[10]
+                'event_data__organizer': utils.sanitize_string_for_html(event_tuple[9]),
+                'event_data__types': json.loads(event_tuple[10]) if event_tuple[10] else []
             }
 
         return events_dict

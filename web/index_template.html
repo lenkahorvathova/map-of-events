@@ -59,6 +59,10 @@
                         <a class="nav-link" href="./crawler_status.html">Crawler Status</a>
                     </li>
                 </ul>
+                <button type="button" class="nav-item btn btn-secondary btn-sm"
+                        data-target="#modal--calendar-sources" data-toggle="modal">
+                    Calendar Sources
+                </button>
             </div>
         </nav>
 
@@ -144,6 +148,25 @@
                            target="_blank">
                             <i class="fa fa-external-link-square"></i> Go to event's page
                         </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--    - Calendar Sources List -->
+        <div id="modal--calendar-sources" class="modal">
+            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Calendar Sources <i>({{calendar_sources_count}})</i></h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <ul class="list-group">
+                            {{calendar_sources}}
+                        </ul>
                     </div>
                 </div>
             </div>

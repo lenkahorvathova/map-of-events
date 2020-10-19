@@ -1,7 +1,8 @@
 import json
 import os
+import re
 import shutil
-from typing import Optional
+from datetime import datetime
 
 from lib import utils
 
@@ -16,6 +17,7 @@ class GenerateHTML:
 
     def __init__(self) -> None:
         self.connection = utils.create_connection()
+        self.latest_execution_log_path = self._get_latest_execution_log_path()
 
         missing_views = utils.check_db_views(self.connection, ["event_data_view"])
         if len(missing_views) != 0:
@@ -57,11 +59,11 @@ class GenerateHTML:
             calendar_url = event[0]
             event_dict = {
                 "event_url": event[2],
-                "title": self.sanitize_string(event[4]),
-                "perex": self.sanitize_string(event[5]),
-                "location": self.sanitize_string(event[6]),
+                "title": utils.sanitize_string_for_html(event[4]),
+                "perex": utils.sanitize_string_for_html(event[5]),
+                "location": utils.sanitize_string_for_html(event[6]),
                 "gps": event[7],
-                "organizer": self.sanitize_string(event[8]),
+                "organizer": utils.sanitize_string_for_html(event[8]),
                 "types": json.loads(event[9]) if event[9] else [],
                 "start_date": event[10],
                 "start_time": event[11],
@@ -83,17 +85,22 @@ class GenerateHTML:
         return events_dataset
 
     @staticmethod
-    def sanitize_string(input_string: str) -> Optional[str]:
-        if not input_string:
-            return None
-        return input_string.replace('\n', '\\n').replace('\t', '\\t').replace('"', '\\"').replace('`', '\'')
-
-    @staticmethod
     def complete_index_template(events_dataset: dict) -> None:
         with open(GenerateHTML.INDEX_TEMPLATE_HTML_FILE_PATH, 'r') as index_template_file:
             file = index_template_file.read()
-            data = json.dumps(events_dataset, indent=4, ensure_ascii=True)
-            file = file.replace('{{events_dataset}}', data)
+
+        data = json.dumps(events_dataset, indent=4, ensure_ascii=True)
+        file = file.replace('{{events_dataset}}', data)
+
+        calendars = [calendar_base['url'] for calendar_base in utils.get_active_base()]
+        file = file.replace('{{calendar_sources_count}}', str(len(calendars)))
+        calendar_sources_modal = ""
+        for calendar in calendars:
+            calendar_sources_modal += "<li class=\"list-group-item list-group-item-action\" " \
+                                      "onclick=\"window.open('{}', '_blank');\">\n" \
+                                      "<a href=\"#\">{}</a>\n" \
+                                      "</li>".format(calendar, calendar)
+        file = file.replace('{{calendar_sources}}', calendar_sources_modal)
 
         os.makedirs(GenerateHTML.TEMP_WEB_FOLDER, exist_ok=True)
         with open(GenerateHTML.INDEX_GENERATED_HTML_FILE_PATH, 'w') as index_generated_file:
@@ -106,12 +113,13 @@ class GenerateHTML:
 
         return crawler_status_dict
 
-    @staticmethod
-    def complete_crawler_status_template(status_info: dict) -> None:
+    def complete_crawler_status_template(self, status_info: dict) -> None:
         with open(GenerateHTML.CRAWLER_STATUS_TEMPLATE_HTML_FILE_PATH, 'r') as crawler_status_template_file:
             file = crawler_status_template_file.read()
         file = file.replace('{{all_events_count}}', str(status_info['statistics']['total_count'])) \
             .replace('{{future_events_count}}', str(status_info['statistics']['future_count'])) \
+            .replace('{{calendars_data}}', json.dumps(status_info['calendars'], indent=4, ensure_ascii=True)) \
+            .replace('{{events_data}}', json.dumps(status_info['events'], indent=4, ensure_ascii=True)) \
             .replace('{{events_per_week}}',
                      json.dumps(status_info['statistics']['count_per_week'], indent=4, ensure_ascii=True)) \
             .replace('{{events_per_calendar}}',
@@ -136,12 +144,16 @@ class GenerateHTML:
                                    "</tr>\n".format(item['day'], str(item['count']))
         file = file.replace('{{counts_per_day}}', per_day_table_tbody)
 
+        base_name = os.path.basename(self.latest_execution_log_path)
+        datetime_str = re.search(r'^cron_process_([\d\-_]*).txt$', base_name).group(1)
+        datetime_obj = datetime.strptime(datetime_str, '%Y-%m-%d_%H-%M-%S')
+        file = file.replace('{{latest_execution_datetime}}', datetime.strftime(datetime_obj, '%d %B %Y %H:%M'))
+
         os.makedirs(GenerateHTML.TEMP_WEB_FOLDER, exist_ok=True)
         with open(GenerateHTML.CRAWLER_STATUS_GENERATED_HTML_FILE_PATH, 'w') as crawler_status_generated_file:
             crawler_status_generated_file.write(file)
 
-    @staticmethod
-    def copy_other_files() -> None:
+    def copy_other_files(self) -> None:
         os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/'), exist_ok=True)
         shutil.copy2('web/scripts/events_map.js', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/events_map.js'))
         shutil.copy2('web/scripts/index.js', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/index.js'))
@@ -157,6 +169,17 @@ class GenerateHTML:
         shutil.copy2('web/styles/index.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/index.css'))
         shutil.copy2('web/styles/crawler_status.css',
                      os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/crawler_status.css'))
+
+        os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'assets/'), exist_ok=True)
+        shutil.copy2(self.latest_execution_log_path,
+                     os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'assets/execution_log.txt'))
+        shutil.copy2('data/tmp/geocode_location_output.json',
+                     os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'assets/geocoding_log.json'))
+
+    @staticmethod
+    def _get_latest_execution_log_path() -> str:
+        logs_paths = [os.path.join('data/log', basename) for basename in os.listdir('data/log')]
+        return max(logs_paths, key=os.path.getctime)
 
 
 if __name__ == '__main__':
