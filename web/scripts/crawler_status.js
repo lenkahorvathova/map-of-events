@@ -45,9 +45,9 @@ function initializeFailedEventsTable() {
             {data: 'event_url_id'}
         ],
         dom: 'ltipr',
-        order: [[4, "asc"]],
+        order: [[4, "desc"]],
         responsive: true,
-        autoWidth: true,
+        autoWidth: false,
         columnDefs: [
             {
                 targets: 0,
@@ -66,7 +66,9 @@ function initializeFailedEventsTable() {
             },
             {
                 targets: 2,
+                className: "shorten-cell",
                 orderable: true,
+                visible: true,
                 render: function (data) {
                     return `<a href="${data}" target="_blank">${data}</a>`;
                 }
@@ -74,12 +76,12 @@ function initializeFailedEventsTable() {
             {
                 targets: 3,
                 orderable: true,
-                width: 200
+                width: 150
             },
             {
                 targets: 4,
                 orderable: true,
-                width: 100,
+                width: 80,
                 render: function (data, type) {
                     if (type === 'display')
                         return new Date(data).toLocaleDateString();

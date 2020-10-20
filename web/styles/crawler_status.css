@@ -19,16 +19,28 @@
     margin-bottom: 1rem;
 }
 
-#failures__events--failed__table {
-    table-layout: fixed;
-    width: 98% !important;
-}
-
-#failures__events--failed__table > tbody > tr > td {
+td.shorten-cell {
     border-spacing: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+@media (max-width: 575px) {
+    #failures__events--failed__table {
+        width: 100%;
+    }
+
+    td.shorten-cell {
+        max-width: 100px;
+    }
+}
+
+@media (min-width: 576px) {
+    #failures__events--failed__table {
+        table-layout: fixed;
+        width: 98% !important;
+    }
 }
 
 td.details-control {
