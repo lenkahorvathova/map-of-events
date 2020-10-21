@@ -7,7 +7,7 @@ import sqlite3
 import sys
 
 from lib import utils
-from lib.constants import MUNICIPALITIES_OF_CR_FILE
+from lib.constants import MUNICIPALITIES_OF_CR_FILE_PATH
 
 
 class GeocodeLocation:
@@ -71,7 +71,7 @@ class GeocodeLocation:
         print("Loading municipalities...")
 
         municipalities = []
-        with open(MUNICIPALITIES_OF_CR_FILE, 'r') as csv_file:
+        with open(MUNICIPALITIES_OF_CR_FILE_PATH, 'r') as csv_file:
             csv_reader = csv.reader(csv_file)
 
             seen = set()

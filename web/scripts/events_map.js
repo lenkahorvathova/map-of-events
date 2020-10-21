@@ -187,6 +187,14 @@ function initializeMap() {
 function filterEventsAndLoadMap() {
     initializeMap();
 
+    const typesPickedOptions = document.getElementById('selectTypePicker').selectedOptions;
+    typesPicked = [];
+    if (typesPickedOptions !== undefined) {
+        for (let i = 0; i < typesPickedOptions.length; i++) {
+            typesPicked.push(typesPickedOptions[i].label.toLowerCase());
+        }
+    }
+
     const gpsChecked = document.getElementById('sidebar__form--filter__location__options--gps').checked;
     let specifiedRadius = null;
     let specifiedCoordinates = null;
@@ -232,6 +240,13 @@ function filterEventsAndLoadMap() {
         if ((onlineChecked && !GLB_EVENTS_DATASET[eventId]['online'])
                 || (!onlineChecked && GLB_EVENTS_DATASET[eventId]['online'])) {
             continue;
+        }
+
+        if (typesPicked.length !== 0) {
+            const typesIntersection = typesPicked.filter(value => GLB_EVENTS_DATASET[eventId]['types'].includes(value));
+            if (typesIntersection.length === 0) {
+                continue;
+            }
         }
 
         const ongoingChecked = document.getElementById('sidebar__form--filter__datetime__including-checkboxes--ongoing').checked;

@@ -2,9 +2,11 @@ import json
 import os
 import re
 import shutil
+from collections import defaultdict
 from datetime import datetime
 
 from lib import utils
+from lib.constants import EVENT_TYPES_JSON_FILE_PATH
 
 
 class GenerateHTML:
@@ -14,10 +16,12 @@ class GenerateHTML:
     CRAWLER_STATUS_INFO_JSON_FILE = "data/tmp/crawler_status_info.json"
     CRAWLER_STATUS_TEMPLATE_HTML_FILE_PATH = "web/crawler_status_template.html"
     CRAWLER_STATUS_GENERATED_HTML_FILE_PATH = os.path.join(TEMP_WEB_FOLDER, "crawler_status.html")
+    FALLBACK_EVENT_TYPE = "ostatní"
 
     def __init__(self) -> None:
         self.connection = utils.create_connection()
         self.latest_execution_log_path = self._get_latest_execution_log_path()
+        self.mapping_types = self._prepare_types()
 
         missing_views = utils.check_db_views(self.connection, ["event_data_view"])
         if len(missing_views) != 0:
@@ -53,9 +57,11 @@ class GenerateHTML:
         for calendar_url, calendar_base in calendars_with_default_location_base.items():
             calendars_with_default_location[calendar_url] = calendar_base['default_location']
 
+        event_ids_list = []
         events_dataset = {}
         for event in events_tuples:
             event_id = event[3]
+            event_ids_list.append(event_id)
             calendar_url = event[0]
             event_dict = {
                 "event_url": event[2],
@@ -64,7 +70,7 @@ class GenerateHTML:
                 "location": utils.sanitize_string_for_html(event[6]),
                 "gps": event[7],
                 "organizer": utils.sanitize_string_for_html(event[8]),
-                "types": json.loads(event[9]) if event[9] else [],
+                "types": [],
                 "start_date": event[10],
                 "start_time": event[11],
                 "end_date": event[12],
@@ -82,15 +88,71 @@ class GenerateHTML:
             }
             events_dataset[event_id] = event_dict
 
+        query = '''
+                    SELECT event_data_id, type
+                    FROM event_data_types
+                    WHERE event_data_id IN ({})
+                '''.format(",".join([str(event_id) for event_id in event_ids_list]))
+        cursor = self.connection.execute(query)
+        events_types = cursor.fetchall()
+
+        nok = 0
+        for event_id, event_type in events_types:
+            if event_type:
+                events_dataset[event_id]['types'].append(event_type)
+        for event_id in events_dataset:
+            types_list = events_dataset[event_id]['types']
+            events_dataset[event_id]['types'] = sorted(self._get_associated_types(types_list))
+            if events_dataset[event_id]['types'] == [GenerateHTML.FALLBACK_EVENT_TYPE]:
+                nok += 1
+
         return events_dataset
 
     @staticmethod
-    def complete_index_template(events_dataset: dict) -> None:
+    def _prepare_types() -> dict:
+        with open(EVENT_TYPES_JSON_FILE_PATH, 'r') as types_file:
+            types_list = json.load(types_file)
+
+        types_graph = defaultdict(set)
+        for type_dict in types_list:
+            main_type = type_dict['type']
+            supertypes = type_dict.get('supertypes', [])
+            types_graph[main_type].update(supertypes)
+
+        def add_supertypes_rec(type_word: str) -> set:
+            out = {type_word}
+            if type_word in types_graph:
+                for supertype in types_graph[type_word]:
+                    out.update(add_supertypes_rec(supertype))
+            return out
+
+        types_mapping = defaultdict(set)
+        for type_dict in types_list:
+            main_type = type_dict['type']
+            types_mapping[main_type] = add_supertypes_rec(main_type)
+
+        return {key: list(value) for key, value in types_mapping.items()}
+
+    def _get_associated_types(self, types: list) -> list:
+        mapped_types = set()
+        for event_type in types:
+            mapped_types.update(self.mapping_types[event_type])
+        if len(mapped_types) == 0:
+            return [GenerateHTML.FALLBACK_EVENT_TYPE]
+        else:
+            return list(mapped_types)
+
+    def complete_index_template(self, events_dataset: dict) -> None:
         with open(GenerateHTML.INDEX_TEMPLATE_HTML_FILE_PATH, 'r') as index_template_file:
             file = index_template_file.read()
 
         data = json.dumps(events_dataset, indent=4, ensure_ascii=True)
         file = file.replace('{{events_dataset}}', data)
+
+        event_types = [event_type for event_type in self.mapping_types]
+        event_types.append(GenerateHTML.FALLBACK_EVENT_TYPE)
+        event_types_data = json.dumps(event_types, indent=4, ensure_ascii=True)
+        file = file.replace('{{event_types}}', event_types_data)
 
         calendars = [calendar_base['url'] for calendar_base in utils.get_active_base()]
         file = file.replace('{{calendar_sources_count}}', str(len(calendars)))

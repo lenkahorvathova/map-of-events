@@ -1,0 +1,345 @@
+[
+    {
+        "type": "beseda",
+        "variations": [
+            "besedy",
+            "debata",
+            "setkání"
+        ],
+        "supertypes": [
+            "vzdělávací akce"
+        ]
+    },
+    {
+        "type": "církevní akce",
+        "variations": [
+            "biblie",
+            "biblí",
+            "bohoslužba",
+            "duchovní",
+            "církevní",
+            "kostel",
+            "kostelů",
+            "mše"
+        ]
+    },
+    {
+        "type": "cvičení",
+        "variations": [
+            "trénink",
+            "turnaj"
+        ]
+    },
+    {
+        "type": "divadlo",
+        "variations": [
+            "činohra",
+            "divadelní",
+            "divadla",
+            "muzikál"
+        ],
+        "supertypes": [
+            "kultúrní akce"
+        ]
+    },
+    {
+        "type": "diskotéka",
+        "variations": [
+            "disco",
+            "disko",
+            "zábava"
+        ],
+        "supertypes": [
+            "tanec"
+        ]
+    },
+    {
+        "type": "výlet",
+        "variations": [
+            "exkurze",
+            "expedice",
+            "zájezd"
+        ]
+    },
+    {
+        "type": "festival",
+        "variations": [
+            "festivaly"
+        ],
+        "supertypes": [
+            "hudební akce"
+        ]
+    },
+    {
+        "type": "gastronomické akce",
+        "variations": [
+            "gastronomické",
+            "gastronomie",
+            "jídlo",
+            "kulinářské",
+            "pečení",
+            "vinařská",
+            "vinařské"
+        ]
+    },
+    {
+        "type": "historické akce",
+        "variations": [
+            "dějiny",
+            "historické",
+            "historickým",
+            "vojenské"
+        ]
+    },
+    {
+        "type": "hudební akce",
+        "variations": [
+            "hudba",
+            "hudební",
+            "jazz",
+            "písničky",
+            "písniček"
+        ]
+    },
+    {
+        "type": "kino",
+        "variations": [
+            "film",
+            "filmová",
+            "filmové",
+            "filmový",
+            "filmu",
+            "kina",
+            "projekce",
+            "promítání"
+        ]
+    },
+    {
+        "type": "knihovna",
+        "variations": [
+            "četba",
+            "čtení",
+            "knihovny",
+            "literární"
+        ]
+    },
+    {
+        "type": "koncert",
+        "variations": [
+            "koncerty"
+        ],
+        "supertypes": [
+            "hudební akce"
+        ]
+    },
+    {
+        "type": "kultúrní akce",
+        "variations": [
+            "kultura",
+            "kulturní"
+        ]
+    },
+    {
+        "type": "kurz",
+        "variations": [
+            "dílna",
+            "kurzy",
+            "lekce",
+            "seminář",
+            "školení",
+            "tvoření",
+            "workshop",
+            "workshopy"
+        ],
+        "supertypes": [
+            "vzdělávací akce"
+        ]
+    },
+    {
+        "type": "muzeum",
+        "variations": [
+            "galerie",
+            "muzea",
+            "muzejní"
+        ],
+        "supertypes": [
+            "kultúrní akce"
+        ]
+    },
+    {
+        "type": "odpad",
+        "variations": [
+            "odpadu",
+            "odpadů",
+            "popelnic",
+            "popelnice"
+        ],
+        "supertypes": [
+            "úřední akce"
+        ]
+    },
+    {
+        "type": "ples",
+        "variations": [
+            "plesy",
+            "plesová",
+            "plesové",
+            "plesový"
+        ],
+        "supertypes": [
+            "spoločenská akce",
+            "tanec"
+        ]
+    },
+    {
+        "type": "pochod",
+        "variations": [
+            "pouť",
+            "průvod",
+            "putování"
+        ]
+    },
+    {
+        "type": "pro děti",
+        "variations": [
+            "děti",
+            "dětí",
+            "dětmi",
+            "dětská",
+            "dětské",
+            "dětský"
+        ]
+    },
+    {
+        "type": "pro seniory",
+        "variations": [
+            "důchodový",
+            "seniorů",
+            "seniory"
+        ]
+    },
+    {
+        "type": "přednáška",
+        "variations": [
+            "přednášky"
+        ],
+        "supertypes": [
+            "vzdělávací akce"
+        ]
+    },
+    {
+        "type": "prohlídka",
+        "variations": [
+            "prohlídky",
+            "přehlídka"
+        ],
+        "supertypes": [
+            "kultúrní akce"
+        ]
+    },
+    {
+        "type": "slavnost",
+        "variations": [
+            "oslava",
+            "oslavy",
+            "slavnosti"
+        ],
+        "supertypes": [
+            "spoločenská akce"
+        ]
+    },
+    {
+        "type": "společenská akce",
+        "variations": [
+            "společenská",
+            "společenské",
+            "společenský"
+        ]
+    },
+    {
+        "type": "sport",
+        "variations": [
+            "basketbal",
+            "běh",
+            "bruslení",
+            "cyklistika",
+            "fotbal",
+            "fotbalové",
+            "házená",
+            "hokej",
+            "sportovní"
+        ]
+    },
+    {
+        "type": "tanec",
+        "variations": [
+            "folklór",
+            "foklorní",
+            "taneční"
+        ]
+    },
+    {
+        "type": "trhy",
+        "variations": [
+            "jarmark",
+            "řemesla",
+            "řemeslo",
+            "stánky",
+            "trh"
+        ]
+    },
+    {
+        "type": "turistika",
+        "variations": [
+            "turistická",
+            "turistický"
+        ],
+        "supertypes": [
+            "sport"
+        ]
+    },
+    {
+        "type": "úřední akce",
+        "variations": [
+            "důležité",
+            "obecní",
+            "porada",
+            "úřad",
+            "úřední",
+            "samospráva",
+            "schůze",
+            "zasedání",
+            "zastupitelstva",
+            "zastupitelstvo"
+        ]
+    },
+    {
+        "type": "volný čas",
+        "variations": [
+            "volnočasová",
+            "volnočasové",
+            "volnočasový"
+        ]
+    },
+    {
+        "type": "výstava",
+        "variations": [
+            "umění",
+            "vernisáž",
+            "výstavy",
+            "výstavka",
+            "výstavku",
+            "výtvarné"
+        ],
+        "supertypes": [
+            "kultúrní akce"
+        ]
+    },
+    {
+        "type": "vzdělávací akce",
+        "variations": [
+            "vzdělávací",
+            "vzdělávání"
+        ]
+    }
+]

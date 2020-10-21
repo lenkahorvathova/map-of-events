@@ -214,6 +214,9 @@ function prepareEventDetailsModal(eventData) {
         organizer.innerHTML = `<i>unknown</i>`;
     }
 
+    const types = document.getElementById('modal--event-details__types');
+    types.innerText = eventData['types'].join(', ');
+
     const source = document.getElementById('modal--event-details__calendar--url');
     source.href = eventData['calendar_url'];
     source.innerText = eventData['calendar_url'];
@@ -312,8 +315,19 @@ function initializeEventsTable(eventsData) {
     $('.dataTables_length').addClass('bs-select');
 }
 
+function initializeTypePicker() {
+    const typePicker = $('#selectTypePicker');
+    for (let i = 0; i < GLB_EVENT_TYPES.length; i++) {
+        const typeName = GLB_EVENT_TYPES[i].charAt(0).toUpperCase() + GLB_EVENT_TYPES[i].slice(1);
+        typePicker.append(`<option>${typeName}</option>`);
+    }
+    typePicker.selectpicker();
+}
+
 function handleFirstLoad() {
     setFutureIntoDatetimePickers();
+    initializeTypePicker();
+
     const filteredEventsData = filterEventsAndLoadMap();
     initializeEventsTable(filteredEventsData);
 }

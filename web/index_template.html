@@ -32,6 +32,7 @@
         <script type="text/javascript">
             let GLB_MAP;
             const GLB_EVENTS_DATASET = JSON.parse(`{{events_dataset}}`);
+            const GLB_EVENT_TYPES = JSON.parse(`{{event_types}}`).sort();
         </script>
         <script type="text/javascript" src="scripts/index.js"></script>
         <script type="text/javascript" src="scripts/events_map.js"></script>
@@ -132,6 +133,10 @@
                                         <td id="modal--event-details__organizer"><i>unknown</i></td>
                                     </tr>
                                     <tr>
+                                        <th class="pl-0 w-25" scope="row"><strong>Types</strong></th>
+                                        <td id="modal--event-details__types"></td>
+                                    </tr>
+                                    <tr>
                                         <th class="pl-0 w-25" scope="row"><strong>Source</strong></th>
                                         <td><a id="modal--event-details__calendar--url" target="_blank"></a></td>
                                     </tr>
@@ -204,6 +209,18 @@
 
                                 <!--    - Filtering Events -->
                                 <form id="sidebar__form--filter" onsubmit="return handleSearchFormSubmission(event)">
+
+                                    <!--        -- Types -->
+                                    <h6 class="sidebar-heading d-flex mt-4 text-muted">Filtering by Types</h6>
+                                    <div id="sidebar__form--filter__types" class="form-group">
+                                        <select id="selectTypePicker" class="w-100"
+                                                data-actions-box="true" data-style="bg-white border"
+                                                data-header="Filters events being at least one of the selected types."
+                                                multiple>
+                                        </select>
+                                    </div>
+
+                                    <br/>
 
                                     <!--        -- Location -->
                                     <h6 class="sidebar-heading d-flex mt-4 text-muted">Narrowing Location</h6>
@@ -430,5 +447,13 @@
         <script type="text/javascript" src="https://cdn.datatables.net/v/bs4/dt-1.10.21/datatables.min.js"></script>
         <!--        - Style -->
         <link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/v/bs4/dt-1.10.21/datatables.min.css"/>
+
+        <!--    Multiselect -->
+        <!--        - Script -->
+        <script type="text/javascript"
+                src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+        <!--        - Style -->
+        <link type="text/css" rel="stylesheet"
+              href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
     </body>
 </html>

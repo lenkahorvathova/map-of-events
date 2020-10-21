@@ -6,7 +6,7 @@ import time
 import requests
 from lxml import etree
 
-from lib.constants import MUNICIPALITIES_OF_CR_FILE
+from lib.constants import MUNICIPALITIES_OF_CR_FILE_PATH
 
 
 class PrepareMunicipalitiesCSV:
@@ -113,7 +113,7 @@ class PrepareMunicipalitiesCSV:
         else:
             print("Writing to CSV file...")
 
-            with open(MUNICIPALITIES_OF_CR_FILE, 'w') as csv_file:
+            with open(MUNICIPALITIES_OF_CR_FILE_PATH, 'w') as csv_file:
                 csv_writer = csv.writer(csv_file, lineterminator='\n')
                 csv_writer.writerow(header)
                 csv_writer.writerows(municipalities_info)
