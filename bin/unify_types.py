@@ -111,6 +111,7 @@ class UnifyTypes:
         ok = 0
         nok = 0
         res_dict = defaultdict(int)
+        events_without_type = []
 
         for event_data_id, types, old_types in types_to_insert:
             values = []
@@ -119,6 +120,7 @@ class UnifyTypes:
             if len(values) == 0:
                 values = ['({}, {})'.format("null", str(event_data_id))]
                 res_dict[old_types] += 1
+                events_without_type.append(event_data_id)
                 nok += 1
             else:
                 ok += 1
@@ -135,6 +137,7 @@ class UnifyTypes:
 
         # print(json.dumps(res_dict, indent=4, ensure_ascii=False))
         print("{} OKs + {} NOKs / {}".format(ok, nok, ok + nok))
+        print("Events without type's event_data IDs: {}".format(events_without_type))
 
 
 if __name__ == '__main__':
