@@ -16,7 +16,7 @@ class UnifyTypes:
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
-            missing_tables = utils.check_db_tables(self.connection, ["event_data"])
+            missing_tables = utils.check_db_tables(self.connection, ["event_data", "event_data_types"])
             if len(missing_tables) != 0:
                 raise Exception("Missing tables in the DB: {}".format(missing_tables))
 

@@ -5,7 +5,7 @@ import sqlite3
 import sys
 
 from lib import utils
-from lib.parser import Parser
+from lib.datetime_parser import DatetimeParser
 
 
 class ProcessDatetime:
@@ -103,7 +103,7 @@ class ProcessDatetime:
             return [], event_data_id
 
         parser_name = website_base["parser"]
-        parser = Parser(parser_name)
+        parser = DatetimeParser(parser_name)
 
         db_datetimes = list(json.loads(event_data_datetime))
         try:
