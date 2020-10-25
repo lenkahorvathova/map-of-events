@@ -37,8 +37,7 @@ class UnifyTypes:
         input_events = self._load_input_events()
         types_mapping = self._prepare_types()
         types_to_insert = self._match_types(input_events, types_mapping)
-        if not self.args.dry_run:
-            self._store_to_db(types_to_insert)
+        self._store_to_db(types_to_insert)
         self.connection.close()
 
     def _load_input_events(self) -> list:
@@ -108,36 +107,40 @@ class UnifyTypes:
 
     def _store_to_db(self, types_to_insert: list) -> None:
         print("Inserting into DB...")
-        ok = 0
-        nok = 0
-        res_dict = defaultdict(int)
         events_without_type = []
+        result_dict = {}
+        nok = 0
 
         for event_data_id, types, old_types in types_to_insert:
+            result_dict[event_data_id] = {
+                'original_types': json.loads(old_types) if old_types else [],
+                'matched_types': types
+            }
             values = []
-            for event_type in types:
-                values.append('("{}", {})'.format(event_type, str(event_data_id)))
-            if len(values) == 0:
-                values = ['({}, {})'.format("null", str(event_data_id))]
-                res_dict[old_types] += 1
-                events_without_type.append(event_data_id)
+            if len(types) == 0:
                 nok += 1
+                events_without_type.append(event_data_id)
+                values = ['({}, {})'.format("null", str(event_data_id))]
             else:
-                ok += 1
+                for event_type in types:
+                    values.append('("{}", {})'.format(event_type, str(event_data_id)))
 
-            query = '''
-                        INSERT OR IGNORE INTO event_data_types(type, event_data_id)
-                        VALUES {}
-                    '''.format(', '.join(values))
-            try:
-                self.connection.execute(query)
-            except sqlite3.Error as e:
-                print("Error occurred when storing {} into 'event_data_types' table: {}".format(values, str(e)))
-        self.connection.commit()
+            if not self.args.dry_run:
+                query = '''
+                            INSERT OR IGNORE INTO event_data_types(type, event_data_id)
+                            VALUES {}
+                        '''.format(', '.join(values))
+                try:
+                    self.connection.execute(query)
+                except sqlite3.Error as e:
+                    print("Error occurred when storing {} into 'event_data_types' table: {}".format(values, str(e)))
+        if self.args.dry_run:
+            print(json.dumps(result_dict, indent=4, ensure_ascii=False))
+        else:
+            self.connection.commit()
 
-        # print(json.dumps(res_dict, indent=4, ensure_ascii=False))
-        print("{} OKs + {} NOKs / {}".format(ok, nok, ok + nok))
-        print("Events without type's event_data IDs: {}".format(events_without_type))
+        print(">> Result: {} OKs + {} NOKs / {}".format(len(types_to_insert) - nok, nok, len(types_to_insert)))
+        print(">> Events without type's event_data IDs: {}".format(events_without_type))
 
 
 if __name__ == '__main__':
