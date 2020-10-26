@@ -71,6 +71,7 @@ class GenerateHTML:
                 "gps": event[7],
                 "organizer": utils.sanitize_string_for_html(event[8]),
                 "types": [],
+                "keywords": [],
                 "start_date": event[10],
                 "start_time": event[11],
                 "end_date": event[12],
@@ -96,15 +97,26 @@ class GenerateHTML:
         cursor = self.connection.execute(query)
         events_types = cursor.fetchall()
 
-        nok = 0
         for event_id, event_type in events_types:
             if event_type:
                 events_dataset[event_id]['types'].append(event_type)
         for event_id in events_dataset:
             types_list = events_dataset[event_id]['types']
-            events_dataset[event_id]['types'] = sorted(self._get_associated_types(types_list))
-            if events_dataset[event_id]['types'] == [GenerateHTML.FALLBACK_EVENT_TYPE]:
-                nok += 1
+            events_dataset[event_id]['types'] = sorted(self._get_associated_types(types_list), key=str.lower)
+
+        query = '''
+                    SELECT event_data_id, keyword
+                    FROM event_data_keywords
+                    WHERE event_data_id IN ({})
+                '''.format(",".join([str(event_id) for event_id in event_ids_list]))
+        cursor = self.connection.execute(query)
+        events_keywords = cursor.fetchall()
+
+        for event_id, event_keyword in events_keywords:
+            if event_keyword:
+                events_dataset[event_id]['keywords'].append(event_keyword)
+        for event_id in events_dataset:
+            events_dataset[event_id]['keywords'] = sorted(events_dataset[event_id]['keywords'], key=str.lower)
 
         return events_dataset
 
@@ -142,6 +154,17 @@ class GenerateHTML:
         else:
             return list(mapped_types)
 
+    @staticmethod
+    def _get_types_and_keywords(input_events: dict) -> (list, list):
+        types = set()
+        keywords = set()
+
+        for event_id in input_events:
+            types.update(input_events[event_id]["types"])
+            keywords.update(input_events[event_id]["keywords"])
+
+        return sorted(list(types), key=str.lower), sorted(list(keywords), key=str.lower)
+
     def complete_index_template(self, events_dataset: dict) -> None:
         with open(GenerateHTML.INDEX_TEMPLATE_HTML_FILE_PATH, 'r') as index_template_file:
             file = index_template_file.read()
@@ -149,10 +172,11 @@ class GenerateHTML:
         data = json.dumps(events_dataset, indent=4, ensure_ascii=True)
         file = file.replace('{{events_dataset}}', data)
 
-        event_types = [event_type for event_type in self.mapping_types]
-        event_types.append(GenerateHTML.FALLBACK_EVENT_TYPE)
+        event_types, event_keywords = self._get_types_and_keywords(events_dataset)
         event_types_data = json.dumps(event_types, indent=4, ensure_ascii=True)
         file = file.replace('{{event_types}}', event_types_data)
+        event_keywords_data = json.dumps(event_keywords, indent=4, ensure_ascii=True)
+        file = file.replace('{{event_keywords}}', event_keywords_data)
 
         calendars = [calendar_base['url'] for calendar_base in utils.get_active_base()]
         file = file.replace('{{calendar_sources_count}}', str(len(calendars)))

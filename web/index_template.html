@@ -32,7 +32,8 @@
         <script type="text/javascript">
             let GLB_MAP;
             const GLB_EVENTS_DATASET = JSON.parse(`{{events_dataset}}`);
-            const GLB_EVENT_TYPES = JSON.parse(`{{event_types}}`).sort();
+            const GLB_EVENT_TYPES = JSON.parse(`{{event_types}}`);
+            const GLB_EVENT_KEYWORDS = JSON.parse(`{{event_keywords}}`);
         </script>
         <script type="text/javascript" src="scripts/index.js"></script>
         <script type="text/javascript" src="scripts/events_map.js"></script>
@@ -137,6 +138,10 @@
                                         <td id="modal--event-details__types"></td>
                                     </tr>
                                     <tr>
+                                        <th class="pl-0 w-25" scope="row"><strong>Keywords</strong></th>
+                                        <td id="modal--event-details__keywords"></td>
+                                    </tr>
+                                    <tr>
                                         <th class="pl-0 w-25" scope="row"><strong>Source</strong></th>
                                         <td><a id="modal--event-details__calendar--url" target="_blank"></a></td>
                                     </tr>
@@ -210,12 +215,22 @@
                                 <!--    - Filtering Events -->
                                 <form id="sidebar__form--filter" onsubmit="return handleSearchFormSubmission(event)">
 
-                                    <!--        -- Types -->
-                                    <h6 class="sidebar-heading d-flex mt-4 text-muted">Filtering by Types</h6>
+                                    <!--        -- Content -->
+                                    <h6 class="sidebar-heading d-flex mt-4 text-muted">Filtering by Content</h6>
                                     <div id="sidebar__form--filter__types" class="form-group">
-                                        <select id="selectTypePicker" class="w-100"
+                                        <label for="sidebar__form--filter__types__select-picker">Types:</label>
+                                        <select id="sidebar__form--filter__types__select-picker" class="w-100"
                                                 data-actions-box="true" data-style="bg-white border"
                                                 data-header="Filters events being at least one of the selected types."
+                                                multiple>
+                                        </select>
+                                    </div>
+                                    <div id="sidebar__form--filter__keywords" class="form-group">
+                                        <label for="sidebar__form--filter__keywords__select-picker">Keywords:</label>
+                                        <select id="sidebar__form--filter__keywords__select-picker" class="w-100"
+                                                data-actions-box="true" data-live-search="true"
+                                                data-style="bg-white border"
+                                                data-header="Filters events containing at least one of the selected keywords."
                                                 multiple>
                                         </select>
                                     </div>

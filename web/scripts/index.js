@@ -217,6 +217,9 @@ function prepareEventDetailsModal(eventData) {
     const types = document.getElementById('modal--event-details__types');
     types.innerText = eventData['types'].join(', ');
 
+    const keywords = document.getElementById('modal--event-details__keywords');
+    keywords.innerText = eventData['keywords'].join(', ');
+
     const source = document.getElementById('modal--event-details__calendar--url');
     source.href = eventData['calendar_url'];
     source.innerText = eventData['calendar_url'];
@@ -316,7 +319,7 @@ function initializeEventsTable(eventsData) {
 }
 
 function initializeTypePicker() {
-    const typePicker = $('#selectTypePicker');
+    const typePicker = $('#sidebar__form--filter__types__select-picker');
     for (let i = 0; i < GLB_EVENT_TYPES.length; i++) {
         const typeName = GLB_EVENT_TYPES[i].charAt(0).toUpperCase() + GLB_EVENT_TYPES[i].slice(1);
         typePicker.append(`<option>${typeName}</option>`);
@@ -324,9 +327,18 @@ function initializeTypePicker() {
     typePicker.selectpicker();
 }
 
+function initializeKeywordPicker() {
+    const keywordPicker = $('#sidebar__form--filter__keywords__select-picker');
+    for (let i = 0; i < GLB_EVENT_KEYWORDS.length; i++) {
+        keywordPicker.append(`<option>${GLB_EVENT_KEYWORDS[i]}</option>`);
+    }
+    keywordPicker.selectpicker();
+}
+
 function handleFirstLoad() {
     setFutureIntoDatetimePickers();
     initializeTypePicker();
+    initializeKeywordPicker();
 
     const filteredEventsData = filterEventsAndLoadMap();
     initializeEventsTable(filteredEventsData);

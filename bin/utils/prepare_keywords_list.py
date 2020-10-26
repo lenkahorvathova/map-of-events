@@ -86,7 +86,8 @@ class PrepareKeywordsList:
                 result_dict[keyword].update(light_stem_list)
                 # result_dict[keyword].update(aggressive_stem_list)  # not including aggressive version
 
-        return dict({key: sorted(list(value)) for key, value in sorted(result_dict.items())})
+        return dict({key: sorted(list(value), key=str.lower)
+                     for key, value in sorted(result_dict.items(), key=lambda tpl: tpl[0].lower())})
 
     @staticmethod
     def _sanitize_list_values(stemmed_words: list) -> list:

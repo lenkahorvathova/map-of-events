@@ -1,20 +1,4 @@
 {
-    "Evropská unie": [
-        "Evropsk uni"
-    ],
-    "Mikuláš": [
-        "Mikuláš",
-        "Mikulášsk",
-        "Mikulášská",
-        "Mikulášské",
-        "Mikulášský"
-    ],
-    "Vánoce": [
-        "Vánoc",
-        "Vánok",
-        "vánočn",
-        "vánoční"
-    ],
     "airsoft": [
         "airsoft"
     ],
@@ -115,6 +99,9 @@
     ],
     "ekologie": [
         "ekologi"
+    ],
+    "Evropská unie": [
+        "Evropsk uni"
     ],
     "exkurze": [
         "exkurh"
@@ -234,6 +221,13 @@
         "literatúr",
         "literárn",
         "literární"
+    ],
+    "Mikuláš": [
+        "Mikuláš",
+        "Mikulášsk",
+        "Mikulášská",
+        "Mikulášské",
+        "Mikulášský"
     ],
     "minifotbal": [
         "minifotbal"
@@ -487,6 +481,12 @@
         "vzdělávací",
         "vzděláván",
         "vzdělávání"
+    ],
+    "Vánoce": [
+        "Vánoc",
+        "Vánok",
+        "vánočn",
+        "vánoční"
     ],
     "víno": [
         "vinařsk",

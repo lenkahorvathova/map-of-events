@@ -187,11 +187,19 @@ function initializeMap() {
 function filterEventsAndLoadMap() {
     initializeMap();
 
-    const typesPickedOptions = document.getElementById('selectTypePicker').selectedOptions;
+    const typesPickedOptions = document.getElementById('sidebar__form--filter__types__select-picker').selectedOptions;
     typesPicked = [];
     if (typesPickedOptions !== undefined) {
         for (let i = 0; i < typesPickedOptions.length; i++) {
             typesPicked.push(typesPickedOptions[i].label.toLowerCase());
+        }
+    }
+
+    const keywordsPickedOptions = document.getElementById('sidebar__form--filter__keywords__select-picker').selectedOptions;
+    keywordsPicked = [];
+    if (keywordsPickedOptions !== undefined) {
+        for (let i = 0; i < keywordsPickedOptions.length; i++) {
+            keywordsPicked.push(keywordsPickedOptions[i].label);
         }
     }
 
@@ -245,6 +253,13 @@ function filterEventsAndLoadMap() {
         if (typesPicked.length !== 0) {
             const typesIntersection = typesPicked.filter(value => GLB_EVENTS_DATASET[eventId]['types'].includes(value));
             if (typesIntersection.length === 0) {
+                continue;
+            }
+        }
+
+        if (keywordsPicked.length !== 0) {
+            const keywordsIntersection = keywordsPicked.filter(value => GLB_EVENTS_DATASET[eventId]['keywords'].includes(value));
+            if (keywordsIntersection.length === 0) {
                 continue;
             }
         }
