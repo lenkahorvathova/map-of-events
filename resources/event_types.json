@@ -1,8 +1,8 @@
 [
     {
         "type": "beseda",
-        "variations": [
-            "besedy",
+        "keywords": [
+            "beseda",
             "debata",
             "setkání"
         ],
@@ -12,30 +12,28 @@
     },
     {
         "type": "církevní akce",
-        "variations": [
+        "keywords": [
             "biblie",
-            "biblí",
             "bohoslužba",
-            "duchovní",
-            "církevní",
+            "církev",
+            "duchovno",
             "kostel",
-            "kostelů",
             "mše"
         ]
     },
     {
         "type": "cvičení",
-        "variations": [
+        "keywords": [
+            "cvičení",
             "trénink",
             "turnaj"
         ]
     },
     {
         "type": "divadlo",
-        "variations": [
+        "keywords": [
             "činohra",
-            "divadelní",
-            "divadla",
+            "divadlo",
             "muzikál"
         ],
         "supertypes": [
@@ -44,9 +42,8 @@
     },
     {
         "type": "diskotéka",
-        "variations": [
-            "disco",
-            "disko",
+        "keywords": [
+            "diskotéka",
             "zábava"
         ],
         "supertypes": [
@@ -55,16 +52,16 @@
     },
     {
         "type": "výlet",
-        "variations": [
+        "keywords": [
             "exkurze",
-            "expedice",
+            "výlet",
             "zájezd"
         ]
     },
     {
         "type": "festival",
-        "variations": [
-            "festivaly"
+        "keywords": [
+            "festival"
         ],
         "supertypes": [
             "hudební akce"
@@ -72,61 +69,52 @@
     },
     {
         "type": "gastronomické akce",
-        "variations": [
-            "gastronomické",
+        "keywords": [
             "gastronomie",
             "jídlo",
-            "kulinářské",
+            "kulinářství",
             "pečení",
-            "vinařská",
-            "vinařské"
+            "víno"
         ]
     },
     {
         "type": "historické akce",
-        "variations": [
+        "keywords": [
             "dějiny",
-            "historické",
-            "historickým",
-            "vojenské"
+            "historie",
+            "voják"
         ]
     },
     {
         "type": "hudební akce",
-        "variations": [
+        "keywords": [
             "hudba",
-            "hudební",
             "jazz",
-            "písničky",
-            "písniček"
+            "písnička"
         ]
     },
     {
         "type": "kino",
-        "variations": [
+        "keywords": [
             "film",
-            "filmová",
-            "filmové",
-            "filmový",
-            "filmu",
-            "kina",
+            "kino",
             "projekce",
             "promítání"
         ]
     },
     {
         "type": "knihovna",
-        "variations": [
+        "keywords": [
             "četba",
-            "čtení",
-            "knihovny",
-            "literární"
+            "kniha",
+            "knihovna",
+            "literatúra"
         ]
     },
     {
         "type": "koncert",
-        "variations": [
-            "koncerty"
+        "keywords": [
+            "koncert"
         ],
         "supertypes": [
             "hudební akce"
@@ -134,22 +122,20 @@
     },
     {
         "type": "kultúrní akce",
-        "variations": [
-            "kultura",
-            "kulturní"
+        "keywords": [
+            "kultura"
         ]
     },
     {
         "type": "kurz",
-        "variations": [
+        "keywords": [
             "dílna",
-            "kurzy",
+            "kurz",
             "lekce",
             "seminář",
             "školení",
             "tvoření",
-            "workshop",
-            "workshopy"
+            "workshop"
         ],
         "supertypes": [
             "vzdělávací akce"
@@ -157,10 +143,9 @@
     },
     {
         "type": "muzeum",
-        "variations": [
+        "keywords": [
             "galerie",
-            "muzea",
-            "muzejní"
+            "muzeum"
         ],
         "supertypes": [
             "kultúrní akce"
@@ -168,10 +153,8 @@
     },
     {
         "type": "odpad",
-        "variations": [
-            "odpadu",
-            "odpadů",
-            "popelnic",
+        "keywords": [
+            "odpad",
             "popelnice"
         ],
         "supertypes": [
@@ -180,11 +163,8 @@
     },
     {
         "type": "ples",
-        "variations": [
-            "plesy",
-            "plesová",
-            "plesové",
-            "plesový"
+        "keywords": [
+            "ples"
         ],
         "supertypes": [
             "spoločenská akce",
@@ -193,7 +173,7 @@
     },
     {
         "type": "pochod",
-        "variations": [
+        "keywords": [
             "pouť",
             "průvod",
             "putování"
@@ -201,28 +181,21 @@
     },
     {
         "type": "pro děti",
-        "variations": [
-            "dětem",
-            "děti",
-            "dětí",
-            "dětmi",
-            "dětská",
-            "dětské",
-            "dětský"
+        "keywords": [
+            "dítě"
         ]
     },
     {
         "type": "pro seniory",
-        "variations": [
-            "důchodový",
-            "seniorů",
-            "seniory"
+        "keywords": [
+            "důchod",
+            "senior"
         ]
     },
     {
         "type": "přednáška",
-        "variations": [
-            "přednášky"
+        "keywords": [
+            "přednáška"
         ],
         "supertypes": [
             "vzdělávací akce"
@@ -230,9 +203,8 @@
     },
     {
         "type": "prohlídka",
-        "variations": [
-            "prohlídky",
-            "přehlídka"
+        "keywords": [
+            "prohlídka"
         ],
         "supertypes": [
             "kultúrní akce"
@@ -240,10 +212,9 @@
     },
     {
         "type": "slavnost",
-        "variations": [
+        "keywords": [
             "oslava",
-            "oslavy",
-            "slavnosti"
+            "slavnost"
         ],
         "supertypes": [
             "spoločenská akce"
@@ -251,49 +222,43 @@
     },
     {
         "type": "společenská akce",
-        "variations": [
-            "společenská",
-            "společenské",
-            "společenský"
+        "keywords": [
+            "společnost"
         ]
     },
     {
         "type": "sport",
-        "variations": [
+        "keywords": [
             "basketbal",
             "běh",
             "bruslení",
             "cyklistika",
             "fotbal",
-            "fotbalové",
             "házená",
             "hokej",
-            "sportovní"
+            "sport"
         ]
     },
     {
         "type": "tanec",
-        "variations": [
+        "keywords": [
             "folklór",
-            "foklorní",
-            "taneční"
+            "tanec"
         ]
     },
     {
         "type": "trhy",
-        "variations": [
+        "keywords": [
             "jarmark",
-            "řemesla",
             "řemeslo",
-            "stánky",
+            "stánek",
             "trh"
         ]
     },
     {
         "type": "turistika",
-        "variations": [
-            "turistická",
-            "turistický"
+        "keywords": [
+            "turistika"
         ],
         "supertypes": [
             "sport"
@@ -301,35 +266,28 @@
     },
     {
         "type": "úřední akce",
-        "variations": [
+        "keywords": [
             "důležité",
-            "obecní",
             "porada",
             "úřad",
-            "úřední",
             "samospráva",
             "schůze",
             "zasedání",
-            "zastupitelstva",
             "zastupitelstvo"
         ]
     },
     {
         "type": "volný čas",
-        "variations": [
-            "volnočasová",
-            "volnočasové",
-            "volnočasový"
+        "keywords": [
+            "volný čas"
         ]
     },
     {
         "type": "výstava",
-        "variations": [
+        "keywords": [
             "umění",
             "vernisáž",
-            "výstavy",
-            "výstavka",
-            "výstavku",
+            "výstava",
             "výtvarné"
         ],
         "supertypes": [
@@ -338,9 +296,8 @@
     },
     {
         "type": "vzdělávací akce",
-        "variations": [
-            "vzdělávací",
-            "vzdělávání"
+        "keywords": [
+            "vzdělání"
         ]
     }
 ]

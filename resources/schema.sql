@@ -75,6 +75,7 @@ CREATE TABLE IF NOT EXISTS event_data_keywords
 (
     id            INTEGER PRIMARY KEY AUTOINCREMENT,
     keyword       TEXT,
+    source        TEXT,
     event_data_id INTEGER,
     FOREIGN KEY (event_data_id) REFERENCES event_data (id)
 );

@@ -55,6 +55,11 @@ mkdir -p "${LOG_DATA_DIR}"
   python3 -u bin/geocode_location.py
 
   echo "============================================================"
+  echo "EXTRACT EVENTS' KEYWORDS:"
+  echo "============================================================"
+  python3 -u bin/extract_keywords.py
+
+  echo "============================================================"
   echo "UNIFY EVENTS' TYPES:"
   echo "============================================================"
   python3 -u bin/unify_types.py

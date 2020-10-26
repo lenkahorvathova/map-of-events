@@ -85,28 +85,37 @@ class ExtractKeywords:
         print(debug_output)
 
         matched_keywords = set()
-        string_to_search = "|".join(filter(None, [title, perex, types]))
-        for keyword, stemmed_list in keywords_dict.items():
-            for stemmed_word in stemmed_list:
-                word_count = len(stemmed_word.split())
-                if word_count > 1:
-                    matched = False
-                    multiword = stemmed_word.split()
-                    word_rest_count = word_count - 1
-                    regex_pattern = r'\b{}\w*'.format(multiword[0].lower()) + word_rest_count * r'\s*(\w*)'
-                    match_iter = re.finditer(regex_pattern, string_to_search.lower())
-                    for match in match_iter:
-                        matched = True
-                        for i in range(word_rest_count):
-                            next_word_match = re.search(r'\b{}'.format(multiword[i + 1].lower()), match.group(i + 1))
-                            if next_word_match is None:
-                                matched = False
-                    if matched:
-                        matched_keywords.add(keyword)
-                else:
-                    match = re.search(r'\b{}'.format(stemmed_word.lower()), string_to_search.lower())
-                    if match:
-                        matched_keywords.add(keyword)
+        event_data = {
+            "title": title,
+            "perex": perex,
+            "types": types
+        }
+        for source, string_to_search in event_data.items():
+            if string_to_search is None:
+                continue
+
+            for keyword, stemmed_list in keywords_dict.items():
+                for stemmed_word in stemmed_list:
+                    word_count = len(stemmed_word.split())
+                    if word_count > 1:
+                        matched = False
+                        multiword = stemmed_word.split()
+                        word_rest_count = word_count - 1
+                        regex_pattern = r'\b{}\w*'.format(multiword[0].lower()) + word_rest_count * r'\s*(\w*)'
+                        match_iter = re.finditer(regex_pattern, string_to_search.lower())
+                        for match in match_iter:
+                            matched = True
+                            for i in range(word_rest_count):
+                                next_word_match = re.search(r'\b{}'.format(multiword[i + 1].lower()),
+                                                            match.group(i + 1))
+                                if next_word_match is None:
+                                    matched = False
+                        if matched:
+                            matched_keywords.add((keyword, source))
+                    else:
+                        match = re.search(r'\b{}'.format(stemmed_word.lower()), string_to_search.lower())
+                        if match:
+                            matched_keywords.add((keyword, source))
 
         return event_data_id, list(matched_keywords), title, perex, types
 
@@ -127,14 +136,14 @@ class ExtractKeywords:
             if len(matched_keywords) == 0:
                 nok += 1
                 events_without_keywords.append(event_data_id)
-                values = ['({}, {})'.format("null", str(event_data_id))]
+                values = ['({}, {}, {})'.format("null", "null", str(event_data_id))]
             else:
-                for event_keyword in matched_keywords:
-                    values.append('("{}", {})'.format(event_keyword, str(event_data_id)))
+                for event_keyword, source in matched_keywords:
+                    values.append('("{}", "{}", {})'.format(event_keyword, source, str(event_data_id)))
 
             if not self.args.dry_run:
                 query = '''
-                            INSERT OR IGNORE INTO event_data_keywords(keyword, event_data_id)
+                            INSERT OR IGNORE INTO event_data_keywords(keyword, source, event_data_id)
                             VALUES {}
                         '''.format(', '.join(values))
                 try:

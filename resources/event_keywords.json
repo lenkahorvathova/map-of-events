@@ -2,6 +2,19 @@
     "Evropská unie": [
         "Evropsk uni"
     ],
+    "Mikuláš": [
+        "Mikuláš",
+        "Mikulášsk",
+        "Mikulášská",
+        "Mikulášské",
+        "Mikulášský"
+    ],
+    "Vánoce": [
+        "Vánoc",
+        "Vánok",
+        "vánočn",
+        "vánoční"
+    ],
     "airsoft": [
         "airsoft"
     ],
@@ -16,6 +29,24 @@
         "balet",
         "baletu"
     ],
+    "basketbal": [
+        "basketbal"
+    ],
+    "beseda": [
+        "besed",
+        "besedy"
+    ],
+    "biblie": [
+        "bibl",
+        "bibli",
+        "biblí"
+    ],
+    "bohoslužba": [
+        "bohoslužb"
+    ],
+    "bruslení": [
+        "bruslen"
+    ],
     "běh": [
         "běh",
         "běhu",
@@ -23,27 +54,113 @@
         "běžecká",
         "běžecký"
     ],
-    "děti": [
+    "cvičení": [
+        "cvičen"
+    ],
+    "cyklistika": [
+        "cyklistik"
+    ],
+    "církev": [
+        "církev",
+        "církevn",
+        "církevní"
+    ],
+    "debata": [
+        "deb"
+    ],
+    "den otevřených dveří": [
+        "den otevřen dveř"
+    ],
+    "diskotéka": [
+        "disc",
+        "disco",
+        "disk",
+        "disko",
+        "diskoték"
+    ],
+    "divadlo": [
+        "divadeln",
+        "divadelní",
+        "divadl",
+        "divadla"
+    ],
+    "duchovno": [
+        "duchovn",
+        "duchovní"
+    ],
+    "dílna": [
+        "díln"
+    ],
+    "dítě": [
+        "dít",
         "dět",
+        "dětem",
+        "děti",
+        "dětmi",
+        "dětsk",
+        "dětská",
+        "dětské",
+        "dětský",
         "dětí"
+    ],
+    "dějiny": [
+        "dějin"
+    ],
+    "důchod": [
+        "důchod",
+        "důchodový"
+    ],
+    "důležité": [
+        "důležit"
     ],
     "ekologie": [
         "ekologi"
     ],
+    "exkurze": [
+        "exkurh"
+    ],
+    "festival": [
+        "festival",
+        "festivaly"
+    ],
+    "film": [
+        "film",
+        "filmová",
+        "filmové",
+        "filmový",
+        "filmu"
+    ],
     "filosofie": [
         "filosofi"
+    ],
+    "folklór": [
+        "foklorn",
+        "foklorní",
+        "folklór"
     ],
     "fotbal": [
         "fotbal",
         "fotbalem",
         "fotbalová",
+        "fotbalové",
         "fotbalový"
     ],
+    "galerie": [
+        "galeri"
+    ],
     "gastronomie": [
-        "gastronomi"
+        "gastronomi",
+        "gastronomick",
+        "gastronomické"
     ],
     "historie": [
-        "histori"
+        "histori",
+        "historick",
+        "historické",
+        "historický"
+    ],
+    "hokej": [
+        "hokej"
     ],
     "hra": [
         "hra",
@@ -54,26 +171,69 @@
         "hudebn",
         "hudební"
     ],
+    "házená": [
+        "házen"
+    ],
     "informace": [
         "informak"
+    ],
+    "jarmark": [
+        "jarmark"
+    ],
+    "jazz": [
+        "jazz"
     ],
     "jednání zastupitelstva": [
         "jednán zastupitelstv"
     ],
+    "jídlo": [
+        "jídl"
+    ],
+    "kino": [
+        "kin",
+        "kina"
+    ],
     "kniha": [
         "knih",
-        "knihovn",
-        "knihovna",
         "knižn",
         "knižní"
     ],
+    "knihovna": [
+        "knihovn",
+        "knihovny"
+    ],
+    "koncert": [
+        "koncert",
+        "koncerty"
+    ],
+    "kostel": [
+        "kostel",
+        "kostelů"
+    ],
     "košíková": [
         "košík"
+    ],
+    "kulinářství": [
+        "kulinářsk",
+        "kulinářské",
+        "kulinářstv"
     ],
     "kultura": [
         "kultur",
         "kulturn",
         "kulturní"
+    ],
+    "kurz": [
+        "kurz",
+        "kurzy"
+    ],
+    "lekce": [
+        "lekk"
+    ],
+    "literatúra": [
+        "literatúr",
+        "literárn",
+        "literární"
     ],
     "minifotbal": [
         "minifotbal"
@@ -83,14 +243,40 @@
         "motorky"
     ],
     "muzeum": [
+        "muze",
+        "muzea",
+        "muzejn",
+        "muzejní",
         "muzeum"
+    ],
+    "muzikál": [
+        "muzikál"
     ],
     "město": [
         "měst",
         "města"
     ],
+    "mše": [
+        "mše"
+    ],
+    "obec": [
+        "obec",
+        "obecn",
+        "obecní"
+    ],
+    "odpad": [
+        "odpad",
+        "odpadů"
+    ],
+    "oslava": [
+        "oslav",
+        "oslavy"
+    ],
     "peníze": [
         "peníh"
+    ],
+    "pečení": [
+        "pečen"
     ],
     "ping-pong": [
         "ping-pong",
@@ -101,12 +287,44 @@
         "pionýrsk",
         "pionýrský"
     ],
+    "ples": [
+        "ples",
+        "plesová",
+        "plesové",
+        "plesový",
+        "plesy"
+    ],
+    "pochod": [
+        "pochod"
+    ],
     "politika": [
         "politik"
+    ],
+    "popelnice": [
+        "popelnic",
+        "popelnik"
+    ],
+    "porada": [
+        "porad"
+    ],
+    "pouť": [
+        "pouť"
     ],
     "program": [
         "program",
         "programu"
+    ],
+    "prohlídka": [
+        "prohlídk",
+        "prohlídky",
+        "přehlídk",
+        "přehlídka"
+    ],
+    "projekce": [
+        "projekk"
+    ],
+    "promítání": [
+        "promítán"
     ],
     "prostředí": [
         "prostřed"
@@ -114,10 +332,27 @@
     "práce": [
         "prák"
     ],
+    "průvod": [
+        "průvod"
+    ],
+    "putování": [
+        "putován"
+    ],
     "pétanque": [
         "petanqu",
         "petanque",
         "pétanqu"
+    ],
+    "písnička": [
+        "písniček",
+        "písničk",
+        "písničky"
+    ],
+    "přednáška": [
+        "prednášk",
+        "prednáška",
+        "přednášk",
+        "přednášky"
     ],
     "příroda": [
         "přírod",
@@ -129,12 +364,36 @@
         "rocková",
         "rockový"
     ],
+    "samospráva": [
+        "samospráv"
+    ],
+    "schůze": [
+        "schůh",
+        "schůzi"
+    ],
+    "seminář": [
+        "seminář"
+    ],
+    "senior": [
+        "senior",
+        "seniorsk",
+        "seniorský",
+        "seniory",
+        "seniorů"
+    ],
+    "setkání": [
+        "setkán"
+    ],
     "skaut": [
         "skaut",
         "skautsk",
         "skautská",
         "skautský",
         "skautů"
+    ],
+    "slavnost": [
+        "slavnost",
+        "slavnosti"
     ],
     "služby": [
         "služb",
@@ -144,6 +403,10 @@
         "spartak"
     ],
     "společnost": [
+        "společensk",
+        "společenská",
+        "společenské",
+        "společenský",
         "společnost"
     ],
     "sport": [
@@ -151,8 +414,27 @@
         "sportovn",
         "sportovní"
     ],
+    "stánek": [
+        "stánek",
+        "stánk",
+        "stánky"
+    ],
     "stát": [
         "stát"
+    ],
+    "tanec": [
+        "tanec",
+        "tanečn",
+        "taneční"
+    ],
+    "trh": [
+        "trh",
+        "trhy",
+        "tržn",
+        "tržní"
+    ],
+    "trénink": [
+        "trénink"
     ],
     "turistika": [
         "turist",
@@ -162,10 +444,22 @@
         "turistik",
         "turisty"
     ],
+    "turnaj": [
+        "turnaj"
+    ],
+    "tvoření": [
+        "tvořen"
+    ],
+    "umění": [
+        "uměn"
+    ],
     "velikonoce": [
         "velikonok",
         "velikonočn",
         "velikonoční"
+    ],
+    "vernisáž": [
+        "vernisáž"
     ],
     "vesmír": [
         "vesmír",
@@ -175,32 +469,105 @@
         "vod",
         "vody"
     ],
+    "voják": [
+        "vojensk",
+        "vojenské",
+        "voják"
+    ],
+    "volný čas": [
+        "voln čas",
+        "volnočas",
+        "volnočasová",
+        "volnočasové",
+        "volnočasový"
+    ],
     "vzdělání": [
-        "vzdělán"
+        "vzdělán",
+        "vzdělávac",
+        "vzdělávací",
+        "vzděláván",
+        "vzdělávání"
     ],
     "víno": [
         "vinařsk",
         "vinařská",
+        "vinařské",
         "vinařský",
         "vinn",
         "vinná",
         "vinný",
         "vín"
     ],
+    "výlet": [
+        "výlet"
+    ],
+    "výstava": [
+        "výstav",
+        "výstavk",
+        "výstavka",
+        "výstavku",
+        "výstavy"
+    ],
+    "výtvarné": [
+        "výtvarn",
+        "výtvarná",
+        "výtvarný"
+    ],
     "věda": [
         "věd",
         "vědeck",
         "vědecký"
     ],
+    "workshop": [
+        "workshop",
+        "workshopy"
+    ],
+    "zasedání": [
+        "zasedán"
+    ],
+    "zastupitelstvo": [
+        "zastupitelstv",
+        "zastupitelstva"
+    ],
+    "zdraví": [
+        "zdrav",
+        "zdravých"
+    ],
     "země": [
         "zem"
+    ],
+    "zábava": [
+        "zábav"
+    ],
+    "zájezd": [
+        "zájezd"
     ],
     "úklid": [
         "úklid"
     ],
+    "úřad": [
+        "úřad",
+        "úředn",
+        "úřední"
+    ],
+    "četba": [
+        "četb",
+        "čten",
+        "čtení"
+    ],
+    "činohra": [
+        "činohr"
+    ],
+    "řemeslo": [
+        "řemesl",
+        "řemesla"
+    ],
     "škola": [
         "škol",
         "školy"
+    ],
+    "školení": [
+        "školen"
     ],
     "žena": [
         "žen",

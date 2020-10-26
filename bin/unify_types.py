@@ -16,7 +16,8 @@ class UnifyTypes:
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
-            missing_tables = utils.check_db_tables(self.connection, ["event_data", "event_data_types"])
+            missing_tables = utils.check_db_tables(self.connection,
+                                                   ["event_data", "event_data_keywords", "event_data_types"])
             if len(missing_tables) != 0:
                 raise Exception("Missing tables in the DB: {}".format(missing_tables))
 
@@ -40,12 +41,13 @@ class UnifyTypes:
         self._store_to_db(types_to_insert)
         self.connection.close()
 
-    def _load_input_events(self) -> list:
+    def _load_input_events(self) -> dict:
         print("Loading events...")
         query = '''
-                    SELECT ed.id, ed.title, ed.types
+                    SELECT ed.id, ed.title, ed.types, edk.keyword, edk.source
                     FROM event_data ed
                          LEFT OUTER JOIN event_data_types edt ON ed.id = edt.event_data_id
+                         LEFT OUTER JOIN event_data_keywords edk ON ed.id = edk.event_data_id
                     WHERE 1 == 1
                 '''
 
@@ -57,7 +59,21 @@ class UnifyTypes:
             query += ''' AND edt.id IS NULL'''
 
         cursor = self.connection.execute(query)
-        return cursor.fetchall()
+        event_tuples = cursor.fetchall()
+        input_event_dict = {}
+        for event_data_id, title, types, _, _ in event_tuples:
+            input_event_dict[event_data_id] = {
+                'id': event_data_id,
+                'title': title,
+                'types': json.loads(types) if types else [],
+                'keywords': defaultdict(list)
+            }
+        for event_data_id, _, _, keyword, source in event_tuples:
+            if source is None:
+                continue
+            input_event_dict[event_data_id]['keywords'][source].append(keyword)
+
+        return input_event_dict
 
     @staticmethod
     def _prepare_types() -> dict:
@@ -65,45 +81,61 @@ class UnifyTypes:
         with open(EVENT_TYPES_JSON_FILE_PATH, 'r') as types_file:
             types_list = json.load(types_file)
 
-        types_mapping = defaultdict(list)
+        types_mapping = {}
         for type_dict in types_list:
             main_type = type_dict['type']
-            variations = type_dict.get('variations', [])
-            types_mapping[main_type] = [main_type]
-            for variation in variations:
-                types_mapping[variation].append(main_type)
+            keywords = type_dict.get('keywords', [])
+            types_mapping[main_type] = []
+            for keyword in keywords:
+                types_mapping[main_type].append(keyword)
 
         return dict(types_mapping)
 
     @staticmethod
-    def _match_types(input_events: list, types_mapping: dict) -> list:
+    def _match_types(input_events: dict, types_mapping: dict) -> list:
         input_tuples = []
-        for index, event in enumerate(input_events):
-            input_tuples.append((index + 1, len(input_events), event, types_mapping))
+        for index, event_id in enumerate(input_events):
+            input_tuples.append((index + 1, len(input_events), input_events[event_id], types_mapping))
 
         with multiprocessing.Pool(32) as p:
             return p.map(UnifyTypes._match_type, input_tuples)
 
     @staticmethod
     def _match_type(input_tuple: tuple) -> tuple:
-        input_index, total_length, event, types_mapping = input_tuple
-        event_id, title, types = event
+        input_index, total_length, event_dict, types_mapping = input_tuple
+        event_id = event_dict['id']
 
         debug_output = "{}/{} | Unifying types for event: {}".format(input_index, total_length, event_id)
-        if types is None:
-            debug_output += " - Guessing type..."
-            string_to_search = title
-        else:
-            string_to_search = types
-        print(debug_output)
 
         matched_types = set()
-        for type_word in types_mapping:
-            match = re.search(r'\b{}\b'.format(type_word.lower()), string_to_search.lower())
-            if match:
-                matched_types.update(types_mapping[type_word])
+        for type_word, keywords in types_mapping.items():
+            if len(event_dict['types']) != 0:
+                string_to_search = "|".join(event_dict['types'])
+                match = re.search(r'\b{}\b'.format(type_word.lower()), string_to_search.lower())
+                if match:
+                    matched_types.add(type_word)
 
-        return event_id, list(matched_types), types
+            keywords_from_types = event_dict['keywords'].get('types', [])
+            if UnifyTypes._type_matches_keywords(types_mapping[type_word], keywords_from_types):
+                matched_types.add(type_word)
+
+        if len(matched_types) == 0:
+            debug_output += " - Guessing type from keywords..."
+            if len(event_dict['keywords']) != 0:
+                for type_word, keywords in types_mapping.items():
+                    keywords_from_title = event_dict['keywords'].get('title', [])
+                    if UnifyTypes._type_matches_keywords(types_mapping[type_word], keywords_from_title):
+                        matched_types.add(type_word)
+
+        print(debug_output)
+        return event_id, list(matched_types), event_dict['types']
+
+    @staticmethod
+    def _type_matches_keywords(type_keywords, event_keywords) -> bool:
+        for keyword in event_keywords:
+            if keyword in type_keywords:
+                return True
+        return False
 
     def _store_to_db(self, types_to_insert: list) -> None:
         print("Inserting into DB...")
@@ -113,7 +145,7 @@ class UnifyTypes:
 
         for event_data_id, types, old_types in types_to_insert:
             result_dict[event_data_id] = {
-                'original_types': json.loads(old_types) if old_types else [],
+                'original_types': old_types,
                 'matched_types': types
             }
             values = []
