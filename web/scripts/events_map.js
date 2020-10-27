@@ -1,5 +1,7 @@
 function showEventDetailsFromMap(eventId) {
     const eventData = GLB_EVENTS_DATASET[eventId];
+    document.getElementById('modal--event-details__close-btn').hidden = false;
+    document.getElementById('modal--event-details__back-btn').hidden = true;
     prepareEventDetailsModal(eventData);
 }
 
@@ -148,11 +150,50 @@ function computeCirclePoint(specifiedRadius, gpsLatitude, gpsLongitude) {
     return SMap.Coords.fromWGS84(gpsLongitude + angle, gpsLatitude);
 }
 
+function addShowTableButton() {
+    const customLayer = new SMap.Layer.HUD();
+    GLB_MAP.addLayer(customLayer);
+    customLayer.enable();
+
+    const showTable = JAK.mel("div");
+    const button = JAK.mel("button", {
+        type: "button",
+        textContent: "Show Events Table"
+    }, {
+        fontSize: "17px",
+        lineHeight: "27px",
+        fontWeight: "400",
+        background: "#fff",
+        color: "#6b7580",
+        border: "none",
+        outline: "0",
+        borderRadius: "2px",
+        padding: "0 8px 0 8px",
+        fontStyle: "normal",
+        fontSmooth: "antialiased",
+        "-webkit-font-smoothing": "antialiased"
+
+    });
+    button.onclick = function () {
+        $("#modal--events-table").modal('show');
+    };
+    showTable.appendChild(button);
+    customLayer.addItem(showTable, {
+        position: "absolute",
+        right: "97px",
+        top: "17px",
+        borderRadius: "2px",
+        boxShadow: "0 0 2px 0 rgba(0,0,0,.3)"
+    });
+}
+
 function initializeMap() {
     GLB_MAP = new SMap(document.getElementById('content__map'));
     GLB_MAP.addControl(new SMap.Control.Sync());
     GLB_MAP.addDefaultLayer(SMap.DEF_BASE).enable();
     GLB_MAP.addDefaultControls();
+
+    addShowTableButton();
 
     const mouse = new SMap.Control.Mouse(SMap.MOUSE_PAN | SMap.MOUSE_WHEEL | SMap.MOUSE_ZOOM);
     GLB_MAP.addControl(mouse);

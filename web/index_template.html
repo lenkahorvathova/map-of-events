@@ -77,8 +77,12 @@
                 <div class="modal-content">
                     <div class="modal-header card-header">
                         <h4 class="modal-title my-0 font-weight-normal">Event's Details</h4>
-                        <button type="button" class="close" data-dismiss="modal">
+                        <button id="modal--event-details__close-btn" type="button" class="close" data-dismiss="modal">
                             &times;
+                        </button>
+                        <button id="modal--event-details__back-btn" type="button" class="close"
+                                data-toggle="modal" data-target="#modal--events-table" data-dismiss="modal">
+                            &rarr;
                         </button>
                     </div>
                     <div class="modal-body">
@@ -151,6 +155,38 @@
                         <ul class="list-group">
                             {{calendar_sources}}
                         </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--    - Events Table -->
+        <div id="modal--events-table" class="modal">
+            <div class="modal-dialog modal-lg modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header card-header">
+                        <h4 class="modal-title my-0 font-weight-normal">Events Found</h4>
+                        <button type="button" class="close" data-dismiss="modal">
+                            &times;
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row">
+                            <div class="col table-responsive rounded">
+                                <table id="modal--events-table__table"
+                                       class="table table-bordered table-striped table-hover table-sm">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th scope="col" class="th-sm">Title</th>
+                                            <th scope="col" class="th-sm">Location</th>
+                                            <th scope="col" class="th-sm">Start</th>
+                                            <th scope="col" class="th-sm">End</th>
+                                            <th scope="col" class="th-sm">Actions</th>
+                                        </tr>
+                                    </thead>
+                                </table>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -406,28 +442,8 @@
             <!-- Main Content  -->
             <main id="content" role="main">
 
-                <!-- Events Listing -->
-                <!--    - Map -->
+                <!-- Events Map -->
                 <div id="content__map" class="event-map"></div>
-
-                <!--                    &lt;!&ndash;    - Table &ndash;&gt;-->
-                <!--                    <h2>Events Found</h2>-->
-                <!--                    <div class="row">-->
-                <!--                        <div class="col table-responsive rounded">-->
-                <!--                            <table id="main-content__events-table"-->
-                <!--                                   class="table table-bordered table-striped table-hover table-sm">-->
-                <!--                                <thead class="thead-dark">-->
-                <!--                                    <tr>-->
-                <!--                                        <th scope="col" class="th-sm">Title</th>-->
-                <!--                                        <th scope="col" class="th-sm">Location</th>-->
-                <!--                                        <th scope="col" class="th-sm">Start</th>-->
-                <!--                                        <th scope="col" class="th-sm">End</th>-->
-                <!--                                        <th scope="col" class="th-sm">Actions</th>-->
-                <!--                                    </tr>-->
-                <!--                                </thead>-->
-                <!--                            </table>-->
-                <!--                        </div>-->
-                <!--                    </div>-->
             </main>
         </div>
 

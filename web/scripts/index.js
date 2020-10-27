@@ -102,7 +102,7 @@ function handleGeocodeFormSubmission(event) {
 }
 
 function reloadEventsTable(eventsData) {
-    const eventsDatatable = $('#main-content__events-table').DataTable();
+    const eventsDatatable = $('#modal--events-table__table').DataTable();
     eventsDatatable.clear();
     eventsDatatable.rows.add(eventsData);
     eventsDatatable.draw();
@@ -113,10 +113,12 @@ function handleSearchFormSubmission(event) {
 
     const filteredEventsData = filterEventsAndLoadMap();
     reloadEventsTable(filteredEventsData);
+    handleSidebarToggleButtonClick();
 }
 
 function zoomToEventGPS(element) {
-    const eventData = $('#main-content__events-table').DataTable().row($(element).parents('tr')).data();
+    $('#modal--events-table').modal('hide');
+    const eventData = $('#modal--events-table__table').DataTable().row($(element).parents('tr')).data();
 
     if (eventData['online']) {
         alert("You can't zoom to this event as it is being held online.");
@@ -236,8 +238,11 @@ function prepareEventDetailsModal(eventData) {
 }
 
 function showEventDetailsFromEventsTable(element) {
-    const eventsDatatable = $('#main-content__events-table').DataTable();
+    const eventsDatatable = $('#modal--events-table__table').DataTable();
     const eventData = eventsDatatable.row($(element).parents('tr')).data();
+    document.getElementById('modal--event-details__close-btn').hidden = true;
+    document.getElementById('modal--event-details__back-btn').hidden = false;
+    $('#modal--events-table').modal('hide');
     prepareEventDetailsModal(eventData);
 }
 
@@ -266,7 +271,7 @@ function prepareDatetimeFilterForEventsTable(date, time) {
 }
 
 function initializeEventsTable(eventsData) {
-    $('#main-content__events-table').DataTable({
+    $('#modal--events-table__table').DataTable({
         data: eventsData,
         columns: [
             {data: 'table_title'},
@@ -351,5 +356,5 @@ function handleFirstLoad() {
     initializeKeywordPicker();
 
     const filteredEventsData = filterEventsAndLoadMap();
-    // initializeEventsTable(filteredEventsData);
+    initializeEventsTable(filteredEventsData);
 }
