@@ -1,15 +1,83 @@
-.smap .cluster div {
-    box-sizing: content-box;
+body {
+    font-size: .875rem;
 }
 
-.sidebar-form-input-group {
-    min-width: 300px;
+.feather {
+    width: 16px;
+    height: 16px;
+    vertical-align: text-bottom;
 }
 
-.centered-cell-content {
-    text-align: center;
-    white-space: nowrap
+/* ---------------------------------------------------
+    TOP NAVIGATION BAR STYLE
+----------------------------------------------------- */
+
+.navbar {
+    padding-top: .75rem;
+    padding-bottom: .75rem;
+    font-size: 1rem;
 }
+
+/* ---------------------------------------------------
+    SIDEBAR FORM STYLE
+----------------------------------------------------- */
+
+.wrapper {
+    position: absolute;
+    height: calc(100vh - 40px);
+    top: 40px;
+    left: 0;
+    width: 100vw;
+}
+
+.sidebar {
+    width: 430px;
+    height: 100%;
+    overflow: auto;
+    padding: 0;
+    position: absolute;
+    bottom: 0;
+    left: -430px;
+    z-index: 100;
+    transition: all 0.3s;
+    box-shadow: inset 0 -1px 0 rgba(0, 0, 0, .1);
+}
+
+.sidebar.active {
+    left: 0;
+}
+
+.sidebar-sticky {
+    padding: 0 20px;
+}
+
+.sidebar .nav-link {
+    font-weight: 500;
+    color: #333;
+}
+
+.sidebar .nav-link .feather {
+    margin-right: 4px;
+    color: #999;
+}
+
+.sidebar .nav-link.active {
+    color: #007bff;
+}
+
+.sidebar .nav-link:hover .feather,
+.sidebar .nav-link.active .feather {
+    color: inherit;
+}
+
+.sidebar-heading {
+    font-size: .75rem;
+    text-transform: uppercase;
+}
+
+/*.sidebar-form-input-group {*/
+/*    min-width: 300px;*/
+/*}*/
 
 .bootstrap-select .bs-ok-default::after {
     width: 0.3em;
@@ -24,4 +92,35 @@
 
 .popover-header {
     text-align: center;
+}
+
+.right-align-actions {
+    display: flex;
+    flex-direction: row-reverse;
+}
+
+/* ---------------------------------------------------
+    CONTENT STYLE
+----------------------------------------------------- */
+
+#content {
+    width: 100%;
+    transition: all 0.3s;
+}
+
+main {
+    height: 100%;
+}
+
+.event-map {
+    height: 100%;
+}
+
+.smap .cluster div {
+    box-sizing: content-box;
+}
+
+.centered-cell-content {
+    text-align: center;
+    white-space: nowrap
 }

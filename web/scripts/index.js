@@ -218,7 +218,11 @@ function prepareEventDetailsModal(eventData) {
     types.innerText = eventData['types'].join(', ');
 
     const keywords = document.getElementById('modal--event-details__keywords');
-    keywords.innerText = eventData['keywords'].join(', ');
+    if (eventData['keywords'].length !== 0) {
+        keywords.innerText = eventData['keywords'].join(', ');
+    } else {
+        keywords.innerHTML = `<i>unknown</i>`;
+    }
 
     const source = document.getElementById('modal--event-details__calendar--url');
     source.href = eventData['calendar_url'];
@@ -335,11 +339,17 @@ function initializeKeywordPicker() {
     keywordPicker.selectpicker();
 }
 
+function handleSidebarToggleButtonClick() {
+    $('#sidebar, #content').toggleClass('active');
+    $('.collapse.in').toggleClass('in');
+    $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+}
+
 function handleFirstLoad() {
     setFutureIntoDatetimePickers();
     initializeTypePicker();
     initializeKeywordPicker();
 
     const filteredEventsData = filterEventsAndLoadMap();
-    initializeEventsTable(filteredEventsData);
+    // initializeEventsTable(filteredEventsData);
 }

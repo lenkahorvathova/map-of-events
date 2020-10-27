@@ -166,7 +166,7 @@ function addLayerForGPSMark(specifiedCoordinates) {
 }
 
 function initializeMap() {
-    GLB_MAP = new SMap(document.getElementById('main-content__map'));
+    GLB_MAP = new SMap(document.getElementById('content__map'));
     GLB_MAP.addControl(new SMap.Control.Sync());
     GLB_MAP.addDefaultLayer(SMap.DEF_BASE).enable();
     GLB_MAP.addDefaultControls();

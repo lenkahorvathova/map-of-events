@@ -116,7 +116,8 @@ class GenerateHTML:
             if event_keyword:
                 events_dataset[event_id]['keywords'].append(event_keyword)
         for event_id in events_dataset:
-            events_dataset[event_id]['keywords'] = sorted(events_dataset[event_id]['keywords'], key=str.lower)
+            events_dataset[event_id]['keywords'] = set(events_dataset[event_id]['keywords'])
+            events_dataset[event_id]['keywords'] = list(sorted(events_dataset[event_id]['keywords'], key=str.lower))
 
         return events_dataset
 
@@ -251,7 +252,6 @@ class GenerateHTML:
                      os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/statistics_graphs.js'))
 
         os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/'), exist_ok=True)
-        shutil.copy2('web/styles/dashboard.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/dashboard.css'))
         shutil.copy2('web/styles/index.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/index.css'))
         shutil.copy2('web/styles/crawler_status.css',
                      os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/crawler_status.css'))
