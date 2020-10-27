@@ -148,23 +148,6 @@ function computeCirclePoint(specifiedRadius, gpsLatitude, gpsLongitude) {
     return SMap.Coords.fromWGS84(gpsLongitude + angle, gpsLatitude);
 }
 
-function addLayerForGPSMark(specifiedCoordinates) {
-    const dropBlue = "https://api.mapy.cz/img/api/marker/drop-blue.png";
-    const specifiedCoordinatesOptions = {
-        url: dropBlue,
-        anchor: {left: 10, bottom: 1}
-    };
-    const specifiedGPSLayer = new SMap.Layer.Marker();
-    const specifiedGPSMark = new SMap.Marker(specifiedCoordinates, null, specifiedCoordinatesOptions);
-    const specifiedGPSMarkOptions = {
-        anchor: {left: 0.5, top: 0.5}
-    };
-    specifiedGPSMark.decorate(SMap.Marker.Feature.RelativeAnchor, specifiedGPSMarkOptions);
-    specifiedGPSLayer.addMarker(specifiedGPSMark);
-    GLB_MAP.addLayer(specifiedGPSLayer);
-    specifiedGPSLayer.enable();
-}
-
 function initializeMap() {
     GLB_MAP = new SMap(document.getElementById('content__map'));
     GLB_MAP.addControl(new SMap.Control.Sync());
@@ -212,8 +195,6 @@ function filterEventsAndLoadMap() {
         const gpsLatitude = parseFloat(document.getElementById('sidebar__form--filter__location__gps--latitude').value);
         const gpsLongitude = parseFloat(document.getElementById('sidebar__form--filter__location__gps--longitude').value);
         specifiedCoordinates = SMap.Coords.fromWGS84(gpsLongitude, gpsLatitude);
-
-        addLayerForGPSMark(specifiedCoordinates);
 
         const circlePoint = computeCirclePoint(specifiedRadius, gpsLatitude, gpsLongitude);
         addLayerForRadiusCircle(specifiedRadius, specifiedCoordinates, circlePoint);
