@@ -75,10 +75,6 @@ body {
     text-transform: uppercase;
 }
 
-/*.sidebar-form-input-group {*/
-/*    min-width: 300px;*/
-/*}*/
-
 .bootstrap-select .bs-ok-default::after {
     width: 0.3em;
     height: 0.6em;
@@ -99,6 +95,23 @@ body {
     flex-direction: row-reverse;
 }
 
+#sidebar-collapse-btn {
+    position: absolute;
+    border-radius: 0 5px 5px 0;
+    border-left-color: white;
+    left: 0;
+    z-index: 90;
+    top: 20px;
+    transition: all 0.3s;
+    color: #6c757d!important;
+    background-color: #f8f9fa!important;
+    padding: 2px 8px 2px 2px;
+}
+
+#sidebar-collapse-btn.active {
+    left: 430px;
+}
+
 /* ---------------------------------------------------
     CONTENT STYLE
 ----------------------------------------------------- */
@@ -106,6 +119,7 @@ body {
 #content {
     width: 100%;
     transition: all 0.3s;
+    position: relative;
 }
 
 main {
@@ -114,6 +128,7 @@ main {
 
 .event-map {
     height: 100%;
+    position: relative;
 }
 
 .smap .cluster div {

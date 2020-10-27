@@ -179,19 +179,67 @@ class GenerateHTML:
         event_keywords_data = json.dumps(event_keywords, indent=4, ensure_ascii=True)
         file = file.replace('{{event_keywords}}', event_keywords_data)
 
-        calendars = [calendar_base['url'] for calendar_base in utils.get_active_base()]
-        file = file.replace('{{calendar_sources_count}}', str(len(calendars)))
-        calendar_sources_modal = ""
-        for calendar in calendars:
-            calendar_sources_modal += "<li class=\"list-group-item list-group-item-action\" " \
-                                      "onclick=\"window.open('{}', '_blank');\">\n" \
-                                      "<a href=\"#\">{}</a>\n" \
-                                      "</li>".format(calendar, calendar)
+        calendar_sources_modal, calendars_count = self._get_calendar_sources_modal()
+        file = file.replace('{{calendar_sources_count}}', str(calendars_count))
         file = file.replace('{{calendar_sources}}', calendar_sources_modal)
 
         os.makedirs(GenerateHTML.TEMP_WEB_FOLDER, exist_ok=True)
         with open(GenerateHTML.INDEX_GENERATED_HTML_FILE_PATH, 'w') as index_generated_file:
             index_generated_file.write(file)
+
+    @staticmethod
+    def _get_calendar_sources_modal() -> (str, int):
+        active_base = utils.get_active_base()
+        parsers = {}
+        calendars_count = 0
+        for calendar in active_base:
+            calendars_count += 1
+            if calendar['parser'] in parsers:
+                parsers[calendar['parser']]['count'] += 1
+                parsers[calendar['parser']]['calendars'].append(calendar['url'])
+            else:
+                parsers[calendar['parser']] = {
+                    'count': 1,
+                    'calendars': [calendar['url']]
+                }
+        calendar_sources_modal = ""
+        for parser in parsers:
+            if parsers[parser]['count'] > 1:
+                header_string = "{} <i>({})</i>".format(parser, str(parsers[parser]['count']))
+                href = "#collapse-parser-{}".format(parser)
+                click = "data-toggle=\"collapse\""
+            else:
+                header_string = parsers[parser]['calendars'][0]
+                href = parsers[parser]['calendars'][0]
+                click = "target=\"_blank\""
+            calendar_card = "<div id=\"heading-parser-{}\" class=\"card-header\" style=\"padding: 0;\">\n" \
+                            "  <h5 class=\"mb-0\">\n" \
+                            "      <a class=\"btn btn-link\" role=\"button\"" \
+                            "               href=\"{}\" {}" \
+                            "              aria-expanded=\"true\" aria-controls=\"collapse-parser-{}\">" \
+                            "          {}\n" \
+                            "      </a>\n" \
+                            "  </h5>\n" \
+                            "</div>\n".format(parser, href, click, parser, header_string)
+            if parsers[parser]['count'] > 1:
+                calendars_list = ""
+                for calendar in parsers[parser]['calendars']:
+                    calendars_list += "<li class=\"list-group-item list-group-item-action\" " \
+                                      "    onclick=\"window.open('{}', '_blank');\">\n" \
+                                      "     <a href=\"#\">{}</a>\n" \
+                                      "</li>".format(calendar, calendar)
+                calendar_card += "<div id=\"collapse-parser-{}\" class=\"collapse\" " \
+                                 "     aria-labelledby=\"heading-parser-{}\" data-parent=\"#accordion\">\n" \
+                                 "  <div class=\"card-body\">\n" \
+                                 "      <ul class=\"list-group\">\n" \
+                                 "          {}\n" \
+                                 "      </ul>\n" \
+                                 "  </div>\n" \
+                                 "</div>\n".format(parser, parser, calendars_list)
+            calendar_card = "<div class=\"card\">{}</div>\n".format(calendar_card)
+            calendar_sources_modal += calendar_card
+
+        return calendar_sources_modal, calendars_count
 
     @staticmethod
     def get_crawler_status_info() -> dict:

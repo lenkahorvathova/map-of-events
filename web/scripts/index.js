@@ -345,7 +345,14 @@ function initializeKeywordPicker() {
 }
 
 function handleSidebarToggleButtonClick() {
-    $('#sidebar, #content').toggleClass('active');
+    $('#sidebar, #content, #sidebar-collapse-btn').toggleClass('active');
+    const sidebarBtn = document.getElementById('sidebar-collapse-btn');
+    if (sidebarBtn.classList.contains('active')) {
+        sidebarBtn.innerHTML = `<i class="fa fa-angle-double-left"> Search Form</i>`;
+    } else {
+        sidebarBtn.innerHTML = `<i class="fa fa-angle-double-right"> Search Form</i>`;
+    }
+
     $('.collapse.in').toggleClass('in');
     $('a[aria-expanded=true]').attr('aria-expanded', 'false');
 }

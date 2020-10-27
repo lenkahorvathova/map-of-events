@@ -152,9 +152,9 @@
                         </button>
                     </div>
                     <div class="modal-body">
-                        <ul class="list-group">
+                        <div id="accordion">
                             {{calendar_sources}}
-                        </ul>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -194,30 +194,24 @@
 
         <!-- Top Navigation Bar -->
         <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark flex-md-nowrap p-0">
-            <div class="container-fluid">
-                <button type="button" id="sidebar-collapse-btn" class="nav-item btn btn-secondary btn-sm mx-3"
-                        onclick="handleSidebarToggleButtonClick()">
-                    <i class="fa fa-align-left"></i> <span>Search Form</span>
+            <button type="button" class="navbar-toggler mx-3"
+                    data-toggle="collapse" data-target="#navbar-collapse-btn"
+                    aria-controls="navbar-collapse-btn" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse mx-3" id="navbar-collapse-btn">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item active">
+                        <a class="nav-link" href="#">Events Map</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./crawler_status.html">Crawler Status</a>
+                    </li>
+                </ul>
+                <button type="button" class="nav-item btn btn-secondary btn-sm"
+                        data-target="#modal--calendar-sources" data-toggle="modal">
+                    Calendar Sources
                 </button>
-                <button type="button" class="navbar-toggler mx-3"
-                        data-toggle="collapse" data-target="#navbar-collapse-btn"
-                        aria-controls="navbar-collapse-btn" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse mx-3" id="navbar-collapse-btn">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item active">
-                            <a class="nav-link" href="#">Events Map</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="./crawler_status.html">Crawler Status</a>
-                        </li>
-                    </ul>
-                    <button type="button" class="nav-item btn btn-secondary btn-sm"
-                            data-target="#modal--calendar-sources" data-toggle="modal">
-                        Calendar Sources
-                    </button>
-                </div>
             </div>
         </nav>
 
@@ -441,6 +435,10 @@
 
             <!-- Main Content  -->
             <main id="content" role="main">
+                <button type="button" id="sidebar-collapse-btn" class="btn btn-light"
+                        onclick="handleSidebarToggleButtonClick()">
+                    <i class="fa fa-angle-double-right"> Search Form</i>
+                </button>
 
                 <!-- Events Map -->
                 <div id="content__map" class="event-map"></div>
