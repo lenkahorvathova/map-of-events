@@ -205,7 +205,8 @@ class GenerateHTML:
         calendar_sources_modal = ""
         for parser in parsers:
             if parsers[parser]['count'] > 1:
-                header_string = "{} <i>({})</i>".format(parser, str(parsers[parser]['count']))
+                header_string = "<i class=\"fa fa-caret-down\"></i> {} <i>({})</i>".format(parser, str(
+                    parsers[parser]['count']))
                 href = "#collapse-parser-{}".format(parser)
                 click = "data-toggle=\"collapse\""
             else:
@@ -298,8 +299,11 @@ class GenerateHTML:
                      os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/crawler_status.js'))
         shutil.copy2('web/scripts/statistics_graphs.js',
                      os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/statistics_graphs.js'))
+        shutil.copy2('web/scripts/localization.js',
+                     os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/localization.js'))
 
         os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/'), exist_ok=True)
+        shutil.copy2('web/styles/global.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/global.css'))
         shutil.copy2('web/styles/index.css', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/index.css'))
         shutil.copy2('web/styles/crawler_status.css',
                      os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'styles/crawler_status.css'))

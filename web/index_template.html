@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="cs">
     <head>
-        <title>Map of Events</title>
+        <title lang="en">Map of Events</title>
 
         <!-- Meta Data -->
         <meta charset="utf-8">
@@ -35,12 +35,14 @@
         <script type="text/javascript" src="scripts/index.js"></script>
         <script type="text/javascript" src="scripts/events_map.js"></script>
         <script type="text/javascript" src="scripts/datetime_pickers.js"></script>
+        <script type="text/javascript" src="scripts/localization.js"></script>
 
         <!--    - Styles -->
+        <link type="text/css" rel="stylesheet" href="styles/global.css">
         <link type="text/css" rel="stylesheet" href="styles/index.css">
     </head>
 
-    <body onload="handleFirstLoad()">
+    <body onload="handleFirstLoad()" style="visibility: hidden">
 
         <!-- Modal Windows -->
         <!--    - Geo-coded Location into GPS -->
@@ -48,7 +50,7 @@
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Location Search Results</h4>
+                        <h4 class="modal-title">%%modal_gps_table_title%%</h4>
                         <button type="button" id="modal--gps-table__close-button" class="close" data-dismiss="modal">
                             &times;
                         </button>
@@ -59,9 +61,9 @@
                             <thead>
                                 <tr>
                                     <th scope="col">#</th>
-                                    <th scope="col">Location</th>
-                                    <th scope="col">Latitude</th>
-                                    <th scope="col">Longitude</th>
+                                    <th scope="col">%%modal_table_column_location%%</th>
+                                    <th scope="col">%%gps_latitude%%</th>
+                                    <th scope="col">%%gps_longitude%%</th>
                                     <th scope="col"></th>
                                 </tr>
                             </thead>
@@ -76,7 +78,7 @@
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header card-header">
-                        <h4 class="modal-title my-0 font-weight-normal">Event's Details</h4>
+                        <h4 class="modal-title my-0 font-weight-normal">%%modal_event_details_title%%</h4>
                         <button id="modal--event-details__close-btn" type="button" class="close" data-dismiss="modal">
                             &times;
                         </button>
@@ -97,34 +99,59 @@
                             <table class="table table-sm table-borderless mb-0">
                                 <tbody>
                                     <tr>
-                                        <th class="pl-0 w-25" scope="row"><strong>Location</strong></th>
-                                        <td id="modal--event-details__location"><i>unknown</i></td>
+                                        <th class="pl-0 w-25" scope="row">
+                                            <strong>%%modal_table_column_location%%</strong>
+                                        </th>
+                                        <td id="modal--event-details__location">
+                                            <i>%%modal_event_details_value_unknown%%</i>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <th class="pl-0 w-25" scope="row"><strong>GPS</strong></th>
-                                        <td><span id="modal--event-details__gps"
-                                                  style="font-style: italic;">unknown</span>
+                                        <th class="pl-0 w-25" scope="row">
+                                            <strong>%%modal_event_details_column_gps%%</strong>
+                                        </th>
+                                        <td>
+                                            <span id="modal--event-details__gps" style="font-style: italic;">
+                                                %%modal_event_details_value_unknown%%
+                                            </span>
                                             <span id="modal--event-details__location--geocoded"
-                                                  class="text-muted small"></span></td>
+                                                  class="text-muted small"></span>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <th class="pl-0 w-25" scope="row"><strong>Organizer</strong></th>
-                                        <td id="modal--event-details__organizer"><i>unknown</i></td>
+                                        <th class="pl-0 w-25" scope="row">
+                                            <strong>%%modal_event_details_column_organizer%%</strong>
+                                        </th>
+                                        <td id="modal--event-details__organizer">
+                                            <i>%%modal_event_details_value_unknown%%</i>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <th class="pl-0 w-25" scope="row"><strong>Types</strong></th>
+                                        <th class="pl-0 w-25" scope="row">
+                                            <strong>%%modal_event_details_column_types%%</strong>
+                                        </th>
                                         <td id="modal--event-details__types"></td>
                                     </tr>
                                     <tr>
-                                        <th class="pl-0 w-25" scope="row"><strong>Keywords</strong></th>
-                                        <td id="modal--event-details__keywords"><i>unknown</i></td>
+                                        <th class="pl-0 w-25" scope="row">
+                                            <strong>%%modal_event_details_column_keywords%%</strong>
+                                        </th>
+                                        <td id="modal--event-details__keywords">
+                                            <i>%%modal_event_details_value_unknown%%</i>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <th class="pl-0 w-25" scope="row"><strong>Source</strong></th>
-                                        <td><a id="modal--event-details__calendar--url" target="_blank"></a></td>
+                                        <th class="pl-0 w-25" scope="row">
+                                            <strong>%%modal_event_details_column_source%%</strong>
+                                        </th>
+                                        <td>
+                                            <a id="modal--event-details__calendar--url" target="_blank"></a>
+                                        </td>
                                     </tr>
                                     <tr>
-                                        <th class="pl-0 w-25" scope="row"><strong>Fetched at</strong></th>
+                                        <th class="pl-0 w-25" scope="row">
+                                            <strong>%%modal_event_details_column_fetched_at%%</strong>
+                                        </th>
                                         <td id="modal--event-details__calendar--downloaded-at"></td>
                                     </tr>
                                 </tbody>
@@ -146,7 +173,9 @@
             <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h4 class="modal-title">Calendar Sources <i>({{calendar_sources_count}})</i></h4>
+                        <h4 class="modal-title">
+                            %%modal_calendar_sources_title%% <i>({{calendar_sources_count}})</i>
+                        </h4>
                         <button type="button" class="close" data-dismiss="modal">
                             &times;
                         </button>
@@ -165,7 +194,7 @@
             <div class="modal-dialog modal-lg modal-dialog-scrollable">
                 <div class="modal-content">
                     <div class="modal-header card-header">
-                        <h4 class="modal-title my-0 font-weight-normal">Events Found</h4>
+                        <h4 class="modal-title my-0 font-weight-normal">%%modal_events_table_title%%</h4>
                         <button type="button" class="close" data-dismiss="modal">
                             &times;
                         </button>
@@ -177,11 +206,11 @@
                                        class="table table-bordered table-striped table-hover table-sm">
                                     <thead class="thead-dark">
                                         <tr>
-                                            <th scope="col" class="th-sm">Title</th>
-                                            <th scope="col" class="th-sm">Location</th>
-                                            <th scope="col" class="th-sm">Start</th>
-                                            <th scope="col" class="th-sm">End</th>
-                                            <th scope="col" class="th-sm">Actions</th>
+                                            <th scope="col" class="th-sm">%%modal_events_table_column_title%%</th>
+                                            <th scope="col" class="th-sm">%%modal_table_column_location%%</th>
+                                            <th scope="col" class="th-sm">%%modal_events_table_column_start%%</th>
+                                            <th scope="col" class="th-sm">%%modal_events_table_column_end%%</th>
+                                            <th scope="col" class="th-sm">%%modal_events_table_column_actions%%</th>
                                         </tr>
                                     </thead>
                                 </table>
@@ -199,19 +228,26 @@
                     aria-controls="navbar-collapse-btn" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse mx-3" id="navbar-collapse-btn">
+            <div class="collapse navbar-collapse ml-3" id="navbar-collapse-btn">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item active">
-                        <a class="nav-link" href="#">Events Map</a>
+                        <a class="nav-link" href="#">%%top_navigation_bar_events_map%%</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="./crawler_status.html">Crawler Status</a>
+                        <a class="nav-link" href="./crawler_status.html"
+                           onclick="location.href=this.href+'?lang='+getCurrentLang();return false;">
+                            %%top_navigation_bar_crawler_status%%
+                        </a>
                     </li>
                 </ul>
                 <button type="button" class="nav-item btn btn-secondary btn-sm"
                         data-target="#modal--calendar-sources" data-toggle="modal">
-                    Calendar Sources
+                    %%top_navigation_bar_calendar_sources%%
                 </button>
+            </div>
+            <div class="mx-3">
+                <a id="lang-en" class="navbar-lang" onclick="handleLocalizationChange('en')">en</a>
+                <a id="lang-cs" class="navbar-lang" onclick="handleLocalizationChange('cs')">cs</a>
             </div>
         </nav>
 
@@ -224,11 +260,11 @@
                     <!-- Forms -->
                     <!--    - Geo-coding Location -->
                     <form id="sidebar__form--geocode" onsubmit="return handleGeocodeFormSubmission(event)">
-                        <h6 class="sidebar-heading d-flex mt-4 text-muted">Acquiring GPS</h6>
-                        <label for="sidebar__form--geocode__location-query">Location:</label>
+                        <h6 class="sidebar-heading d-flex mt-4 text-muted">%%form_geocoding_heading%%</h6>
+                        <label for="sidebar__form--geocode__location-query">%%form_geocoding_search_label%%:</label>
                         <div class="form-group input-group sidebar-form-input-group">
                             <input type="text" id="sidebar__form--geocode__location-query"
-                                   class="form-control" placeholder="Search">
+                                   class="form-control" placeholder="%%form_geocoding_search_placeholder%%">
                             <div class="input-group-append">
                                 <button type="submit" class="btn btn-outline-secondary"
                                         data-target="#modal--gps-table" data-toggle="modal">
@@ -245,29 +281,35 @@
                     <form id="sidebar__form--filter" onsubmit="return handleSearchFormSubmission(event)">
 
                         <!--        -- Content -->
-                        <h6 class="sidebar-heading d-flex mt-4 text-muted">Filtering by Content</h6>
-                        <div id="sidebar__form--filter__types" class="form-group">
-                            <label for="sidebar__form--filter__types__select-picker">Types:</label>
-                            <select id="sidebar__form--filter__types__select-picker" class="w-100"
-                                    data-actions-box="true" data-style="bg-white border"
-                                    data-header="Filters events being at least one of the selected types."
-                                    multiple>
-                            </select>
-                        </div>
-                        <div id="sidebar__form--filter__keywords" class="form-group">
-                            <label for="sidebar__form--filter__keywords__select-picker">Keywords:</label>
-                            <select id="sidebar__form--filter__keywords__select-picker" class="w-100"
-                                    data-actions-box="true" data-live-search="true"
-                                    data-style="bg-white border"
-                                    data-header="Filters events containing at least one of the selected keywords."
-                                    multiple>
-                            </select>
+                        <h6 class="sidebar-heading d-flex mt-4 text-muted">%%form_filtering_content_heading%%</h6>
+                        <div id="sidebar__form--filter__select-picker" class="form-group">
+                            <div class="form-group">
+                                <label for="sidebar__form--filter__select-picker--types">
+                                    %%form_filtering_content_select_types%%:
+                                </label>
+                                <select id="sidebar__form--filter__select-picker--types" class="w-100"
+                                        data-actions-box="true" data-style="bg-white border"
+                                        data-header="%%form_filtering_content_select_types_header%%"
+                                        multiple>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="sidebar__form--filter__select-picker--keywords">
+                                    %%form_filtering_content_select_keywords%%:
+                                </label>
+                                <select id="sidebar__form--filter__select-picker--keywords" class="w-100"
+                                        data-actions-box="true" data-live-search="true"
+                                        data-style="bg-white border"
+                                        data-header="%%form_filtering_content_select_keywords_header%%"
+                                        multiple>
+                                </select>
+                            </div>
                         </div>
 
                         <br/>
 
                         <!--        -- Location -->
-                        <h6 class="sidebar-heading d-flex mt-4 text-muted">Narrowing Location</h6>
+                        <h6 class="sidebar-heading d-flex mt-4 text-muted">%%form_filtering_location_heading%%</h6>
                         <div id="sidebar__form--filter__location" class="form-group">
 
                             <!--            --- Radio Buttons -->
@@ -280,7 +322,7 @@
                                            onclick="handleLocationRadioButtonsClick()" checked>
                                     <label for="sidebar__form--filter__location__options--all"
                                            class="form-check-label">
-                                        ALL
+                                        %%form_filtering_location_radio_all%%
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
@@ -291,7 +333,7 @@
                                            onclick="handleLocationRadioButtonsClick()">
                                     <label for="sidebar__form--filter__location__options--online"
                                            class="form-check-label">
-                                        ONLINE
+                                        %%form_filtering_location_radio_online%%
                                     </label>
                                 </div>
                                 <div class="form-check form-check-inline">
@@ -301,26 +343,26 @@
                                            onclick="handleLocationRadioButtonsClick()">
                                     <label for="sidebar__form--filter__location__options--gps"
                                            class="form-check-label">
-                                        GPS
+                                        %%form_filtering_location_gps%%
                                     </label>
                                 </div>
                             </div>
 
                             <!--            --- GPS + Radius -->
                             <div class="form-group">
-                                <label for="sidebar__form--filter__location__gps">GPS:</label>
+                                <label for="sidebar__form--filter__location__gps">%%form_filtering_location_gps%%:</label>
                                 <div id="sidebar__form--filter__location__gps"
                                      class="form-group form-inline input-group sidebar-form-input-group">
                                     <input type="text" id="sidebar__form--filter__location__gps--latitude"
-                                           class="form-control" placeholder="Latitude"
+                                           class="form-control" placeholder="%%gps_latitude%%"
                                            pattern="^(\+|-)?(?:90(?:(?:\.0{1,})?)|(?:[0-9]|[1-8][0-9])(?:(?:\.[0-9]{1,})?))$"
-                                           title="(Use a decimal format of a coordinate.)" disabled>
+                                           title="(%%form_filtering_location_gps_title%%)" disabled>
                                     <input type="text" id="sidebar__form--filter__location__gps--longitude"
-                                           class="form-control" placeholder="Longitude"
+                                           class="form-control" placeholder="%%gps_longitude%%"
                                            pattern="^(\+|-)?(?:180(?:(?:\.0{1,})?)|(?:[0-9]|[1-9][0-9]|1[0-7][0-9])(?:(?:\.[0-9]{1,})?))$"
-                                           title="(Use a decimal format of a coordinate.)" disabled>
+                                           title="(%%form_filtering_location_gps_title%%)" disabled>
                                 </div>
-                                <label for="sidebar__form--filter__location__radius">Radius:</label>
+                                <label for="sidebar__form--filter__location__radius">%%form_filtering_location_radius%%:</label>
                                 <div class="form-group input-group sidebar-form-input-group">
                                     <input type="number" id="sidebar__form--filter__location__radius"
                                            class="form-control" value=20 min=0 disabled>
@@ -334,7 +376,7 @@
                         <br/>
 
                         <!--        -- Datetime -->
-                        <h6 class="sidebar-heading d-flex mt-4 text-muted">Specifying Dates</h6>
+                        <h6 class="sidebar-heading d-flex mt-4 text-muted">%%form_filtering_datetime_heading%%</h6>
                         <div id="sidebar__form--filter__datetime" class="form-group">
 
                             <!--            --- Helper Buttons -->
@@ -345,19 +387,19 @@
                                             id="sidebar__form--filter__datetime__helper-buttons--today"
                                             class="btn btn-outline-dark"
                                             onclick="setTodayIntoDatetimePickers()">
-                                        Today
+                                        %%form_filtering_datetime_button_today%%
                                     </button>
                                     <button type="button"
                                             id="sidebar__form--filter__datetime__helper-buttons--tomorrow"
                                             class="btn btn-outline-dark"
                                             onclick="setTomorrowIntoDatetimePickers()">
-                                        Tomorrow
+                                        %%form_filtering_datetime_button_tomorrow%%
                                     </button>
                                     <button type="button"
                                             id="sidebar__form--filter__datetime__helper-buttons--next-10-days"
                                             class="btn btn-outline-dark"
                                             onclick="setNext10DaysIntoDatetimePickers()">
-                                        Next 10 days
+                                        %%form_filtering_datetime_button_next_10_days%%
                                     </button>
                                 </div>
                             </div>
@@ -365,14 +407,16 @@
                             <!--            --- Including Checkboxes -->
                             <div id="sidebar__form--filter__datetime__including-checkboxes"
                                  class="form-group">
-                                <label for=sidebar__form--filter__datetime__including-checkboxes>Include:</label>
+                                <label for=sidebar__form--filter__datetime__including-checkboxes>
+                                    %%form_filtering_datetime_checkbox_label%%:
+                                </label>
                                 <div class="form-check">
                                     <input class="form-check-input" type="checkbox"
                                            id="sidebar__form--filter__datetime__including-checkboxes--long-term"
                                            disabled>
                                     <label for="sidebar__form--filter__datetime__including-checkboxes--long-term"
                                            class="form-check-label">
-                                        Long-term Events (3+ weeks)
+                                        %%form_filtering_datetime_checkbox_long_term%%
                                     </label>
                                 </div>
                                 <div class="form-check">
@@ -381,14 +425,16 @@
                                            onclick="handleOngoingCheckboxClick(this)">
                                     <label for="sidebar__form--filter__datetime__including-checkboxes--ongoing"
                                            class="form-check-label">
-                                        Ongoing Events
+                                        %%form_filtering_datetime_checkbox_on_going%%
                                     </label>
                                 </div>
                             </div>
 
                             <!--            --- Pickers -->
                             <div class="form-group">
-                                <label for="sidebar__form--filter__datetime__start">Start:</label>
+                                <label for="sidebar__form--filter__datetime__start">
+                                    %%form_filtering_datetime_picker_start%%:
+                                </label>
                                 <div id="sidebar__form--filter__datetime__start"
                                      class="form-group form-inline input-group sidebar-form-input-group">
                                     <input type="date"
@@ -402,7 +448,9 @@
                                            onchange="handleStartTimePickerOnChange(this)">
                                 </div>
 
-                                <label for="sidebar__form--filter__datetime__end">End:</label>
+                                <label for="sidebar__form--filter__datetime__end">
+                                    %%form_filtering_datetime_picker_end%%:
+                                </label>
                                 <div id="sidebar__form--filter__datetime__end"
                                      class="form-group form-inline input-group sidebar-form-input-group">
                                     <div class="input-group-prepend">
@@ -427,7 +475,7 @@
                         <br/>
 
                         <div class="right-align-actions">
-                            <button type="submit" class="btn btn-primary mb-2">Search</button>
+                            <button type="submit" class="btn btn-primary mb-2">%%form_filtering_submit_button%%</button>
                         </div>
                     </form>
                 </div>
@@ -437,7 +485,7 @@
             <main id="content" role="main">
                 <button type="button" id="sidebar-collapse-btn" class="btn btn-light"
                         onclick="handleSidebarToggleButtonClick()">
-                    <i class="fa fa-angle-double-right"> Search Form</i>
+                    <i class="fa fa-angle-double-right"> %%content_search_form_bookmark%%</i>
                 </button>
 
                 <!-- Events Map -->
@@ -446,6 +494,14 @@
         </div>
 
         <!-- Optional -->
+        <!--    Custom Localization -->
+        <script type="text/javascript">
+            handleFirstLocalization();
+            window.requestAnimationFrame(() => {
+                document.body.style.visibility = "visible";
+            });
+        </script>
+
         <!--    jQuery Script -->
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
                 integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
@@ -467,7 +523,7 @@
         <!--        - Style -->
         <link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/v/bs4/dt-1.10.21/datatables.min.css"/>
 
-        <!--    Multiselect -->
+        <!--    MultiSelect -->
         <!--        - Script -->
         <script type="text/javascript"
                 src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>

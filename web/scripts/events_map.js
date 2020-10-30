@@ -28,7 +28,7 @@ function createCustomCluster() {
                                 <button type="button" class="btn btn-secondary btn-sm"
                                         data-toggle="modal" data-target="#modal--event-details"
                                         onclick="showEventDetailsFromMap(${this._markers[i]._options.eventId})"
-                                        title="Show event's details.">
+                                        title=${getLocalizedString('modal_details_btn_title')}>
                                     <i class="fa fa-info-circle"></i>
                                 </button>
                             </div>
@@ -36,7 +36,7 @@ function createCustomCluster() {
                     </tr>`;
             }
 
-            card.getHeader().innerHTML = "<strong>Included Events</strong>";
+            card.getHeader().innerHTML = `<strong>${getLocalizedString('content_map_card_title')}</strong>`;
             card.getBody().innerHTML = `
                 <div class="table-responsive rounded">
                     <table class="table table-bordered table-hover table-sm">
@@ -158,7 +158,7 @@ function addShowTableButton() {
     const showTable = JAK.mel("div");
     const button = JAK.mel("button", {
         type: "button",
-        textContent: "Show Events Table"
+        textContent: getLocalizedString('content_map_show_table_btn')
     }, {
         fontSize: "17px",
         lineHeight: "27px",
@@ -211,7 +211,7 @@ function initializeMap() {
 function filterEventsAndLoadMap() {
     initializeMap();
 
-    const typesPickedOptions = document.getElementById('sidebar__form--filter__types__select-picker').selectedOptions;
+    const typesPickedOptions = document.getElementById('sidebar__form--filter__select-picker--types').selectedOptions;
     typesPicked = [];
     if (typesPickedOptions !== undefined) {
         for (let i = 0; i < typesPickedOptions.length; i++) {
@@ -219,7 +219,7 @@ function filterEventsAndLoadMap() {
         }
     }
 
-    const keywordsPickedOptions = document.getElementById('sidebar__form--filter__keywords__select-picker').selectedOptions;
+    const keywordsPickedOptions = document.getElementById('sidebar__form--filter__select-picker--keywords').selectedOptions;
     keywordsPicked = [];
     if (keywordsPickedOptions !== undefined) {
         for (let i = 0; i < keywordsPickedOptions.length; i++) {

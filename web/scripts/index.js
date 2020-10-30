@@ -55,7 +55,9 @@ function addRowToGPSTable(itemId, item) {
 
     const td4 = tr.insertCell();
     td4.innerHTML = `<button type="button" class="btn btn-primary btn-block btn-sm" 
-                             onclick="copyGPSValueIntoSearchForm(${itemId})">Use</button>`;
+                             onclick="copyGPSValueIntoSearchForm(${itemId})">
+                        ${getLocalizedString('modal_gps_table_button')}
+                    </button>`;
 }
 
 function addMessageRowToGPSTable(message) {
@@ -79,7 +81,7 @@ function geocodeCallback(geocoder) {
     clearTbodyOfGPSTable();
 
     if (!locationResults.length) {
-        addMessageRowToGPSTable("The specified location couldn't be geocoded!");
+        addMessageRowToGPSTable(getLocalizedString('modal_gps_table_message'));
     }
 
     for (let i = 0; i < locationResults.length; i++) {
@@ -93,10 +95,10 @@ function handleGeocodeFormSubmission(event) {
 
     const queryValue = document.getElementById('sidebar__form--geocode__location-query').value;
     const tableTitle = document.getElementById('modal--gps-table__table__title');
-    tableTitle.innerHTML = `Value used for the search: <strong>"${queryValue}"</strong>`;
+    tableTitle.innerHTML = `${getLocalizedString('modal_gps_table_used_value')}: <strong>"${queryValue}"</strong>`;
 
     clearTbodyOfGPSTable();
-    addMessageRowToGPSTable("Geocoding the specified location...");
+    addMessageRowToGPSTable(getLocalizedString('modal_gps_table_geocoding'));
 
     new SMap.Geocoder(queryValue, geocodeCallback);
 }
@@ -121,7 +123,7 @@ function zoomToEventGPS(element) {
     const eventData = $('#modal--events-table__table').DataTable().row($(element).parents('tr')).data();
 
     if (eventData['online']) {
-        alert("You can't zoom to this event as it is being held online.");
+        alert(getLocalizedString('modal_events_table_online_alert'));
     } else {
         let gps = eventData['gps'];
         if (gps === null) {
@@ -182,7 +184,7 @@ function prepareEventDetailsModal(eventData) {
         if (eventData['online']) {
             location.innerHTML = `<i>online</i>`;
         } else {
-            location.innerHTML = `<i>unknown</i>`;
+            location.innerHTML = `<i>${getLocalizedString('modal_event_details_value_unknown')}</i>`;
         }
     }
 
@@ -213,7 +215,7 @@ function prepareEventDetailsModal(eventData) {
     if (eventData['organizer']) {
         organizer.innerText = eventData['organizer'];
     } else {
-        organizer.innerHTML = `<i>unknown</i>`;
+        organizer.innerHTML = `<i>${getLocalizedString('modal_event_details_value_unknown')}</i>`;
     }
 
     const types = document.getElementById('modal--event-details__types');
@@ -223,7 +225,7 @@ function prepareEventDetailsModal(eventData) {
     if (eventData['keywords'].length !== 0) {
         keywords.innerText = eventData['keywords'].join(', ');
     } else {
-        keywords.innerHTML = `<i>unknown</i>`;
+        keywords.innerHTML = `<i>${getLocalizedString('modal_event_details_value_unknown')}</i>`;
     }
 
     const source = document.getElementById('modal--event-details__calendar--url');
@@ -312,11 +314,11 @@ function initializeEventsTable(eventsData) {
                     <div class="centered-cell-content">
                         <button type="button" class="btn btn-secondary btn-sm"
                                 data-target="#modal--event-details" onclick="showEventDetailsFromEventsTable(this)" data-toggle="modal"
-                                title="Show event's details.">
+                                title="${getLocalizedString('modal_details_btn_title')}">
                             <i class="fa fa-info-circle"></i>
                         </button>
-                        <button type="button" class="btn btn-secondary btn-sm"
-                                title="Zoom event's location on the map." onclick="zoomToEventGPS(this)">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="zoomToEventGPS(this)"
+                                title="${getLocalizedString('modal_events_table_zoom_btn_title')}">
                             <i class="fa fa-bullseye"></i>
                         </button>
                     </div>`
@@ -328,7 +330,7 @@ function initializeEventsTable(eventsData) {
 }
 
 function initializeTypePicker() {
-    const typePicker = $('#sidebar__form--filter__types__select-picker');
+    const typePicker = $('#sidebar__form--filter__select-picker--types');
     for (let i = 0; i < GLB_EVENT_TYPES.length; i++) {
         const typeName = GLB_EVENT_TYPES[i].charAt(0).toUpperCase() + GLB_EVENT_TYPES[i].slice(1);
         typePicker.append(`<option>${typeName}</option>`);
@@ -337,7 +339,7 @@ function initializeTypePicker() {
 }
 
 function initializeKeywordPicker() {
-    const keywordPicker = $('#sidebar__form--filter__keywords__select-picker');
+    const keywordPicker = $('#sidebar__form--filter__select-picker--keywords');
     for (let i = 0; i < GLB_EVENT_KEYWORDS.length; i++) {
         keywordPicker.append(`<option>${GLB_EVENT_KEYWORDS[i]}</option>`);
     }
@@ -348,9 +350,9 @@ function handleSidebarToggleButtonClick() {
     $('#sidebar, #content, #sidebar-collapse-btn').toggleClass('active');
     const sidebarBtn = document.getElementById('sidebar-collapse-btn');
     if (sidebarBtn.classList.contains('active')) {
-        sidebarBtn.innerHTML = `<i class="fa fa-angle-double-left"> Search Form</i>`;
+        sidebarBtn.innerHTML = `<i class="fa fa-angle-double-left"> ${getLocalizedString('content_search_form_bookmark')}</i>`;
     } else {
-        sidebarBtn.innerHTML = `<i class="fa fa-angle-double-right"> Search Form</i>`;
+        sidebarBtn.innerHTML = `<i class="fa fa-angle-double-right"> ${getLocalizedString('content_search_form_bookmark')}</i>`;
     }
 
     $('.collapse.in').toggleClass('in');
@@ -361,7 +363,6 @@ function handleFirstLoad() {
     setFutureIntoDatetimePickers();
     initializeTypePicker();
     initializeKeywordPicker();
-
     const filteredEventsData = filterEventsAndLoadMap();
     initializeEventsTable(filteredEventsData);
 }

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="cs">
     <head>
-        <title>Map of Events - Crawler Status</title>
+        <title lang="en">Map of Events</title>
 
         <!-- Meta Data -->
         <meta charset="utf-8">
@@ -19,9 +19,6 @@
         <!--    - Font Awesome Icons -->
         <link type="text/css" rel="stylesheet"
               href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css"/>
-
-        <!--    - Custom styles for the template (https://getbootstrap.com/docs/4.0/examples/dashboard/) -->
-        <link type="text/css" rel="stylesheet" href="styles/dashboard.css">
 
         <!-- D3.js -->
         <script type="text/javascript" src="https://d3js.org/d3.v4.js"></script>
@@ -43,12 +40,14 @@
         </script>
         <script type="text/javascript" src="scripts/crawler_status.js"></script>
         <script type="text/javascript" src="scripts/statistics_graphs.js"></script>
+        <script type="text/javascript" src="scripts/localization.js"></script>
 
         <!--    - Styles -->
+        <link type="text/css" rel="stylesheet" href="styles/global.css">
         <link type="text/css" rel="stylesheet" href="styles/crawler_status.css">
     </head>
 
-    <body onload="handleFirstLoad()">
+    <body onload="handleFirstLoad()" style="visibility: hidden">
 
         <!-- Top Navigation Bar -->
         <nav class="navbar navbar-expand-md navbar-dark sticky-top bg-dark flex-md-nowrap p-0">
@@ -57,32 +56,39 @@
                     aria-controls="navbar-collapse-btn" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse mx-3" id="navbar-collapse-btn">
+            <div class="collapse navbar-collapse ml-3" id="navbar-collapse-btn">
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="./index.html">Events Map</a>
+                        <a class="nav-link" href="./index.html"
+                           onclick="location.href=this.href+'?lang='+getCurrentLang();return false;">
+                            %%top_navigation_bar_events_map%%
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="#">Crawler Status</a>
+                        <a class="nav-link active" href="#">%%top_navigation_bar_crawler_status%%</a>
                     </li>
                 </ul>
                 <div class="nav-item dropdown btn-group">
                     <button type="button" class="btn btn-outline-secondary btn-sm dropdown-toggle"
                             data-toggle="dropdown"
                             aria-haspopup="true" aria-expanded="false">
-                        Latest Log Files
+                        %%top_navigation_bar_latest_logs%%
                     </button>
                     <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbar-dropdown">
                         <a class="dropdown-item" href="./assets/execution_log.txt" target="_blank">
-                            Log from Execution
+                            %%top_navigation_bar_latest_logs_execution%%
                         </a>
                         <a class="dropdown-item" href="./assets/geocoding_log.json" target="_blank">
-                            Log from Geocoding
+                            %%top_navigation_bar_latest_logs_geocoding%%
                         </a>
                         <div class="dropdown-divider"></div>
                         <h6 class="dropdown-header small">{{latest_execution_datetime}}</h6>
                     </div>
                 </div>
+            </div>
+            <div class="mx-3">
+                <a id="lang-en" class="navbar-lang" onclick="handleLocalizationChange('en')">en</a>
+                <a id="lang-cs" class="navbar-lang" onclick="handleLocalizationChange('cs')">cs</a>
             </div>
         </nav>
 
@@ -91,7 +97,7 @@
 
             <!-- Statistics -->
             <div class="row justify-content-center stats-header">
-                <h3 class="m-4">Counts</h3>
+                <h3 class="m-4">%%crawler_counts_header%%</h3>
             </div>
 
             <!--    - One Line Counts -->
@@ -101,8 +107,8 @@
                         <table class="table table-sm table-borderless">
                             <thead>
                                 <tr>
-                                    <th scope="col" class="th-sm part-title">All Events</th>
-                                    <th scope="col" class="th-sm part-title">Future Events</th>
+                                    <th scope="col" class="th-sm part-title">%%crawler_counts_all%%</th>
+                                    <th scope="col" class="th-sm part-title">%%crawler_counts_future%%</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -121,13 +127,16 @@
             <!--    - Per Day Counts (Table) -->
             <div class="row justify-content-center">
                 <div class="col-xl-6">
-                    <div class="part"><span class="part-title">Events per Day</span> <i>(last 2 weeks)</i></div>
+                    <div class="part">
+                        <span class="part-title">%%crawler_table_per_day_title%% </span>
+                        <i>(%%crawler_table_per_day_timespan%%)</i>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-sm">
                             <thead class="thead-light">
                                 <tr>
-                                    <th scope="col" class="th-sm">Date</th>
-                                    <th scope="col" class="th-sm">Count</th>
+                                    <th scope="col" class="th-sm">%%crawler_table_column_date%%</th>
+                                    <th scope="col" class="th-sm">%%crawler_table_per_day_column_count%%</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -143,7 +152,10 @@
             <!--    - Per Week Counts (Bar Chart) -->
             <div class="row justify-content-center">
                 <div class="col-xl-6">
-                    <div class="part"><span class="part-title">Events per Week</span> <i>(last year)</i></div>
+                    <div class="part">
+                        <span class="part-title">%%crawler_table_per_week_title%% </span>
+                        <i>(%%crawler_table_per_week_timespan%%)</i>
+                    </div>
                     <div id="statistics__graph__events_per_week" class="text-center"></div>
                 </div>
             </div>
@@ -154,18 +166,18 @@
             <div class="row justify-content-center">
                 <div class="col-xl-6">
                     <div class="part">
-                        <span class="part-title" style="vertical-align: middle;">Events</span>
+                        <span class="part-title" style="vertical-align: middle;">%%crawler_table_events_title%%</span>
                         <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                            <label class="btn btn-outline-secondary btn-sm active part-title">
+                            <label class="btn btn-outline-secondary btn-sm active part-title custom-outline-secondary">
                                 <input type="radio"
                                        onclick="loadEventsPerCalendarAndParserGraph(GLB_EVENTS_PER_CALENDAR)"
                                        checked>
-                                per Calendar
+                                %%crawler_table_per_calendar_title%%
                             </label>
-                            <label class="btn btn-outline-secondary btn-sm active part-title">
+                            <label class="btn btn-outline-secondary btn-sm active part-title custom-outline-secondary">
                                 <input type="radio"
                                        onclick="loadEventsPerCalendarAndParserGraph(GLB_EVENTS_PER_PARSER)">
-                                per Parser
+                                %%crawler_table_per_parser_title%%
                             </label>
                         </div>
                     </div>
@@ -176,14 +188,14 @@
 
             <!-- Failures -->
             <div class="row justify-content-center stats-header">
-                <h3 class="m-4">Failures</h3>
+                <h3 class="m-4">%%crawler_failures_header%%</h3>
             </div>
 
             <!--    - Failing Calendars (Table) -->
             <div class="row justify-content-center">
                 <div class="col-xl-6">
-                    <div class="part"><span class="part-title">Failing Calendars</span></div>
-                    <p>- download of these calendars is failing for at least last 3 days consecutively</p>
+                    <div class="part"><span class="part-title">%%crawler_table_failing_calendars_title%%</span></div>
+                    <p>%%crawler_table_failing_calendars_details%%</p>
                     <div class="table-responsive">
                         <table id="failures__calendars--failing__table"
                                class="table table-bordered table-striped table-sm display">
@@ -191,7 +203,7 @@
                                 <tr>
                                     <th scope="col" class="th-sm"></th>
                                     <th scope="col" class="th-sm">#</th>
-                                    <th scope="col" class="th-sm">Calendar URL</th>
+                                    <th scope="col" class="th-sm">%%crawler_table_column_calendar_url%%</th>
                                 </tr>
                             </thead>
                         </table>
@@ -204,27 +216,29 @@
             <!--    - Empty Calendars (Table) -->
             <div class="row justify-content-center">
                 <div id="failures__calendars--empty" class="col-xl-6">
-                    <div class="part"><span class="part-title">Empty Calendars</span></div>
-                    <p>- no events were acquired from these calendars for at least last 2 weeks consecutively</p>
+                    <div class="part"><span class="part-title">%%crawler_table_empty_calendars_title%%</span></div>
+                    <p>%%crawler_table_empty_calendars_details%%</p>
                     <div id="failures__calendars--empty__checkbox" class="form-group">
                         <label for="failures__calendars--empty__checkbox"
-                               style="margin-right: 15px; font-weight: bold">Hide:</label>
+                               style="margin-right: 15px; font-weight: bold">
+                            %%crawler_table_empty_calendars_checkbox_label%%:
+                        </label>
                         <div class="form-check" style="padding-left: 4em;">
                             <label for="failures__calendars--empty__checkbox--vismo" class="form-check-label"
-                                   title="Filters out calendars using 'vismo' parser.">
+                                   title="%%crawler_table_empty_calendars_checkbox_vismo_title%%">
                                 <input class="form-check-input" type="checkbox"
                                        id="failures__calendars--empty__checkbox--vismo"
-                                       title="Hides calendars using 'vismo' parser from the table.">
-                                Vismo calendars
+                                       title="%%crawler_table_empty_calendars_checkbox_vismo_title%%">
+                                %%crawler_table_empty_calendars_checkbox_vismo%%
                             </label>
                         </div>
                         <div class="form-check" style="padding-left: 4em;">
                             <label for="failures__calendars--empty__checkbox--always-empty" class="form-check-label"
-                                   title="Filters out calendars that produced no events so far.">
+                                   title="%%crawler_table_empty_calendars_checkbox_always_title%%">
                                 <input class="form-check-input" type="checkbox"
                                        id="failures__calendars--empty__checkbox--always-empty"
-                                       title="Hides calendars that produced no events so far from the table.">
-                                Always empty calendars
+                                       title="%%crawler_table_empty_calendars_checkbox_always_title%%">
+                                %%crawler_table_empty_calendars_checkbox_always%%
                             </label>
                         </div>
                     </div>
@@ -235,7 +249,7 @@
                                 <tr>
                                     <th scope="col" class="th-sm"></th>
                                     <th scope="col" class="th-sm">#</th>
-                                    <th scope="col" class="th-sm">Calendar URL</th>
+                                    <th scope="col" class="th-sm">%%crawler_table_column_calendar_url%%</th>
                                     <th scope="col" class="th-sm">Parser</th>
                                     <th scope="col" class="th-sm">Always</th>
                                 </tr>
@@ -251,9 +265,10 @@
             <div class="row justify-content-center">
                 <div class="col-xl-6">
                     <div class="part"><span class="part-title">
-                        Calendars with Failed Events</span> <i>(more than 10%)</i>
+                        %%crawler_table_failure_rate_title%% </span>
+                        <i>(%%crawler_table_failure_rate_percentage%%)</i>
                     </div>
-                    <p>- a substantial part of the events from these calendars fails</p>
+                    <p>%%crawler_table_failure_rate_details%%</p>
                     <div class="table-responsive">
                         <table id="failures__calendars--failed-events__table"
                                class="table table-bordered table-striped table-sm">
@@ -261,8 +276,8 @@
                                 <tr>
                                     <th scope="col" class="th-sm"></th>
                                     <th scope="col" class="th-sm">#</th>
-                                    <th scope="col" class="th-sm">Calendar URL</th>
-                                    <th scope="col" class="th-sm">Failure Rate</th>
+                                    <th scope="col" class="th-sm">%%crawler_table_column_calendar_url%%</th>
+                                    <th scope="col" class="th-sm">%%crawler_table_failure_rate_column_rate%%</th>
                                 </tr>
                             </thead>
                         </table>
@@ -275,26 +290,28 @@
             <!--    - Failed Events (Table) -->
             <div class="row justify-content-center">
                 <div class="col-xl-6">
-                    <div class="part"><span class="part-title">Failed Events</span> <i>(last week)</i></div>
-                    <p>- events that couldn't be parsed and a cause of such a failure</p>
+                    <div class="part">
+                        <span class="part-title">%%crawler_table_failed_events_title%% </span>
+                        <i>(%%crawler_table_failed_events_timespan%%)</i></div>
+                    <p>%%crawler_table_failed_events_details%%</p>
                     <div>
-                        What does Cause of Failure code stands for?
+                        %%crawler_table_failed_event_codes_explanation_title%%
                         <ul>
                             <li><strong>event_html_not_downloaded</strong>
-                                - failed to download event's HTML content
-                                <span class="text-muted">(probably faulty event's URL)</span>
+                                - %%crawler_table_failed_event_event_html_not_downloaded%%
+                                <span class="text-muted">(%%crawler_table_failed_event_event_html_not_downloaded_probably%%)</span>
                             </li>
                             <li><strong>event_data_not_parsed</strong>
-                                - failed to parse data from event's HTML
-                                <span class="text-muted">(probably missing title or date)</span>
+                                - %%crawler_table_failed_event_event_data_not_parsed%%
+                                <span class="text-muted">(%%crawler_table_failed_event_event_data_not_parsed_probably%%)</span>
                             </li>
                             <li><strong>event_datetime_not_processed</strong>
-                                - failed to process event's date
-                                <span class="text-muted">(probably doesn't match format for its parser)</span>
+                                - %%crawler_table_failed_event_event_datetime_not_processed%%
+                                <span class="text-muted">(%%crawler_table_failed_event_event_datetime_not_processed_probably%%)</span>
                             </li>
                             <li><strong>event_gps_not_acquired</strong>
-                                - failed to acquire event's GPS
-                                <span class="text-muted">(probably missing or ambiguous location)</span>
+                                - %%crawler_table_failed_event_event_gps_not_acquired%%
+                                <span class="text-muted">(%%crawler_table_failed_event_event_gps_not_acquired_probably%%)</span>
                             </li>
                         </ul>
                     </div>
@@ -305,9 +322,15 @@
                                 <tr>
                                     <th scope="col" class="th-sm"></th>
                                     <th scope="col" class="th-sm">#</th>
-                                    <th scope="col" class="th-sm" style="min-width: 100px">Event URL</th>
-                                    <th scope="col" class="th-sm" style="max-width: 200px;">Cause of Failure</th>
-                                    <th scope="col" class="th-sm" style="max-width: 100px;">Date</th>
+                                    <th scope="col" class="th-sm" style="min-width: 100px">
+                                        %%crawler_table_failed_events_event_url%%
+                                    </th>
+                                    <th scope="col" class="th-sm" style="max-width: 200px;">
+                                        %%crawler_table_failed_events_failure_cause%%
+                                    </th>
+                                    <th scope="col" class="th-sm" style="max-width: 100px;">
+                                        %%crawler_table_column_date%%
+                                    </th>
                                     <th scope="col" class="th-sm">event_url.id</th>
                                 </tr>
                             </thead>
@@ -319,6 +342,14 @@
         </div>
 
         <!-- Optional -->
+        <!--    Custom Localization -->
+        <script type="text/javascript">
+            handleFirstLocalization();
+            window.requestAnimationFrame(() => {
+                document.body.style.visibility = "visible";
+            });
+        </script>
+
         <!--    jQuery Script -->
         <script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
                 integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n"
