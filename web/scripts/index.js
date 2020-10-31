@@ -1,3 +1,16 @@
+function handleSidebarToggleButtonClick() {
+    $('#sidebar, #content, #sidebar-collapse-btn').toggleClass('active');
+    const sidebarBtn = document.getElementById('sidebar-collapse-btn');
+    if (sidebarBtn.classList.contains('active')) {
+        sidebarBtn.innerHTML = `<i class="fa fa-angle-double-left"> ${getLocalizedString('content_search_form_bookmark')}</i>`;
+    } else {
+        sidebarBtn.innerHTML = `<i class="fa fa-angle-double-right"> ${getLocalizedString('content_search_form_bookmark')}</i>`;
+    }
+
+    $('.collapse.in').toggleClass('in');
+    $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+}
+
 function handleLocationRadioButtonsClick() {
     const gpsRadioButton = document.getElementById('sidebar__form--filter__location__options--gps');
     const gpsLatitude = document.getElementById('sidebar__form--filter__location__gps--latitude');
@@ -329,6 +342,21 @@ function initializeEventsTable(eventsData) {
     $('.dataTables_length').addClass('bs-select');
 }
 
+function setSelectPlaceholders() {
+    const selectPickers = document.querySelector('#sidebar__form--filter__select-picker');
+    for (let mainButton of selectPickers.querySelectorAll('button.dropdown-toggle')) {
+        const localizedString = getLocalizedString('form_filtering_content_select_placeholder');
+        mainButton.title = localizedString;
+        mainButton.querySelector('div.filter-option-inner-inner').innerText = localizedString;
+    }
+    for (let selectButton of selectPickers.querySelectorAll('button.bs-select-all')) {
+        selectButton.innerText = getLocalizedString('form_filtering_content_select_all');
+    }
+    for (let deselectButton of selectPickers.querySelectorAll('button.bs-deselect-all')) {
+        deselectButton.innerText = getLocalizedString('form_filtering_content_deselect_all');
+    }
+}
+
 function initializeTypePicker() {
     const typePicker = $('#sidebar__form--filter__select-picker--types');
     for (let i = 0; i < GLB_EVENT_TYPES.length; i++) {
@@ -346,23 +374,15 @@ function initializeKeywordPicker() {
     keywordPicker.selectpicker();
 }
 
-function handleSidebarToggleButtonClick() {
-    $('#sidebar, #content, #sidebar-collapse-btn').toggleClass('active');
-    const sidebarBtn = document.getElementById('sidebar-collapse-btn');
-    if (sidebarBtn.classList.contains('active')) {
-        sidebarBtn.innerHTML = `<i class="fa fa-angle-double-left"> ${getLocalizedString('content_search_form_bookmark')}</i>`;
-    } else {
-        sidebarBtn.innerHTML = `<i class="fa fa-angle-double-right"> ${getLocalizedString('content_search_form_bookmark')}</i>`;
-    }
-
-    $('.collapse.in').toggleClass('in');
-    $('a[aria-expanded=true]').attr('aria-expanded', 'false');
+function initializeSelectPickers() {
+    initializeTypePicker();
+    initializeKeywordPicker();
+    setSelectPlaceholders();
 }
 
 function handleFirstLoad() {
     setFutureIntoDatetimePickers();
-    initializeTypePicker();
-    initializeKeywordPicker();
+    initializeSelectPickers();
     const filteredEventsData = filterEventsAndLoadMap();
     initializeEventsTable(filteredEventsData);
 }

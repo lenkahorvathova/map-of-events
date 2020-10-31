@@ -24,7 +24,8 @@ const localizationStrings = {
         'cs': "Záznam ze spuštení"
     },
     'top_navigation_bar_latest_logs_geocoding': {
-        'en': "Záznam z geokódování"
+        'en': "Log from Geocoding",
+        'cs': "Záznam z geokódování"
     },
     'gps_latitude': {
         'en': "Latitude",
@@ -137,6 +138,18 @@ const localizationStrings = {
     'form_geocoding_search_placeholder': {
         'en': "Search",
         'cs': "Vyhledat"
+    },
+    'form_filtering_content_select_placeholder': {
+        'en': "Nothing Selected",
+        'cs': "Nic nebylo vybráno"
+    },
+    'form_filtering_content_select_all': {
+        'en': "Select All",
+        'cs': "Vybrat vše"
+    },
+    'form_filtering_content_deselect_all': {
+        'en': "Deselect All",
+        'cs': "Odznačit vše"
     },
     'form_filtering_content_heading': {
         'en': "Filtering by Content",
