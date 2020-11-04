@@ -149,10 +149,7 @@ function zoomToEventGPS(element) {
     }
 }
 
-function parseDatetime(datetimeDict) {
-    const dateString = datetimeDict['date'];
-    const timeString = datetimeDict['time'];
-
+function getDatetime(dateString, timeString) {
     let datetime = null;
     if (dateString != null) {
         let datetimeString = dateString;
@@ -164,6 +161,16 @@ function parseDatetime(datetimeDict) {
         }
     }
     return datetime;
+}
+
+function parseDatetime(datetimeTuple) {
+    const startDatetime = getDatetime(datetimeTuple[0], datetimeTuple[1]);
+    const endDatetime = getDatetime(datetimeTuple[2], datetimeTuple[3]);
+
+    let resultDatetime = startDatetime;
+    if (endDatetime) resultDatetime += ' - ' + endDatetime;
+
+    return resultDatetime;
 }
 
 function prepareEventDetailsModal(eventData) {
@@ -182,10 +189,21 @@ function prepareEventDetailsModal(eventData) {
         defaultLocation.innerText = eventData['default_location'];
     }
 
-    const datetime = document.getElementById('modal--event-details__datetime');
-    datetime.innerText = parseDatetime(eventData['table_start_datetime']);
-    const endDatetime = parseDatetime(eventData['table_end_datetime']);
-    if (endDatetime) datetime.innerText += ' - ' + endDatetime;
+    const datetimeUl = document.getElementById('modal--event-details__datetime');
+    datetimeUl.innerHTML = "";
+    for (let eventDatetime of eventData['datetimes']) {
+        const liElement = document.createElement("li");
+        liElement.appendChild(document.createTextNode(parseDatetime(eventDatetime)));
+        liElement.style.fontWeight = "bold";
+        if (eventData.hasOwnProperty('table_start_datetime') && eventData.hasOwnProperty('table_end_datetime')
+                && (eventData['table_start_datetime']['date'] === eventDatetime[0]
+                        && eventData['table_start_datetime']['time'] === eventDatetime[1]
+                        && eventData['table_end_datetime']['date'] === eventDatetime[2]
+                        && eventData['table_end_datetime']['time'] === eventDatetime[3])) {
+            liElement.classList.add("text-primary");
+        }
+        datetimeUl.appendChild(liElement);
+    }
 
     const perex = document.getElementById('modal--event-details__perex');
     perex.innerText = eventData['perex'];

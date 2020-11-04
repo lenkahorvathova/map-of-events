@@ -21,7 +21,6 @@ class GenerateHTML:
     def __init__(self) -> None:
         self.connection = utils.create_connection()
         self.latest_execution_log_path = self._get_latest_execution_log_path()
-        self.mapping_types = self._prepare_types()
 
         missing_views = utils.check_db_views(self.connection, ["event_data_view"])
         if len(missing_views) != 0:
@@ -42,7 +41,9 @@ class GenerateHTML:
                            event_url__url,
                            event_data__id, event_data__title, event_data__perex, event_data__location, event_data__gps, event_data__organizer, event_data__types,
                            event_data_datetime__start_date, event_data_datetime__start_time, event_data_datetime__end_date, event_data_datetime__end_time,
-                           event_data_gps__online, event_data_gps__has_default, event_data_gps__gps, event_data_gps__location, event_data_gps__municipality, event_data_gps__district
+                           event_data_gps__online, event_data_gps__has_default, event_data_gps__gps, event_data_gps__location, event_data_gps__municipality, event_data_gps__district,
+                           event_data_keywords__keyword,
+                           event_data_types__type
                     FROM event_data_view
                     WHERE event_data_datetime__start_date IS NOT NULL 
                       AND (event_data_datetime__start_date >= date('now') OR (event_data_datetime__end_date IS NOT NULL AND event_data_datetime__end_date >= date('now')))
@@ -57,67 +58,53 @@ class GenerateHTML:
         for calendar_url, calendar_base in calendars_with_default_location_base.items():
             calendars_with_default_location[calendar_url] = calendar_base['default_location']
 
-        event_ids_list = []
-        events_dataset = {}
+        event_ids_list = set()
+        events_dataset = dict()
         for event in events_tuples:
             event_id = event[3]
-            event_ids_list.append(event_id)
+            event_ids_list.add(event_id)
+
             calendar_url = event[0]
-            event_dict = {
-                "event_url": event[2],
-                "title": utils.sanitize_string_for_html(event[4]),
-                "perex": utils.sanitize_string_for_html(event[5]),
-                "location": utils.sanitize_string_for_html(event[6]),
-                "gps": event[7],
-                "organizer": utils.sanitize_string_for_html(event[8]),
-                "types": [],
-                "keywords": [],
-                "start_date": event[10],
-                "start_time": event[11],
-                "end_date": event[12],
-                "end_time": event[13],
-                "online": event[14] == 1,
-                "has_default": event[15] == 1,
-                "geocoded_gps": event[16],
-                "default_location": calendars_with_default_location[calendar_url]
-                if calendar_url in calendars_with_default_location
-                else event[17],
-                "municipality": event[18],
-                "district": event[19],
-                "calendar_url": calendar_url,
-                "calendar_downloaded_at": event[1]
-            }
-            events_dataset[event_id] = event_dict
+            if calendar_url in calendars_with_default_location:
+                default_location = calendars_with_default_location[calendar_url]
+            else:
+                default_location = event[17]
+            start_date, start_time, end_date, end_time = event[10], event[11], event[12], event[13]
+            datetime_tuple = (start_date, start_time, end_date, end_time) if start_date else None
 
-        query = '''
-                    SELECT event_data_id, type
-                    FROM event_data_types
-                    WHERE event_data_id IN ({})
-                '''.format(",".join([str(event_id) for event_id in event_ids_list]))
-        cursor = self.connection.execute(query)
-        events_types = cursor.fetchall()
+            if event_id in events_dataset:
+                if event[21]:
+                    events_dataset[event_id]['types'].add(event[21])
+                if event[20]:
+                    events_dataset[event_id]['keywords'].add(event[20])
+                if datetime_tuple:
+                    events_dataset[event_id]['datetimes'].add(datetime_tuple)
+            else:
+                events_dataset[event_id] = {
+                    "event_url": event[2],
+                    "title": utils.sanitize_string_for_html(event[4]),
+                    "perex": utils.sanitize_string_for_html(event[5]),
+                    "location": utils.sanitize_string_for_html(event[6]),
+                    "gps": event[7],
+                    "organizer": utils.sanitize_string_for_html(event[8]),
+                    "types": {event[21]} if event[21] else set(),
+                    "keywords": {event[20]} if event[20] else set(),
+                    "datetimes": {datetime_tuple} if datetime_tuple else set(),
+                    "online": event[14] == 1,
+                    "has_default": event[15] == 1,
+                    "geocoded_gps": event[16],
+                    "default_location": default_location,
+                    "municipality": event[18],
+                    "district": event[19],
+                    "calendar_url": calendar_url,
+                    "calendar_downloaded_at": event[1]
+                }
 
-        for event_id, event_type in events_types:
-            if event_type:
-                events_dataset[event_id]['types'].append(event_type)
         for event_id in events_dataset:
             types_list = events_dataset[event_id]['types']
-            events_dataset[event_id]['types'] = sorted(self._get_associated_types(types_list), key=str.lower)
-
-        query = '''
-                    SELECT event_data_id, keyword
-                    FROM event_data_keywords
-                    WHERE event_data_id IN ({})
-                '''.format(",".join([str(event_id) for event_id in event_ids_list]))
-        cursor = self.connection.execute(query)
-        events_keywords = cursor.fetchall()
-
-        for event_id, event_keyword in events_keywords:
-            if event_keyword:
-                events_dataset[event_id]['keywords'].append(event_keyword)
-        for event_id in events_dataset:
-            events_dataset[event_id]['keywords'] = set(events_dataset[event_id]['keywords'])
+            events_dataset[event_id]['types'] = list(sorted(self._get_associated_types(types_list), key=str.lower))
             events_dataset[event_id]['keywords'] = list(sorted(events_dataset[event_id]['keywords'], key=str.lower))
+            events_dataset[event_id]['datetimes'] = list(events_dataset[event_id]['datetimes'])
 
         return events_dataset
 
@@ -146,10 +133,11 @@ class GenerateHTML:
 
         return {key: list(value) for key, value in types_mapping.items()}
 
-    def _get_associated_types(self, types: list) -> list:
+    def _get_associated_types(self, types: set) -> list:
+        mapping_types = self._prepare_types()
         mapped_types = set()
         for event_type in types:
-            mapped_types.update(self.mapping_types[event_type])
+            mapped_types.update(mapping_types[event_type])
         if len(mapped_types) == 0:
             return [GenerateHTML.FALLBACK_EVENT_TYPE]
         else:

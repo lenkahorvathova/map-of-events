@@ -117,10 +117,17 @@ CREATE VIEW event_data_view AS
            edg.gps           AS event_data_gps__gps,
            edg.location      AS event_data_gps__location,
            edg.municipality  AS event_data_gps__municipality,
-           edg.district      AS event_data_gps__district
+           edg.district      AS event_data_gps__district,
+           edk.id            AS event_data_keywords__id,
+           edk.keyword       AS event_data_keywords__keyword,
+           edk.source        AS event_data_keywords__source,
+           edt.id            AS event_data_types__id,
+           edt.type          AS event_data_types__type
     FROM calendar c
          LEFT OUTER JOIN event_url eu ON eu.calendar_id = c.id
          LEFT OUTER JOIN event_html eh ON eh.event_url_id = eu.id
          LEFT OUTER JOIN event_data ed ON ed.event_html_id = eh.id
          LEFT OUTER JOIN event_data_datetime edd ON edd.event_data_id = ed.id
-         LEFT OUTER JOIN event_data_gps edg ON edg.event_data_id = ed.id;
+         LEFT OUTER JOIN event_data_gps edg ON edg.event_data_id = ed.id
+         LEFT OUTER JOIN event_data_keywords edk ON edk.event_data_id = ed.id
+         LEFT OUTER JOIN event_data_types edt ON edt.event_data_id = ed.id;

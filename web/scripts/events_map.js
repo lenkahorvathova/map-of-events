@@ -62,7 +62,12 @@ function createCustomCluster() {
     return CustomCluster;
 }
 
-function prepareEventDataForEventsTable(event) {
+function prepareEventDataForEventsTable(eventId, eventDatetimes) {
+    const event = GLB_EVENTS_DATASET[eventId];
+    event['id'] = eventId;
+
+    const resultEvents = [];
+
     event['table_title'] = event['title'];
 
     let location = null;
@@ -75,17 +80,27 @@ function prepareEventDataForEventsTable(event) {
     }
     event["table_location"] = location;
 
-    event["table_start_datetime"] = {
-        'date': event['start_date'],
-        'time': event['start_time']
-    };
+    for (let datetimeDict of eventDatetimes) {
+        const datetimeTuple = datetimeDict['datetimeTuple'];
+        const startDate = datetimeTuple[0];
+        if (startDate !== null) {
+            const startTime = datetimeTuple[1];
+            const endDate = datetimeTuple[2];
+            const endTime = datetimeTuple[3];
+            const newEventInstance = {...event};
+            newEventInstance["table_start_datetime"] = {
+                'date': startDate,
+                'time': startTime
+            };
+            newEventInstance["table_end_datetime"] = {
+                'date': endDate,
+                'time': endTime
+            };
+            resultEvents.push(newEventInstance);
+        }
+    }
 
-    event["table_end_datetime"] = {
-        'date': event['end_date'],
-        'time': event['end_time']
-    };
-
-    return event;
+    return resultEvents;
 }
 
 function degreesToRadians(degrees) {
@@ -288,36 +303,68 @@ function filterEventsAndLoadMap() {
 
         const ongoingChecked = document.getElementById('sidebar__form--filter__datetime__including-checkboxes--ongoing').checked;
 
-        const eventsStartDate = GLB_EVENTS_DATASET[eventId]['start_date'];
-        let eventsStartTime = GLB_EVENTS_DATASET[eventId]['start_time'];
-        if (eventsStartTime === null) eventsStartTime = ongoingChecked ? "00:00" : specifiedStartTime;
-        const eventsStartDatetime = new Date(eventsStartDate + ' ' + eventsStartTime);
+        let eventDatetimes = [];
+        for (let datetimeTuple of GLB_EVENTS_DATASET[eventId]['datetimes']) {
+            const startDate = datetimeTuple[0];
+            const startTime = datetimeTuple[1];
+            const endDate = datetimeTuple[2];
+            const endTime = datetimeTuple[3];
 
-        let eventsEndDate = GLB_EVENTS_DATASET[eventId]['end_date'];
-        if (eventsEndDate === null) eventsEndDate = eventsStartDate;
-        let eventsEndTime = GLB_EVENTS_DATASET[eventId]['end_time'];
-        if (eventsEndTime === null) eventsEndTime = ongoingChecked ? "23:59" : specifiedEndTime;
-        const eventsEndDatetime = new Date(eventsEndDate + ' ' + eventsEndTime);
+            const eventsStartDate = startDate;
+            let eventsStartTime = startTime;
+            if (eventsStartTime === null) eventsStartTime = ongoingChecked ? specifiedStartTime : "00:00";
+            const eventsStartDatetime = new Date(eventsStartDate + ' ' + eventsStartTime);
+
+            let eventsEndDate = endDate;
+            if (eventsEndDate === null) eventsEndDate = eventsStartDate;
+            let eventsEndTime = endTime;
+            if (eventsEndTime === null) eventsEndTime = ongoingChecked ? specifiedEndTime : "23:59";
+            const eventsEndDatetime = new Date(eventsEndDate + ' ' + eventsEndTime);
+
+            eventDatetimes.push({
+                'start': eventsStartDatetime,
+                'end': eventsEndDatetime,
+                'datetimeTuple': datetimeTuple
+            });
+        }
 
         const longTermChecked = document.getElementById('sidebar__form--filter__datetime__including-checkboxes--long-term').checked;
         if (!longTermChecked) {
             const longTermMinDuration = 3;
-            const eventDuration = calculateDurationInWeeks(eventsStartDatetime, eventsEndDatetime);
-            if (eventDuration >= longTermMinDuration) {
+            let notLongTermDatetimes = [];
+            for (let eventDates of eventDatetimes) {
+                const eventDuration = calculateDurationInWeeks(eventDates['start'], eventDates['end']);
+                if (eventDuration < longTermMinDuration) {
+                    notLongTermDatetimes.push(eventDates);
+                }
+            }
+            if (notLongTermDatetimes.length === 0) {
                 continue;
+            } else {
+                eventDatetimes = notLongTermDatetimes;
             }
         }
 
+        const passingDatetimes = [];
         if (ongoingChecked) {
-            if ((eventsStartDatetime < specifiedStartDatetime && eventsEndDatetime < specifiedStartDatetime)
-                    || (eventsStartDatetime > specifiedEndDatetime && eventsEndDatetime > specifiedEndDatetime)) {
-                continue;
+            for (let eventDates of eventDatetimes) {
+                if ((specifiedStartDatetime <= eventDates['start'] && eventDates['start'] <= specifiedEndDatetime)
+                        || (specifiedStartDatetime <= eventDates['end'] && eventDates['end'] <= specifiedEndDatetime)) {
+                    passingDatetimes.push(eventDates);
+                }
             }
         } else {
-            if (eventsStartDatetime < specifiedStartDatetime || eventsStartDatetime > specifiedEndDatetime
-                    || eventsEndDatetime < specifiedStartDatetime || eventsEndDatetime > specifiedEndDatetime) {
-                continue;
+            for (let eventDates of eventDatetimes) {
+                if ((specifiedStartDatetime <= eventDates['start'] && eventDates['start'] <= specifiedEndDatetime)
+                        && (specifiedStartDatetime <= eventDates['end'] && eventDates['end'] <= specifiedEndDatetime)) {
+                    passingDatetimes.push(eventDates);
+                }
             }
+        }
+        if (passingDatetimes.length === 0) {
+            continue;
+        } else {
+            eventDatetimes = passingDatetimes;
         }
 
         if (!onlineChecked) {
@@ -350,8 +397,8 @@ function filterEventsAndLoadMap() {
             coordinates.push(sMapCoordinates);
         }
 
-        const eventData = prepareEventDataForEventsTable(GLB_EVENTS_DATASET[eventId]);
-        filteredEventsData.push(eventData);
+        const eventData = prepareEventDataForEventsTable(eventId, eventDatetimes);
+        filteredEventsData.push(...eventData);
     }
 
     if (marks.length > 0) {
