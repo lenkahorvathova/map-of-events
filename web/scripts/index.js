@@ -360,21 +360,6 @@ function initializeEventsTable(eventsData) {
     $('.dataTables_length').addClass('bs-select');
 }
 
-function setSelectPlaceholders() {
-    const selectPickers = document.querySelector('#sidebar__form--filter__select-picker');
-    for (let mainButton of selectPickers.querySelectorAll('button.dropdown-toggle')) {
-        const localizedString = getLocalizedString('form_filtering_content_select_placeholder');
-        mainButton.title = localizedString;
-        mainButton.querySelector('div.filter-option-inner-inner').innerText = localizedString;
-    }
-    for (let selectButton of selectPickers.querySelectorAll('button.bs-select-all')) {
-        selectButton.innerText = getLocalizedString('form_filtering_content_select_all');
-    }
-    for (let deselectButton of selectPickers.querySelectorAll('button.bs-deselect-all')) {
-        deselectButton.innerText = getLocalizedString('form_filtering_content_deselect_all');
-    }
-}
-
 function initializeTypePicker() {
     const typePicker = $('#sidebar__form--filter__select-picker--types');
     for (let i = 0; i < GLB_EVENT_TYPES.length; i++) {
@@ -395,7 +380,6 @@ function initializeKeywordPicker() {
 function initializeSelectPickers() {
     initializeTypePicker();
     initializeKeywordPicker();
-    setSelectPlaceholders();
 }
 
 function handleFirstLoad() {
