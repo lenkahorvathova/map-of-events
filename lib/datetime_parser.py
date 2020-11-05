@@ -171,7 +171,15 @@ class DatetimeParser:
 
     @staticmethod
     def _remove_whitespaces(string: str) -> str:
-        return "".join(string.split())
+        string = " ".join(string.split())
+        string = ".".join([str_part.strip() for str_part in string.split(".")])
+        delimiter_match = re.match(DatetimeParser.RANGE_MATCH_REGEX, string)
+        if delimiter_match:
+            delimiter = delimiter_match.group(2)
+            string = delimiter.join([str_part.strip() for str_part in string.split(delimiter)])
+            delimiter_macro = "%range{" + delimiter + "}"
+            string = delimiter_macro.join([str_part.strip() for str_part in string.split(delimiter_macro)])
+        return string
 
     @staticmethod
     def _replace_hyphen_to_dash(string: str) -> str:

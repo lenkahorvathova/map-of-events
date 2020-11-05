@@ -55,8 +55,10 @@
             "formats": [
                 "%d.%m.%Y",
                 "%d.%m.0%y",
+                "%d.%m.%range{-}%d.%m.0%y",
                 "%d.%m.%range{-}%d.%m.%Y",
-                "%d.%m.%Y%range{-}%d.%m.%Y"
+                "%d.%m.%Y%range{-}%d.%m.%Y",
+                "%d.%m.0%y%range{-}%d.%m.0%y"
             ]
         },
         "time": {
