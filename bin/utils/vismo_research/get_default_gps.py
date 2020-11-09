@@ -10,8 +10,9 @@ import urllib.parse as urllib
 import requests
 from lxml import etree
 
+from bin.utils.vismo_research.generate_input import GenerateInput
 from lib import utils
-from lib.constants import VISMO_RESEARCH_DATA_DIR_PATH, INPUT_SITES_BASE_FILE_PATH
+from lib.constants import VISMO_RESEARCH_DATA_DIR_PATH
 
 
 class GetDefaultGPS:
@@ -33,7 +34,6 @@ class GetDefaultGPS:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
-        self.base = utils.get_active_base()
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -85,7 +85,8 @@ class GetDefaultGPS:
                 sys.exit("Specified domain '{}' is no longer active!".format(self.args.domain))
             return [website_base]
 
-        return self.base
+        with open(GenerateInput.OUTPUT_FILE_PATH, 'r') as vismo_base_file:
+            return json.load(vismo_base_file)
 
     @staticmethod
     def get_addresses(input_domains: list) -> list:
@@ -280,7 +281,7 @@ class GetDefaultGPS:
             print("Found GPS: {}/{}".format(gps_count, len(input_domains)))
             print("Websites left without GPS: {} ({})".format(len(without_gps), without_gps))
         else:
-            utils.store_to_json_file(input_domains, INPUT_SITES_BASE_FILE_PATH)
+            utils.store_to_json_file(input_domains, GenerateInput.OUTPUT_FILE_PATH)
 
             with open(GetDefaultGPS.OUTPUT_FILE_PATH) as file:
                 stat_data = json.load(file)

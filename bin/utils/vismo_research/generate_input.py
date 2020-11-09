@@ -1,17 +1,19 @@
 import json
+import os
 
 from bin.utils.vismo_research.compute_statistics import ComputeStatistics
 from lib import utils
-from lib.constants import INPUT_SITES_BASE_FILE_PATH
+from lib.constants import INPUT_SITES_BASE_FILE_PATH, VISMO_RESEARCH_DATA_DIR_PATH
 
 
 class GenerateInput:
     """ Generates the first base file of input websites from usable Vismo URLs for main scripts. """
+    OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "input_vismo_calendars.json")
 
     def run(self) -> None:
         usable_urls = self.get_usable_urls()
         output_list = self.prepare_output(usable_urls)
-        utils.store_to_json_file(output_list, INPUT_SITES_BASE_FILE_PATH)  # This overwrites the original base file!
+        utils.store_to_json_file(output_list, GenerateInput.OUTPUT_FILE_PATH)
 
     @staticmethod
     def get_usable_urls() -> list:

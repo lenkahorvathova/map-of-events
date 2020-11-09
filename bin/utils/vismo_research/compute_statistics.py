@@ -16,7 +16,7 @@ class ComputeStatistics:
     Outputs a json file with counts and lists for these statistics.
     """
 
-    OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "compute_statistics_output2.json")
+    OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "compute_statistics_output.json")
 
     def run(self) -> None:
         statistics_results = self.compute_statistics()
