@@ -73,6 +73,7 @@ class PrepareCrawlerStatus:
                     FROM event_data_view
                     WHERE event_data_datetime__start_date IS NOT NULL
                       AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1))
+                      AND event_url__duplicate_of IS NULL
                 '''
         cursor = self.connection.execute(query)
         return cursor.fetchone()[0]
@@ -84,6 +85,7 @@ class PrepareCrawlerStatus:
                     WHERE event_data_datetime__start_date IS NOT NULL
                       AND (event_data_datetime__start_date >= date('now') OR (event_data_datetime__end_date IS NOT NULL AND event_data_datetime__end_date >= date('now')))
                       AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1))
+                      AND event_url__duplicate_of IS NULL
                 '''
         cursor = self.connection.execute(query)
         return cursor.fetchone()[0]
@@ -94,6 +96,7 @@ class PrepareCrawlerStatus:
                     FROM event_data_view
                     WHERE event_data_datetime__start_date IS NOT NULL
                       AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1))
+                      AND event_url__duplicate_of IS NULL
                     GROUP BY day
                     ORDER BY day DESC
                     LIMIT {}
@@ -110,6 +113,7 @@ class PrepareCrawlerStatus:
                     FROM event_data_view
                     WHERE event_data_datetime__start_date IS NOT NULL
                       AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1))
+                      AND event_url__duplicate_of IS NULL
                     GROUP BY week
                     ORDER BY week DESC
                     LIMIT {}
@@ -260,7 +264,7 @@ class PrepareCrawlerStatus:
 
         return failed_events
 
-    def get_failure_percentage_per_calendar(self, events_per_calendar: dict, failure_threshold: int) -> list:
+    def get_failure_percentage_per_calendar(self, parsed_events_per_calendar: dict, failure_threshold: int) -> list:
         query = '''
                     SELECT calendar__url, count(DISTINCT event_url__url) AS events_count
                     FROM event_data_view
@@ -271,7 +275,7 @@ class PrepareCrawlerStatus:
         all_events_per_calendar_dict = dict(all_events_per_calendar)
 
         calendars_over_failure_treshold = []
-        for calendar, events_count in events_per_calendar.items():
+        for calendar, events_count in parsed_events_per_calendar.items():
             all_events_count = all_events_per_calendar_dict[calendar]
             failed_events_count = all_events_count - events_count
             failure_percentage = (failed_events_count / all_events_count) * 100

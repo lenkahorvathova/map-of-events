@@ -48,6 +48,7 @@ class GenerateHTML:
                     WHERE event_data_datetime__start_date IS NOT NULL 
                       AND (event_data_datetime__start_date >= date('now') OR (event_data_datetime__end_date IS NOT NULL AND event_data_datetime__end_date >= date('now')))
                       AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1))
+                      AND event_url__duplicate_of IS NULL
                 '''
 
         cursor = self.connection.execute(query)

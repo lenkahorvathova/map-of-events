@@ -11,10 +11,12 @@ CREATE TABLE IF NOT EXISTS calendar
 
 CREATE TABLE IF NOT EXISTS event_url
 (
-    id          INTEGER PRIMARY KEY AUTOINCREMENT,
-    url         TEXT NOT NULL,
-    parsed_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    calendar_id INTEGER,
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    url          TEXT NOT NULL,
+    parsed_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    duplicate_of INTEGER,
+    calendar_id  INTEGER,
+    FOREIGN KEY (duplicate_of) REFERENCES event_url (id),
     FOREIGN KEY (calendar_id) REFERENCES calendar (id)
 );
 
@@ -96,6 +98,7 @@ CREATE VIEW event_data_view AS
            c.downloaded_at   AS calendar__downloaded_at,
            eu.id             AS event_url__id,
            eu.url            AS event_url__url,
+           eu.duplicate_of   AS event_url__duplicate_of,
            eh.id             AS event_html__id,
            eh.html_file_path AS event_html__html_file_path,
            ed.id             AS event_data__id,

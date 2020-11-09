@@ -65,6 +65,11 @@ mkdir -p "${LOG_DATA_DIR}"
   python3 -u bin/unify_types.py
 
   echo "============================================================"
+  echo "DEDUPLICATE EVENTS:"
+  echo "============================================================"
+  python3 -u bin/deduplicate_events.py
+
+  echo "============================================================"
   echo "PREPARE CRAWLER'S STATUS:"
   echo "============================================================"
   python3 -u bin/prepare_crawler_status.py
