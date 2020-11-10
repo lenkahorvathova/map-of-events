@@ -108,7 +108,7 @@ class DeduplicateEvents:
                     'location': event_dict['event_data__location'],
                     'gps': gps,
                     'organizer': event_dict['event_data__organizer'],
-                    'datetimes': {datetime_tuple},  # has to be set() for comparison later!
+                    'datetimes': {datetime_tuple},
                     'online': event_dict['event_data_gps__online'] == 1,
                     'geocoded_location': geocoded_location,
                     'keywords': {event_keyword} if event_keyword else set(),

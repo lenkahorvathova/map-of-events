@@ -261,6 +261,7 @@ class PrepareCrawlerStatus:
                     'downloaded_at': downloaded_at,
                     'error': error
                 })
+        failed_events = list(map(dict, set(tuple(sorted(event_dict.items())) for event_dict in failed_events)))
 
         return failed_events
 
