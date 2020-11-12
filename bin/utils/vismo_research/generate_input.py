@@ -3,7 +3,7 @@ import os
 
 from bin.utils.vismo_research.compute_statistics import ComputeStatistics
 from lib import utils
-from lib.constants import INPUT_SITES_BASE_FILE_PATH, VISMO_RESEARCH_DATA_DIR_PATH
+from lib.constants import VISMO_RESEARCH_DATA_DIR_PATH
 
 
 class GenerateInput:

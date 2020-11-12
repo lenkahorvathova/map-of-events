@@ -2,7 +2,8 @@ import argparse
 import json
 from typing import Optional
 
-from lib import utils
+from lib import utils, logger
+from lib.arguments_parser import ArgumentsParser
 
 
 class PrepareCrawlerStatus:
@@ -10,6 +11,7 @@ class PrepareCrawlerStatus:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
+        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
 
         missing_tables = utils.check_db_tables(self.connection, ["calendar"])
@@ -21,11 +23,7 @@ class PrepareCrawlerStatus:
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
-        parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
-        parser.add_argument('--dry-run', action='store_true', default=False,
-                            help="don't store any output and print to stdout")
-
+        parser = ArgumentsParser()
         return parser.parse_args()
 
     def run(self):

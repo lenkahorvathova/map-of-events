@@ -1,3 +1,4 @@
+import argparse
 import json
 import os
 import re
@@ -5,7 +6,8 @@ import shutil
 from collections import defaultdict
 from datetime import datetime
 
-from lib import utils
+from lib import utils, logger
+from lib.arguments_parser import ArgumentsParser
 from lib.constants import EVENT_TYPES_JSON_FILE_PATH
 
 
@@ -19,12 +21,19 @@ class GenerateHTML:
     FALLBACK_EVENT_TYPE = "ostatní"
 
     def __init__(self) -> None:
+        self.args = self._parse_arguments()
+        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
         self.latest_execution_log_path = self._get_latest_execution_log_path()
 
         missing_views = utils.check_db_views(self.connection, ["event_data_view"])
         if len(missing_views) != 0:
             raise Exception("Missing views in the DB: {}".format(missing_views))
+
+    @staticmethod
+    def _parse_arguments() -> argparse.Namespace:
+        parser = ArgumentsParser()
+        return parser.parse_args()
 
     def run(self) -> None:
         print("Generating HTML...", end="")

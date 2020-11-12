@@ -8,7 +8,8 @@ from datetime import datetime
 
 from lxml import etree
 
-from lib import utils
+from lib import utils, logger
+from lib.arguments_parser import ArgumentsParser
 from lib.parser import Parser
 
 
@@ -20,6 +21,7 @@ class ParseCalendars:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
+        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
@@ -29,10 +31,8 @@ class ParseCalendars:
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
-        parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        parser = ArgumentsParser()
 
-        parser.add_argument('--dry-run', action='store_true', default=False,
-                            help="don't store any output and print to stdout")
         parser.add_argument('--domain', type=str, default=None,
                             help="parse calendars only of the specified domain")
         parser.add_argument('--parse-all', action='store_true', default=False,

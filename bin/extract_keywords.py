@@ -4,7 +4,8 @@ import multiprocessing
 import re
 import sqlite3
 
-from lib import utils
+from lib import utils, logger
+from lib.arguments_parser import ArgumentsParser
 
 
 class ExtractKeywords:
@@ -12,6 +13,7 @@ class ExtractKeywords:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
+        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
@@ -21,10 +23,8 @@ class ExtractKeywords:
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
-        parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        parser = ArgumentsParser()
 
-        parser.add_argument('--dry-run', action='store_true', default=False,
-                            help="don't store any output and print to stdout")
         parser.add_argument('--events-ids', type=int, nargs="*",
                             help="extract keywords only from the specified events' IDs")
         parser.add_argument('--extract-all', action='store_true', default=False,

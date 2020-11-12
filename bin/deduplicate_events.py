@@ -5,7 +5,8 @@ import re
 import sqlite3
 from collections import defaultdict
 
-from lib import utils
+from lib import utils, logger
+from lib.arguments_parser import ArgumentsParser
 
 
 class DeduplicateEvents:
@@ -16,6 +17,7 @@ class DeduplicateEvents:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
+        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
@@ -25,10 +27,8 @@ class DeduplicateEvents:
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
-        parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        parser = ArgumentsParser()
 
-        parser.add_argument('--dry-run', action='store_true', default=False,
-                            help="don't store any output and print to stdout")
         parser.add_argument('--event-url', type=str, default=None,
                             help="find duplicates of the specified URL")
         parser.add_argument('--deduplicate-all', action='store_true', default=False,

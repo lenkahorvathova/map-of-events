@@ -7,7 +7,8 @@ import sys
 import time
 from datetime import datetime
 
-from lib import utils
+from lib import utils, logger
+from lib.arguments_parser import ArgumentsParser
 from lib.constants import DATA_DIR_PATH
 
 
@@ -21,6 +22,7 @@ class DownloadEvents:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
+        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
@@ -30,10 +32,8 @@ class DownloadEvents:
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
-        parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        parser = ArgumentsParser()
 
-        parser.add_argument('--dry-run', action='store_true', default=False,
-                            help="don't store any output and print to stdout")
         parser.add_argument('--domain', type=str, default=None,
                             help="download events only for the specified domain")
         parser.add_argument('--event-url', type=str, default=None,
