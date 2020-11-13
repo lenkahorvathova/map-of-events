@@ -22,13 +22,15 @@ class GenerateHTML:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
-        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
+        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
         self.latest_execution_log_path = self._get_latest_execution_log_path()
 
         missing_views = utils.check_db_views(self.connection, ["event_data_view"])
         if len(missing_views) != 0:
-            raise Exception("Missing views in the DB: {}".format(missing_views))
+            exception_msg = "Missing views in the DB: {}".format(missing_views)
+            self.logger.critical(exception_msg)
+            raise Exception(exception_msg)
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -36,13 +38,13 @@ class GenerateHTML:
         return parser.parse_args()
 
     def run(self) -> None:
-        print("Generating HTML...", end="")
+        self.logger.info("Generating HTML...".rstrip('\n'))
         events_dataset = self.get_events()
         self.complete_index_template(events_dataset)
         status_info = self.get_crawler_status_info()
         self.complete_crawler_status_template(status_info)
         self.copy_other_files()
-        print("DONE")
+        self.logger.info("DONE")
 
     def get_events(self) -> dict:
         query = '''

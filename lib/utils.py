@@ -1,11 +1,15 @@
 import json
 import sqlite3
+import sys
 import urllib.parse as urllib
 from typing import Union, Optional
 
 import requests
 
 from lib.constants import DATABASE_PATH, INPUT_SITES_BASE_FILE_PATH
+from lib.logger import set_up_script_logger
+
+LOGGER = set_up_script_logger(__file__)
 
 
 def create_connection() -> sqlite3.Connection:
@@ -19,7 +23,8 @@ def create_connection() -> sqlite3.Connection:
         return connection
 
     except sqlite3.Error as e:
-        print("Error occurred while creating a connection to the DB: {}".format(str(e)))
+        LOGGER.critical("Error occurred while creating a connection to the DB: {}".format(str(e)))
+        sys.exit()
 
 
 def generate_domain_name(url: str) -> str:

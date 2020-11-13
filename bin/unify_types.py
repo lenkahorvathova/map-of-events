@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 import multiprocessing
 import re
 import sqlite3
@@ -7,21 +8,23 @@ from collections import defaultdict
 
 from lib import utils, logger
 from lib.arguments_parser import ArgumentsParser
-from lib.constants import EVENT_TYPES_JSON_FILE_PATH
+from lib.constants import EVENT_TYPES_JSON_FILE_PATH, SIMPLE_LOGGER_PREFIX
 
 
 class UnifyTypes:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
-        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
+        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
             missing_tables = utils.check_db_tables(self.connection,
                                                    ["event_data", "event_data_keywords", "event_data_types"])
             if len(missing_tables) != 0:
-                raise Exception("Missing tables in the DB: {}".format(missing_tables))
+                exception_msg = "Missing tables in the DB: {}".format(missing_tables)
+                self.logger.critical(exception_msg)
+                raise Exception(exception_msg)
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -42,7 +45,7 @@ class UnifyTypes:
         self.connection.close()
 
     def _load_input_events(self) -> dict:
-        print("Loading events...")
+        self.logger.info("Loading events...")
         query = '''
                     SELECT ed.id, ed.title, ed.types, edk.keyword, edk.source
                     FROM event_data ed
@@ -75,9 +78,8 @@ class UnifyTypes:
 
         return input_event_dict
 
-    @staticmethod
-    def _prepare_types() -> dict:
-        print("Preparing types...")
+    def _prepare_types(self) -> dict:
+        self.logger.info("Preparing types...")
         with open(EVENT_TYPES_JSON_FILE_PATH, 'r') as types_file:
             types_list = json.load(types_file)
 
@@ -91,8 +93,9 @@ class UnifyTypes:
 
         return dict(types_mapping)
 
-    @staticmethod
-    def _match_types(input_events: dict, types_mapping: dict) -> list:
+    def _match_types(self, input_events: dict, types_mapping: dict) -> list:
+        self.logger.info("Unifying events' types...")
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX, __file__)
         input_tuples = []
         for index, event_id in enumerate(input_events):
             input_tuples.append((index + 1, len(input_events), input_events[event_id], types_mapping))
@@ -102,10 +105,11 @@ class UnifyTypes:
 
     @staticmethod
     def _match_type(input_tuple: tuple) -> tuple:
+        simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
         input_index, total_length, event_dict, types_mapping = input_tuple
         event_id = event_dict['id']
 
-        debug_output = "{}/{} | Unifying types for event: {}".format(input_index, total_length, event_id)
+        info_output = "{}/{} | Unifying types for event: {}".format(input_index, total_length, event_id)
 
         matched_types = set()
         for type_word, keywords in types_mapping.items():
@@ -120,14 +124,20 @@ class UnifyTypes:
                 matched_types.add(type_word)
 
         if len(matched_types) == 0:
-            debug_output += " - Guessing type from keywords..."
+            info_output += " | ...guessing type from keywords"
             if len(event_dict['keywords']) != 0:
                 for type_word, keywords in types_mapping.items():
                     keywords_from_title = event_dict['keywords'].get('title', [])
                     if UnifyTypes._type_matches_keywords(types_mapping[type_word], keywords_from_title):
                         matched_types.add(type_word)
 
-        print(debug_output)
+        if len(matched_types) == 0:
+            info_output += " | NOK"
+            simple_logger.warning(info_output)
+        else:
+            info_output += " | OK"
+            simple_logger.info(info_output)
+
         return event_id, list(matched_types), event_dict['types']
 
     @staticmethod
@@ -138,7 +148,7 @@ class UnifyTypes:
         return False
 
     def _store_to_db(self, types_to_insert: list) -> None:
-        print("Inserting into DB...")
+        self.logger.info("Inserting into DB...")
         events_without_type = []
         result_dict = {}
         nok = 0
@@ -165,14 +175,16 @@ class UnifyTypes:
                 try:
                     self.connection.execute(query)
                 except sqlite3.Error as e:
-                    print("Error occurred when storing {} into 'event_data_types' table: {}".format(values, str(e)))
+                    self.logger.error(
+                        "Error occurred when storing {} into 'event_data_types' table: {}".format(values, str(e)))
         if self.args.dry_run:
-            print(json.dumps(result_dict, indent=4, ensure_ascii=False))
+            self.logger.info(json.dumps(result_dict, indent=4, ensure_ascii=False))
         else:
             self.connection.commit()
 
-        print(">> Result: {} OKs + {} NOKs / {}".format(len(types_to_insert) - nok, nok, len(types_to_insert)))
-        print(">> Events without type's event_data IDs: {}".format(events_without_type))
+        self.logger.info(
+            ">> Result: {} OKs + {} NOKs / {}".format(len(types_to_insert) - nok, nok, len(types_to_insert)))
+        self.logger.info(">> Events without type's event_data IDs: {}".format(events_without_type))
 
 
 if __name__ == '__main__':

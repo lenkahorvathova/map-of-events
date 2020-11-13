@@ -1,18 +1,20 @@
 import argparse
 import json
+import logging
 import multiprocessing
 import sqlite3
 import sys
 
 from lib import utils, logger
 from lib.arguments_parser import ArgumentsParser
+from lib.constants import SIMPLE_LOGGER_PREFIX
 from lib.datetime_parser import DatetimeParser
 
 
 class ProcessDatetime:
     def __init__(self):
         self.args = self._parse_arguments()
-        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
+        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
@@ -20,7 +22,9 @@ class ProcessDatetime:
                                                    ["calendar", "event_url", "event_html", "event_data",
                                                     "event_data_datetime"])
             if len(missing_tables) != 0:
-                raise Exception("Missing tables in the DB: {}".format(missing_tables))
+                exception_msg = "Missing tables in the DB: {}".format(missing_tables)
+                self.logger.critical(exception_msg)
+                raise Exception(exception_msg)
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -44,7 +48,7 @@ class ProcessDatetime:
         self.connection.close()
 
     def load_events(self) -> list:
-        print("Loading input events...")
+        self.logger.info("Loading input events...")
         query = '''
                     SELECT ed.id, ed.datetime, 
                            eu.url, 
@@ -62,10 +66,12 @@ class ProcessDatetime:
         if self.args.domain:
             website_base = utils.get_base_by_domain(self.args.domain)
             if website_base is None:
-                sys.exit("Unknown domain '{}'!".format(self.args.domain))
+                self.logger.critical("Unknown domain '{}'!".format(self.args.domain))
+                sys.exit()
             calendar_url = website_base.get('url', None)
             if calendar_url is None:
-                sys.exit("Specified domain '{}' is no longer active!".format(self.args.domain))
+                self.logger.critical("Specified domain '{}' is no longer active!".format(self.args.domain))
+                sys.exit()
             query += ''' AND c.url = "{}"'''.format(calendar_url)
 
         if self.args.event_url:
@@ -78,8 +84,9 @@ class ProcessDatetime:
         cursor = self.connection.execute(query)
         return cursor.fetchall()
 
-    @staticmethod
-    def process_datetimes(input_events: list) -> list:
+    def process_datetimes(self, input_events: list) -> list:
+        self.logger.info("Processing events' datetimes...")
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__)
         input_tuples = []
 
         for index, event_tuple in enumerate(input_events):
@@ -92,14 +99,15 @@ class ProcessDatetime:
 
     @staticmethod
     def process_datetime(input_tuple: tuple):
+        simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
         input_index, total_length, event_tuple, website_base = input_tuple
         event_data_id, event_data_datetime, event_url, _ = event_tuple
 
-        debug_output = "{}/{} | Processing datetime of: {}".format(input_index, total_length, event_url)
+        info_output = "{}/{} | Processing datetime of: {}".format(input_index, total_length, event_url)
 
         if event_data_datetime is None:
-            debug_output += " | NOK - (Event's datetime is None!)"
-            print(debug_output)
+            info_output += " | NOK - (Event's datetime is None!)"
+            simple_logger.warning(info_output)
             return [], event_data_id
 
         parser_name = website_base["parser"]
@@ -109,22 +117,24 @@ class ProcessDatetime:
         try:
             processed_datetimes = parser.process_datetimes(db_datetimes)
         except Exception as e:
-            debug_output += " | NOK"
+            info_output += " | NOK"
             if len(parser.error_messages) != 0:
-                debug_output += " - ({})".format(" & ".join(parser.error_messages))
-            debug_output += "\n\t> Exception: {}".format(str(e))
-            print(debug_output)
+                info_output += " - ({})".format(" & ".join(parser.error_messages))
+            info_output += "\n\t> Exception: {}".format(str(e))
+            simple_logger.error(info_output)
             return [], event_data_id
 
-        debug_output += " | {}".format(len(processed_datetimes))
-        # if len(processed_datetimes) == 0:
-        print(debug_output)
+        info_output += " | {}".format(len(processed_datetimes))
+        if len(processed_datetimes) == 0:
+            simple_logger.warning(info_output)
+        else:
+            simple_logger.info(info_output)
 
         return processed_datetimes, event_data_id
 
     def store_to_database(self, datetimes_to_insert: list, dry_run: bool) -> None:
         if not dry_run:
-            print("Inserting processed datetimes into DB...")
+            self.logger.info("Inserting into DB...")
         milestones = [10, 30, 50, 70, 90, 100]
 
         ok = 0
@@ -145,7 +155,7 @@ class ProcessDatetime:
             if not dry_run:
                 curr_percentage = (index + 1) / len(datetimes_to_insert) * 100
                 while len(milestones) > 0 and curr_percentage >= milestones[0]:
-                    print("...{:.0f} % inserted".format(milestones[0]))
+                    self.logger.debug("...{:.0f} % inserted".format(milestones[0]))
                     milestones = milestones[1:]
 
                 query = '''
@@ -158,14 +168,14 @@ class ProcessDatetime:
                 except sqlite3.Error as e:
                     ok -= 1
                     nok.append(event_data_id)
-                    print("Error occurred when storing {} into 'event_data_datetime' table: {}".format(
+                    self.logger.error("Error occurred when storing {} into 'event_data_datetime' table: {}".format(
                         tuples_to_insert, str(e)))
                     continue
 
             self.connection.commit()
 
-        print(">> Result: {} OKs + {} NOKs / {}".format(ok, len(nok), ok + len(nok)))
-        print(">> Failed event_data IDs: {}".format(nok))
+        self.logger.info(">> Result: {} OKs + {} NOKs / {}".format(ok, len(nok), ok + len(nok)))
+        self.logger.info(">> Failed event_data IDs: {}".format(nok))
 
 
 if __name__ == '__main__':

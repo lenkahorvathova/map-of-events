@@ -1,5 +1,6 @@
 import argparse
 import json
+import logging
 import multiprocessing
 import os
 import sqlite3
@@ -11,6 +12,7 @@ from lxml import etree
 
 from lib import utils, logger
 from lib.arguments_parser import ArgumentsParser
+from lib.constants import SIMPLE_LOGGER_PREFIX
 from lib.parser import Parser
 
 
@@ -22,7 +24,7 @@ class ParseEvents:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
-        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
+        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
         self.base = utils.get_active_base()
 
@@ -30,7 +32,9 @@ class ParseEvents:
             missing_tables = utils.check_db_tables(self.connection,
                                                    ["calendar", "event_url", "event_html", "event_data"])
             if len(missing_tables) != 0:
-                raise Exception("Missing tables in the DB: {}".format(missing_tables))
+                exception_msg = "Missing tables in the DB: {}".format(missing_tables)
+                self.logger.critical(exception_msg)
+                raise Exception(exception_msg)
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -54,7 +58,7 @@ class ParseEvents:
         self.connection.close()
 
     def load_input_events(self) -> list:
-        print("Loading input events...")
+        self.logger.info("Loading input events...")
         query = '''
                     SELECT eh.id, eh.html_file_path, 
                            eu.url, 
@@ -68,10 +72,12 @@ class ParseEvents:
         if self.args.domain:
             website_base = utils.get_base_by_domain(self.args.domain)
             if website_base is None:
-                sys.exit("Unknown domain '{}'!".format(self.args.domain))
+                self.logger.critical("Unknown domain '{}'!".format(self.args.domain))
+                sys.exit()
             calendar_url = website_base.get('url', None)
             if calendar_url is None:
-                sys.exit("Specified domain '{}' is no longer active!".format(self.args.domain))
+                self.logger.critical("Specified domain '{}' is no longer active!".format(self.args.domain))
+                sys.exit()
             query += ''' AND c.url = "{}"'''.format(calendar_url)
 
         if self.args.event_url:
@@ -83,8 +89,9 @@ class ParseEvents:
         cursor = self.connection.execute(query)
         return cursor.fetchall()
 
-    @staticmethod
-    def parse_events(input_events: list) -> list:
+    def parse_events(self, input_events: list) -> list:
+        self.logger.info("Parsing events' content...")
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__)
         timestamp = datetime.now()
         input_tuples = []
 
@@ -98,21 +105,22 @@ class ParseEvents:
 
     @staticmethod
     def process_event(input_tuple: tuple) -> (dict, str, tuple):
+        simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
         input_index, total_length, event_tuple, timestamp, website_base = input_tuple
         """ (input_index: int, total_length: int, event_tuple: (int, str, str, str), timestamp: datetime, 
             website_base: dict) """
         event_html_id, event_html_file_path, event_url, _ = event_tuple
 
-        debug_output = "{}/{} | Parsing event: {}".format(input_index, total_length, event_url)
+        info_output = "{}/{} | Parsing event: {}".format(input_index, total_length, event_url)
 
         if not event_html_file_path:
-            debug_output += " | NOK - (File path for the event '{}' is None!)".format(event_url)
-            print(debug_output)
+            info_output += " | NOK - (File path for the event '{}' is None!)".format(event_url)
+            simple_logger.error(info_output)
             return {"error": "Filepath is None!"}, timestamp, event_tuple
 
         elif not os.path.isfile(event_html_file_path):
-            debug_output += " | NOK - (File '{}' does not exist!)".format(event_html_file_path)
-            print(debug_output)
+            info_output += " | NOK - (File '{}' does not exist!)".format(event_html_file_path)
+            simple_logger.error(info_output)
             return {"error": "File does not exist!"}, timestamp, event_tuple
 
         with open(event_html_file_path, encoding="utf-8") as html_file:
@@ -125,28 +133,29 @@ class ParseEvents:
         try:
             parsed_event_data = parser.get_event_data()
         except Exception as e:
-            debug_output += " | NOK"
+            info_output += " | NOK"
             if len(parser.error_messages) != 0:
-                debug_output += " - ({})".format(" & ".join(parser.error_messages))
-            debug_output += "\n\t> Exception: {}".format(str(e))
-            print(debug_output)
+                info_output += " - ({})".format(" & ".join(parser.error_messages))
+            info_output += "\n\t> Exception: {}".format(str(e))
+            simple_logger.error(info_output)
             return {"error": "Exception occurred during parsing!"}, timestamp, event_tuple
 
         if len(parsed_event_data) == 0:
-            debug_output += " | NOK - ({})".format(" & ".join(parser.error_messages))
-            print(debug_output)
+            info_output += " | NOK - ({})".format(" & ".join(parser.error_messages))
+            simple_logger.error(info_output)
             return {"error": "No data were parsed!"}, timestamp, event_tuple
 
-        debug_output += " | OK".format(input_index, total_length, event_url)
+        info_output += " | OK".format(input_index, total_length, event_url)
+        simple_logger.info(info_output)
         if len(parser.error_messages) != 0:
-            debug_output += " - ({})".format(" & ".join(parser.error_messages))
-        print(debug_output)
+            debug_output = "Parser's errors: {}".format(" & ".join(parser.error_messages))
+            simple_logger.debug(debug_output)
 
         return parsed_event_data, timestamp, event_tuple
 
     def store_to_database(self, events_to_insert: list, dry_run: bool) -> None:
         if not dry_run:
-            print("Inserting into DB...")
+            self.logger.info("Inserting into DB...")
 
         debug_output = ""
         parsed_data = []
@@ -196,7 +205,8 @@ class ParseEvents:
                 except sqlite3.Error as e:
                     nok_list.append(event_html_id)
                     error_dict["Error occurred during storing!"] += 1
-                    print("Error occurred when storing {} into 'event_data' table: {}".format(values, str(e)))
+                    self.logger.error(
+                        "Error occurred when storing {} into 'event_data' table: {}".format(values, str(e)))
                     parsed_data.append({
                         "file": event_html_file_path,
                         "url": event_url,
@@ -215,14 +225,14 @@ class ParseEvents:
         if dry_run:
             debug_output += ">> Data:\n"
             debug_output += "{}\n".format(json.dumps(parsed_data, indent=4, ensure_ascii=False))
+        self.logger.info(debug_output)
 
-        debug_output += ">> Errors stats: {}\n".format(json.dumps(error_dict, indent=4, ensure_ascii=False))
-        debug_output += ">> Result: {} OKs + {} NOKs / {}\n".format(ok, len(nok_list), ok + len(nok_list))
-        debug_output += ">> Failed event_html IDs: {}\n".format(nok_list)
-        print(debug_output, end="")
+        self.logger.info(">> Errors stats: {}".format(json.dumps(error_dict, indent=4, ensure_ascii=False)))
+        self.logger.info(">> Result: {} OKs + {} NOKs / {}".format(ok, len(nok_list), ok + len(nok_list)))
+        self.logger.info(">> Failed event_html IDs: {}".format(nok_list))
 
     def update_database(self, input_events: list) -> None:
-        print("Updating DB...")
+        self.logger.info("Updating DB...")
 
         input_ids = [event[0] for event in input_events]
         query = '''
@@ -234,7 +244,7 @@ class ParseEvents:
         try:
             self.connection.execute(query)
         except sqlite3.Error as e:
-            print("Error occurred when updating 'is_parsed' in 'event_html' table: {}".format(str(e)))
+            self.logger.error("Error occurred when updating 'is_parsed' in 'event_html' table: {}".format(str(e)))
         self.connection.commit()
 
 

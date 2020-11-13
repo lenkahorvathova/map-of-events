@@ -1,11 +1,13 @@
 import argparse
 import json
+import logging
 import multiprocessing
 import re
 import sqlite3
 
 from lib import utils, logger
 from lib.arguments_parser import ArgumentsParser
+from lib.constants import SIMPLE_LOGGER_PREFIX
 
 
 class ExtractKeywords:
@@ -13,13 +15,15 @@ class ExtractKeywords:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
-        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
+        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
             missing_tables = utils.check_db_tables(self.connection, ["event_data", "event_data_keywords"])
             if len(missing_tables) != 0:
-                raise Exception("Missing tables in the DB: {}".format(missing_tables))
+                exception_msg = "Missing tables in the DB: {}".format(missing_tables)
+                self.logger.critical(exception_msg)
+                raise Exception(exception_msg)
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -40,7 +44,7 @@ class ExtractKeywords:
         self.connection.close()
 
     def _load_input_events(self) -> list:
-        print("Loading events...")
+        self.logger.info("Loading events...")
         query = '''
                     SELECT ed.id, ed.title, ed.perex, ed.types
                     FROM event_data ed
@@ -58,17 +62,17 @@ class ExtractKeywords:
         cursor = self.connection.execute(query)
         return cursor.fetchall()
 
-    @staticmethod
-    def _prepare_keywords_dict() -> dict:
-        print("Preparing keywords...")
+    def _prepare_keywords_dict(self) -> dict:
+        self.logger.info("Preparing keywords...")
         with open(ExtractKeywords.EVENT_KEYWORDS_JSON_FILE_PATH, 'r') as keywords_file:
             keywords_mapping = json.load(keywords_file)
             for keyword in keywords_mapping:
                 keywords_mapping[keyword].append(keyword)
             return dict(keywords_mapping)
 
-    @staticmethod
-    def _extract_events_keywords(input_events: list, keywords_dict: dict) -> list:
+    def _extract_events_keywords(self, input_events: list, keywords_dict: dict) -> list:
+        self.logger.info("Extracting events' keywords...")
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__)
         input_tuples = []
         for index, event in enumerate(input_events):
             input_tuples.append((index + 1, len(input_events), event, keywords_dict))
@@ -78,11 +82,11 @@ class ExtractKeywords:
 
     @staticmethod
     def _extract_event_keywords(input_tuple: tuple) -> tuple:
+        simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
         input_index, total_length, event, keywords_dict = input_tuple
         event_data_id, title, perex, types = event
 
-        debug_output = "{}/{} | Extracting keywords from event: {}".format(input_index, total_length, event_data_id)
-        print(debug_output)
+        info_output = "{}/{} | Extracting keywords from event: {}".format(input_index, total_length, event_data_id)
 
         matched_keywords = set()
         event_data = {
@@ -117,10 +121,17 @@ class ExtractKeywords:
                         if match:
                             matched_keywords.add((keyword, source))
 
+        if len(matched_keywords) == 0:
+            info_output += " | NOK"
+            simple_logger.warning(info_output)
+        else:
+            info_output += " | OK"
+            simple_logger.info(info_output)
+
         return event_data_id, list(matched_keywords), title, perex, types
 
     def _store_to_db(self, keywords_to_insert: list) -> None:
-        print("Inserting into DB...")
+        self.logger.info("Inserting into DB...")
         events_without_keywords = []
         results = {}
         nok = 0
@@ -149,15 +160,17 @@ class ExtractKeywords:
                 try:
                     self.connection.execute(query)
                 except sqlite3.Error as e:
-                    print("Error occurred when storing {} into 'event_data_types' table: {}".format(values, str(e)))
+                    self.logger.error(
+                        "Error occurred when storing {} into 'event_data_types' table: {}".format(values, str(e)))
 
         if self.args.dry_run:
-            print(json.dumps(results, indent=4, ensure_ascii=False))
+            self.logger.info(json.dumps(results, indent=4, ensure_ascii=False))
         else:
             self.connection.commit()
 
-        print(">> Result: {} OKs + {} NOKs / {}".format(len(keywords_to_insert) - nok, nok, len(keywords_to_insert)))
-        print(">> Events without keywords's event_data IDs: {}".format(events_without_keywords))
+        self.logger.info(">> Result: {} OKs + {} NOKs / {}".format(len(keywords_to_insert) - nok, nok,
+                                                                   len(keywords_to_insert)))
+        self.logger.info(">> Events without keywords's event_data IDs: {}".format(events_without_keywords))
 
 
 if __name__ == '__main__':

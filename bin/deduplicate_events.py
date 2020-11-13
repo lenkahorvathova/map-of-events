@@ -1,4 +1,5 @@
 import argparse
+import logging
 import math
 import multiprocessing
 import re
@@ -7,6 +8,7 @@ from collections import defaultdict
 
 from lib import utils, logger
 from lib.arguments_parser import ArgumentsParser
+from lib.constants import SIMPLE_LOGGER_PREFIX
 
 
 class DeduplicateEvents:
@@ -17,13 +19,15 @@ class DeduplicateEvents:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
-        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
+        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
             missing_views = utils.check_db_views(self.connection, ["event_data_view"])
             if len(missing_views) != 0:
-                raise Exception("Missing views in the DB: {}".format(missing_views))
+                exception_msg = "Missing views in the DB: {}".format(missing_views)
+                self.logger.critical(exception_msg)
+                raise Exception(exception_msg)
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -43,7 +47,7 @@ class DeduplicateEvents:
         self.connection.close()
 
     def _get_input_events(self) -> dict:
-        print("Loading events...")
+        self.logger.info("Loading events...")
         query = '''
                     SELECT calendar__url, calendar__downloaded_at,
                            event_url__id, event_url__url,
@@ -117,6 +121,8 @@ class DeduplicateEvents:
         return result_events
 
     def _find_duplicates(self, event_url: str, input_events: dict) -> list:
+        self.logger.info("Deduplicating events...")
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__)
         input_tuples = []
         if event_url is not None:
             self._find_duplicate((1, 1, event_url, input_events))
@@ -129,11 +135,12 @@ class DeduplicateEvents:
 
     @staticmethod
     def _find_duplicate(input_tuple: tuple) -> dict:
+        simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
         input_index, total_length, this_event_url, all_events = input_tuple
 
         this_event_dict = all_events[this_event_url]
-        duplicate_output = ">>>\n {}\n".format(this_event_dict)
-        debug_output = "{}/{} | De-duplicating URL: {}".format(input_index, total_length, this_event_url)
+        debug_output = ">>>\n {}\n".format(this_event_dict)
+        info_output = "{}/{} | De-duplicating URL: {}".format(input_index, total_length, this_event_url)
         count_same = 0
         duplicates = set()
 
@@ -155,13 +162,13 @@ class DeduplicateEvents:
                                                                   other_event_dict['keywords']) \
                     and DeduplicateEvents._are_lists_almost_equal(this_event_dict['types'], other_event_dict['types']):
                 count_same += 1
-                duplicate_output += "==\n{}\n".format(other_event_dict)
+                debug_output += "==\n{}\n".format(other_event_dict)
                 duplicates.add(other_event_dict['id'])
 
-        debug_output += " | {}".format(count_same)
-        # if count_same != 0:
-        #     debug_output += "\n{}".format(duplicate_output)
-        print(debug_output)
+        info_output += " | {}".format(count_same)
+        simple_logger.info(info_output)
+        if count_same != 0:
+            simple_logger.debug(debug_output)
 
         return {
             'event_id': this_event_dict['id'],
@@ -265,7 +272,7 @@ class DeduplicateEvents:
 
     def _update_database(self, duplicates_to_mark: list, dry_run: bool) -> None:
         if not dry_run:
-            print("Updating DB...")
+            self.logger.info("Updating DB...")
 
         sorted_duplicates = sorted(duplicates_to_mark, key=lambda x: x['fetched_at'], reverse=True)
         duplicates_count = 0
@@ -293,13 +300,14 @@ class DeduplicateEvents:
                 try:
                     self.connection.execute(query)
                 except sqlite3.Error as e:
-                    print("Error occurred when updating 'duplicate_of' value in 'event_url' table: {}".format(str(e)))
+                    self.logger.error(
+                        "Error occurred when updating 'duplicate_of' value in 'event_url' table: {}".format(str(e)))
         if not dry_run:
             self.connection.commit()
 
-        print(">> Number of events{}marked as duplicates: {}".format("that would be" if dry_run else " ",
-                                                                     duplicates_count))
-        print(">> Events with its duplicates' event_url IDs: {}".format(output_dict))
+        self.logger.info(">> Number of events{}marked as duplicates: {}".format("that would be" if dry_run else " ",
+                                                                                duplicates_count))
+        self.logger.info(">> Events with its duplicates' event_url IDs: {}".format(output_dict))
 
 
 if __name__ == '__main__':

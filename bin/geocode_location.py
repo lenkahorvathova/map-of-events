@@ -1,14 +1,14 @@
 import argparse
 import csv
 import json
+import logging
 import multiprocessing
 import re
 import sqlite3
-import sys
 
 from lib import utils, logger
 from lib.arguments_parser import ArgumentsParser
-from lib.constants import MUNICIPALITIES_OF_CR_FILE_PATH
+from lib.constants import MUNICIPALITIES_OF_CR_FILE_PATH, SIMPLE_LOGGER_PREFIX
 
 
 class GeocodeLocation:
@@ -17,7 +17,7 @@ class GeocodeLocation:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
-        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
+        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
@@ -25,7 +25,9 @@ class GeocodeLocation:
                                                    ["calendar", "event_url", "event_html", "event_data",
                                                     "event_data_gps"])
             if len(missing_tables) != 0:
-                raise Exception("Missing tables in the DB: {}".format(missing_tables))
+                exception_msg = "Missing tables in the DB: {}".format(missing_tables)
+                self.logger.critical(exception_msg)
+                raise Exception(exception_msg)
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -45,7 +47,7 @@ class GeocodeLocation:
         self.connection.close()
 
     def load_events(self) -> list:
-        print("Loading events...")
+        self.logger.info("Loading events...")
 
         query = '''
                     SELECT ed.id, ed.title, ed.perex, ed.location, 
@@ -66,9 +68,8 @@ class GeocodeLocation:
         cursor = self.connection.execute(query)
         return cursor.fetchall()
 
-    @staticmethod
-    def load_municipalities_csv() -> list:
-        print("Loading municipalities...")
+    def load_municipalities_csv(self) -> list:
+        self.logger.info("Loading municipalities...")
 
         municipalities = []
         with open(MUNICIPALITIES_OF_CR_FILE_PATH, 'r') as csv_file:
@@ -109,8 +110,9 @@ class GeocodeLocation:
 
         return municipalities
 
-    @staticmethod
-    def geocode_events(events_to_geocode: list, municipalities: list) -> list:
+    def geocode_events(self, events_to_geocode: list, municipalities: list) -> list:
+        self.logger.info("Geocoding events' locations...")
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__)
         input_tuples = []
         calendars_with_default_gps = utils.get_base_dict_per_url(utils.get_base_with_default_gps())
 
@@ -122,6 +124,7 @@ class GeocodeLocation:
 
     @staticmethod
     def geocode_event(input_tuple: tuple) -> dict:
+        simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
         input_index, total_length, event, municipalities, calendars_with_default_gps = input_tuple
         event_id, title, perex, location, calendar_url = event
 
@@ -138,10 +141,9 @@ class GeocodeLocation:
             "location": location
         }
 
-        debug_output = "{}/{} | Processing event: {}".format(input_index, total_length, event_id)
+        info_output = "{}/{} | Processing event: {}".format(input_index, total_length, event_id)
         if not event_dict["has_default"]:
-            debug_output += " - Geocoding..."
-        print(debug_output)
+            info_output += " | ...geocoding"
 
         for text in [location, title]:
             event_dict["online"] = GeocodeLocation.match_online_in_text(text)
@@ -203,6 +205,13 @@ class GeocodeLocation:
         event_dict["matched"] = list(event_dict["matched"])
         event_dict["ambiguous"] = list(event_dict["ambiguous"])
 
+        if event_dict["has_default"] or event_dict["geocoded_location"]:
+            info_output += " | OK"
+            simple_logger.info(info_output)
+        else:
+            info_output += " | NOK"
+            simple_logger.warning(info_output)
+
         return event_dict
 
     @staticmethod
@@ -243,8 +252,7 @@ class GeocodeLocation:
 
         return False
 
-    @staticmethod
-    def get_stats(info_to_insert: list, dry_run: bool) -> None:
+    def get_stats(self, info_to_insert: list, dry_run: bool) -> None:
         result_dict = {
             "all": len(info_to_insert),
             "-online": 0,
@@ -287,23 +295,20 @@ class GeocodeLocation:
                 del match_without_default["base"]
                 result_dict["-results"].append(match_without_default)
 
-        debug_output = ""
         if dry_run:
-            debug_output += ">> Would be stored into an output file:\n"
-            debug_output += json.dumps(result_dict, indent=4, ensure_ascii=False)
+            self.logger.info(">> Would be stored into an output file:")
+            self.logger.info(json.dumps(result_dict, indent=4, ensure_ascii=False))
         else:
             utils.store_to_json_file(result_dict, GeocodeLocation.OUTPUT_FILE_PATH)
-            debug_output += ">> Online: {} / {}\n".format(result_dict["-online"], result_dict["all"])
-            debug_output += ">> Without default GPS: {} / {}\n".format(result_dict["without_default_gps"],
-                                                                       result_dict["all"])
-            debug_output += ">> Successfully geocoded: {} / {} + {}".format(result_dict["-geocoded"], result_dict[
-                "without_default_gps"] - without_default_online, without_default_online)
-
-        print(debug_output)
+            self.logger.info(">> Online: {} / {}".format(result_dict["-online"], result_dict["all"]))
+            self.logger.info(">> Without default GPS: {} / {}".format(result_dict["without_default_gps"],
+                                                                      result_dict["all"]))
+            self.logger.info(">> Successfully geocoded: {} / {} + {}".format(result_dict["-geocoded"], result_dict[
+                "without_default_gps"] - without_default_online, without_default_online))
 
     def store_to_db(self, info_to_insert: list, dry_run: bool) -> None:
         if not dry_run:
-            print("Inserting geocoded locations into DB...")
+            self.logger.info("Inserting geocoded locations into DB...")
 
         nok_list = set()
         data_to_insert = []
@@ -342,21 +347,18 @@ class GeocodeLocation:
                 try:
                     self.connection.execute(query, values)
                 except sqlite3.Error as e:
-                    print("Error occurred when inserting event '{}' into DB: {}".format(event_id, str(e)))
+                    self.logger.error("Error occurred when inserting event '{}' into DB: {}".format(event_id, str(e)))
                     nok_list.add(event_id)
 
         self.connection.commit()
 
-        debug_output = ""
         if dry_run:
-            debug_output += ">> Data (online, has_default, gps, municipality, district, event_data_id):\n"
-            debug_output += "\t{}\n".format("\n\t".join([str(tpl) for tpl in data_to_insert]))
+            self.logger.info(">> Data (online, has_default, gps, municipality, district, event_data_id):")
+            self.logger.info("\t{}".format("\n\t".join([str(tpl) for tpl in data_to_insert])))
 
         ok = len(info_to_insert) - len(nok_list)
-        debug_output += ">> Result: {} OKs + {} NOKs / {}\n".format(ok, len(nok_list), len(info_to_insert))
-        debug_output += ">> Failed event_data IDs: {}\n".format(list(nok_list))
-
-        print(debug_output, end="")
+        self.logger.info(">> Result: {} OKs + {} NOKs / {}\n".format(ok, len(nok_list), len(info_to_insert)))
+        self.logger.info(">> Failed event_data IDs: {}\n".format(list(nok_list)))
 
 
 if __name__ == "__main__":

@@ -1,4 +1,4 @@
-from lib import utils
+from lib import utils, logger
 
 
 class SetupDB:
@@ -8,8 +8,10 @@ class SetupDB:
 
     def __init__(self) -> None:
         self.connection = utils.create_connection()
+        self.logger = logger.set_up_script_logger(__file__)
 
     def run(self) -> None:
+        self.logger.info("Setting up DB...")
         self.connection.execute('''PRAGMA foreign_keys = ON''')
 
         with open(self.SCHEMA_PATH, 'r', encoding="utf-8") as schema_file:

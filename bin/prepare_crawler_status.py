@@ -11,15 +11,19 @@ class PrepareCrawlerStatus:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
-        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
+        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
 
         missing_tables = utils.check_db_tables(self.connection, ["calendar"])
         if len(missing_tables) != 0:
-            raise Exception("Missing tables in the DB: {}".format(missing_tables))
+            exception_msg = "Missing tables in the DB: {}".format(missing_tables)
+            self.logger.critical(exception_msg)
+            raise Exception(exception_msg)
         missing_views = utils.check_db_views(self.connection, ["event_data_view"])
         if len(missing_views) != 0:
-            raise Exception("Missing views in the DB: {}".format(missing_views))
+            exception_msg = "Missing views in the DB: {}".format(missing_views)
+            self.logger.critical(exception_msg)
+            raise Exception(exception_msg)
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -27,13 +31,13 @@ class PrepareCrawlerStatus:
         return parser.parse_args()
 
     def run(self):
-        print('Preparing Crawler Status...', end="")
+        self.logger.info('Preparing Crawler Status...'.rstrip('\n'))
         crawler_status_dict = self.prepare_crawler_status_dict()
         if self.args.dry_run:
-            print(json.dumps(crawler_status_dict, indent=4, ensure_ascii=False))
+            self.logger.info(json.dumps(crawler_status_dict, indent=4, ensure_ascii=False))
         else:
             utils.store_to_json_file(crawler_status_dict, PrepareCrawlerStatus.OUTPUT_FILE_PATH)
-        print("DONE")
+        self.logger.info("DONE")
 
     def prepare_crawler_status_dict(self) -> dict:
         crawler_status = {

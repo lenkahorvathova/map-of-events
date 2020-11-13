@@ -1,4 +1,5 @@
 import argparse
+import logging
 import multiprocessing
 import os
 import sqlite3
@@ -7,7 +8,7 @@ from datetime import datetime
 
 from lib import utils, logger
 from lib.arguments_parser import ArgumentsParser
-from lib.constants import DATA_DIR_PATH, INPUT_SITES_BASE_FILE_PATH
+from lib.constants import DATA_DIR_PATH, INPUT_SITES_BASE_FILE_PATH, SIMPLE_LOGGER_PREFIX
 
 
 class DownloadCalendars:
@@ -18,15 +19,19 @@ class DownloadCalendars:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
-        self.logger = logger.set_up_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
+        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
             if not os.path.isfile(INPUT_SITES_BASE_FILE_PATH):
-                raise Exception("Missing an input base file: '{}'".format(INPUT_SITES_BASE_FILE_PATH))
+                exception_msg = "Missing an input base file: '{}'".format(INPUT_SITES_BASE_FILE_PATH)
+                self.logger.critical(exception_msg)
+                raise Exception(exception_msg)
             missing_tables = utils.check_db_tables(self.connection, ["calendar"])
             if len(missing_tables) != 0:
-                raise Exception("Missing tables in the DB: {}".format(missing_tables))
+                exception_msg = ("Missing tables in the DB: {}".format(missing_tables))
+                self.logger.critical(exception_msg)
+                raise Exception(exception_msg)
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -44,15 +49,17 @@ class DownloadCalendars:
         self.connection.close()
 
     def get_input_websites(self) -> list:
-        print("Loading input calendars...")
+        self.logger.info("Loading input calendars...")
 
         if self.args.domain:
             website_base = utils.get_base_by_domain(self.args.domain)
             if website_base is None:
-                sys.exit("Unknown domain '{}'!".format(self.args.domain))
+                self.logger.critical("Unknown domain '{}'!".format(self.args.domain))
+                sys.exit()
             calendar_url = website_base.get('url', None)
             if calendar_url is None:
-                sys.exit("Specified domain '{}' is no longer active!".format(self.args.domain))
+                self.logger.critical("Specified domain '{}' is no longer active!".format(self.args.domain))
+                sys.exit()
 
             return [website_base]
 
@@ -60,6 +67,8 @@ class DownloadCalendars:
         return base_list
 
     def download_calendars(self, base_list: list) -> list:
+        self.logger.info("Downloading calendars' content...")
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__)
         timestamp = datetime.now()
         input_tuples = []
 
@@ -71,6 +80,7 @@ class DownloadCalendars:
 
     @staticmethod
     def process_website(input_tuple: tuple) -> (str, str, str):
+        simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
         input_index, total_length, timestamp, website_base, dry_run = input_tuple
         """ (input_index: int, total_length: int, timestamp: datetime, website_base: dict, dry_run: bool) """
 
@@ -86,15 +96,15 @@ class DownloadCalendars:
         if result != "200":
             html_file_path = None
 
-        debug_output = "{}/{}".format(input_index, total_length)
-        debug_output += " | Downloading URL: {} | {}".format(str(url), str(result))
-        print(debug_output)
+        info_output = "{}/{}".format(input_index, total_length)
+        info_output += " | Downloading URL: {} | {}".format(str(url), str(result))
+        simple_logger.info(info_output)
 
         return url, html_file_path, timestamp
 
     def store_to_database(self, calendars_to_insert: list, dry_run: str) -> None:
         if not dry_run:
-            print("Inserting into DB...")
+            self.logger.info("Inserting into DB...")
 
         failed_calendars = []
 
@@ -115,13 +125,13 @@ class DownloadCalendars:
                 try:
                     self.connection.execute(query, values)
                 except sqlite3.Error as e:
-                    print("Error occurred when storing {} into 'calendar' table: {}".format(values, str(e)))
+                    self.logger.error("Error occurred when storing {} into 'calendar' table: {}".format(values, str(e)))
 
         if not dry_run:
             self.connection.commit()
 
-        print(">> Number of failed calendars: {}/{}".format(len(failed_calendars), len(calendars_to_insert)))
-        print(">> Failed calendars: {}".format(failed_calendars))
+        self.logger.info(">> Number of failed calendars: {}/{}".format(len(failed_calendars), len(calendars_to_insert)))
+        self.logger.info(">> Failed calendars: {}".format(failed_calendars))
 
 
 if __name__ == '__main__':
