@@ -5,6 +5,7 @@ import re
 import shutil
 from collections import defaultdict
 from datetime import datetime
+from typing import List, Set
 
 from lib import utils, logger
 from lib.arguments_parser import ArgumentsParser
@@ -12,6 +13,8 @@ from lib.constants import EVENT_TYPES_JSON_FILE_PATH
 
 
 class GenerateHTML:
+    """ Generate website's HTML. """
+
     TEMP_WEB_FOLDER = "data/tmp/web"
     INDEX_TEMPLATE_HTML_FILE_PATH = "web/index_template.html"
     INDEX_GENERATED_HTML_FILE_PATH = os.path.join(TEMP_WEB_FOLDER, "index.html")
@@ -26,11 +29,8 @@ class GenerateHTML:
         self.connection = utils.create_connection()
         self.latest_execution_log_path = self._get_latest_execution_log_path()
 
-        missing_views = utils.check_db_views(self.connection, ["event_data_view"])
-        if len(missing_views) != 0:
-            exception_msg = "Missing views in the DB: {}".format(missing_views)
-            self.logger.critical(exception_msg)
-            raise Exception(exception_msg)
+        if not self.args.dry_run:
+            utils.check_db_views(self.connection, ["event_data_view"])
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -38,15 +38,17 @@ class GenerateHTML:
         return parser.parse_args()
 
     def run(self) -> None:
-        self.logger.info("Generating HTML...".rstrip('\n'))
-        events_dataset = self.get_events()
-        self.complete_index_template(events_dataset)
-        status_info = self.get_crawler_status_info()
-        self.complete_crawler_status_template(status_info)
-        self.copy_other_files()
+        self.logger.info("Generating HTML...")
+
+        events_dataset = self._get_events()
+        self._complete_index_template(events_dataset)
+        status_info = self._get_crawler_status_info()
+        self._complete_crawler_status_template(status_info)
+        self._copy_other_files()
+
         self.logger.info("DONE")
 
-    def get_events(self) -> dict:
+    def _get_events(self) -> dict:
         query = '''
                     SELECT calendar__url, calendar__downloaded_at,
                            event_url__url,
@@ -131,7 +133,7 @@ class GenerateHTML:
             supertypes = type_dict.get('supertypes', [])
             types_graph[main_type].update(supertypes)
 
-        def add_supertypes_rec(type_word: str) -> set:
+        def add_supertypes_rec(type_word: str) -> Set[str]:
             out = {type_word}
             if type_word in types_graph:
                 for supertype in types_graph[type_word]:
@@ -145,7 +147,7 @@ class GenerateHTML:
 
         return {key: list(value) for key, value in types_mapping.items()}
 
-    def _get_associated_types(self, types: set) -> list:
+    def _get_associated_types(self, types: Set[str]) -> List[str]:
         mapping_types = self._prepare_types()
         mapped_types = set()
         for event_type in types:
@@ -156,7 +158,7 @@ class GenerateHTML:
             return list(mapped_types)
 
     @staticmethod
-    def _get_types_and_keywords(input_events: dict) -> (list, list):
+    def _get_types_and_keywords(input_events: dict) -> (List[str], List[str]):
         types = set()
         keywords = set()
 
@@ -166,7 +168,7 @@ class GenerateHTML:
 
         return sorted(list(types), key=str.lower), sorted(list(keywords), key=str.lower)
 
-    def complete_index_template(self, events_dataset: dict) -> None:
+    def _complete_index_template(self, events_dataset: dict) -> None:
         with open(GenerateHTML.INDEX_TEMPLATE_HTML_FILE_PATH, 'r') as index_template_file:
             file = index_template_file.read()
 
@@ -243,13 +245,13 @@ class GenerateHTML:
         return calendar_sources_modal, calendars_count
 
     @staticmethod
-    def get_crawler_status_info() -> dict:
+    def _get_crawler_status_info() -> dict:
         with open(GenerateHTML.CRAWLER_STATUS_INFO_JSON_FILE, 'r') as status_json_file:
             crawler_status_dict = json.load(status_json_file)
 
         return crawler_status_dict
 
-    def complete_crawler_status_template(self, status_info: dict) -> None:
+    def _complete_crawler_status_template(self, status_info: dict) -> None:
         with open(GenerateHTML.CRAWLER_STATUS_TEMPLATE_HTML_FILE_PATH, 'r') as crawler_status_template_file:
             file = crawler_status_template_file.read()
         file = file.replace('{{all_events_count}}', str(status_info['statistics']['total_count'])) \
@@ -289,7 +291,7 @@ class GenerateHTML:
         with open(GenerateHTML.CRAWLER_STATUS_GENERATED_HTML_FILE_PATH, 'w') as crawler_status_generated_file:
             crawler_status_generated_file.write(file)
 
-    def copy_other_files(self) -> None:
+    def _copy_other_files(self) -> None:
         os.makedirs(os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/'), exist_ok=True)
         shutil.copy2('web/scripts/events_map.js', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/events_map.js'))
         shutil.copy2('web/scripts/index.js', os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'scripts/index.js'))

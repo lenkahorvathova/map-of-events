@@ -20,6 +20,7 @@ export PYTHONPATH="${REPOSITORY_DIR}"
 source "${PYTHON_ENV_SCRIPTS_DIR}/activate" || exit
 
 current_time=$(date "+%Y-%m-%d_%H-%M-%S")
+log_file_path="data/log/cron_process_${current_time}.txt"
 mkdir -p "${LOG_DATA_DIR}"
 {
   echo "====================$current_time====================="
@@ -27,59 +28,58 @@ mkdir -p "${LOG_DATA_DIR}"
   echo "============================================================"
   echo "DOWNLOAD CALENDARS:"
   echo "============================================================"
-  python3 -u bin/download_calendars.py
+  python3 -u bin/download_calendars.py --log-file "${log_file_path}"
 
   echo "============================================================"
   echo "PARSE CALENDARS:"
   echo "============================================================"
-  python3 -u bin/parse_calendars.py
+  python3 -u bin/parse_calendars.py --log-file "${log_file_path}"
 
   echo "============================================================"
   echo "DOWNLOAD EVENTS:"
   echo "============================================================"
-  python3 -u bin/download_events.py
+  python3 -u bin/download_events.py --log-file "${log_file_path}"
 
   echo "============================================================"
   echo "PARSE EVENTS:"
   echo "============================================================"
-  python3 -u bin/parse_events.py
+  python3 -u bin/parse_events.py --log-file "${log_file_path}"
 
   echo "============================================================"
   echo "PROCESS EVENTS' DATETIME:"
   echo "============================================================"
-  python3 -u bin/process_datetime.py
+  python3 -u bin/process_datetime.py --log-file "${log_file_path}"
 
   echo "============================================================"
   echo "GEOCODE EVENTS' LOCATION:"
   echo "============================================================"
-  python3 -u bin/geocode_location.py
+  python3 -u bin/geocode_location.py --log-file "${log_file_path}"
 
   echo "============================================================"
   echo "EXTRACT EVENTS' KEYWORDS:"
   echo "============================================================"
-  python3 -u bin/extract_keywords.py
+  python3 -u bin/extract_keywords.py --log-file "${log_file_path}"
 
   echo "============================================================"
   echo "UNIFY EVENTS' TYPES:"
   echo "============================================================"
-  python3 -u bin/unify_types.py
+  python3 -u bin/unify_types.py --log-file "${log_file_path}"
 
   echo "============================================================"
   echo "DEDUPLICATE EVENTS:"
   echo "============================================================"
-  python3 -u bin/deduplicate_events.py
+  python3 -u bin/deduplicate_events.py --log-file "${log_file_path}"
 
   echo "============================================================"
   echo "PREPARE CRAWLER'S STATUS:"
   echo "============================================================"
-  python3 -u bin/prepare_crawler_status.py
+  python3 -u bin/prepare_crawler_status.py --log-file "${log_file_path}"
 
   echo "============================================================"
   echo "GENERATE WEBSITE'S HTML:"
   echo "============================================================"
-  python3 -u bin/generate_html.py
-
-} 2>&1 | tee -a "data/log/cron_process_${current_time}.txt"
+  python3 -u bin/generate_html.py --log-file "${log_file_path}"
+} >>"${log_file_path}"
 
 mkdir -p "${PUBLIC_HTML_DIR}"
 (cp -rpf "${WEBSITE_DATA_DIR}/." "${PUBLIC_HTML_DIR}" >>/dev/null 2>&1) || (

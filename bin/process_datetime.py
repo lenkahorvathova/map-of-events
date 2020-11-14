@@ -4,6 +4,7 @@ import logging
 import multiprocessing
 import sqlite3
 import sys
+from typing import List
 
 from lib import utils, logger
 from lib.arguments_parser import ArgumentsParser
@@ -12,43 +13,39 @@ from lib.datetime_parser import DatetimeParser
 
 
 class ProcessDatetime:
+    """ Processes datetime of parsed events. """
+
     def __init__(self):
         self.args = self._parse_arguments()
         self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
-            missing_tables = utils.check_db_tables(self.connection,
-                                                   ["calendar", "event_url", "event_html", "event_data",
-                                                    "event_data_datetime"])
-            if len(missing_tables) != 0:
-                exception_msg = "Missing tables in the DB: {}".format(missing_tables)
-                self.logger.critical(exception_msg)
-                raise Exception(exception_msg)
+            utils.check_db_tables(self.connection,
+                                  ["calendar", "event_url", "event_html", "event_data", "event_data_datetime"])
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
-
         parser.add_argument('--domain', type=str, default=None,
-                            help="process datetime only of the specified domain")
+                            help="process datetime only of events from the specified calendar domain")
         parser.add_argument('--event-url', type=str, default=None,
-                            help="process datetime only of the specified URL")
+                            help="process datetime only of an event from the specified URL")
         parser.add_argument('--events-ids', type=int, nargs="*",
-                            help="process datetime only of the specified events' IDs")
+                            help="process datetime only of events with the specified event_data IDs")
         parser.add_argument('--process-all', action='store_true', default=False,
-                            help="process datetimes of even already processed events")
-
+                            help="process datetime of even already processed events")
         return parser.parse_args()
 
     def run(self) -> None:
-        input_events = self.load_events()
-        datetimes_to_insert = self.process_datetimes(input_events)
-        self.store_to_database(datetimes_to_insert, self.args.dry_run)
+        input_events = self._load_input_events()
+        datetimes_to_insert = self._process_datetimes(input_events)
+        self._store_to_database(datetimes_to_insert)
         self.connection.close()
 
-    def load_events(self) -> list:
+    def _load_input_events(self) -> List[tuple]:
         self.logger.info("Loading input events...")
+
         query = '''
                     SELECT ed.id, ed.datetime, 
                            eu.url, 
@@ -84,75 +81,69 @@ class ProcessDatetime:
         cursor = self.connection.execute(query)
         return cursor.fetchall()
 
-    def process_datetimes(self, input_events: list) -> list:
+    def _process_datetimes(self, input_events: List[tuple]) -> List[tuple]:
         self.logger.info("Processing events' datetimes...")
-        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__)
-        input_tuples = []
 
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__, log_file=self.args.log_file, debug=self.args.debug)
+
+        input_tuples = []
         for index, event_tuple in enumerate(input_events):
             _, _, _, calendar_url = event_tuple
             website_base = utils.get_base_by_url(calendar_url)
             input_tuples.append((index + 1, len(input_events), event_tuple, website_base))
 
         with multiprocessing.Pool(32) as p:
-            return p.map(ProcessDatetime.process_datetime, input_tuples)
+            return p.map(ProcessDatetime._process_datetimes_process, input_tuples)
 
     @staticmethod
-    def process_datetime(input_tuple: tuple):
+    def _process_datetimes_process(input_tuple: (int, int, (int, str, str, str), dict)) -> (List[tuple], int):
         simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
+
         input_index, total_length, event_tuple, website_base = input_tuple
         event_data_id, event_data_datetime, event_url, _ = event_tuple
+        db_datetimes = list(json.loads(event_data_datetime)) if event_data_datetime else []
 
         info_output = "{}/{} | Processing datetime of: {}".format(input_index, total_length, event_url)
 
-        if event_data_datetime is None:
-            info_output += " | NOK - (Event's datetime is None!)"
-            simple_logger.warning(info_output)
+        if len(db_datetimes) == 0:
+            simple_logger.warning(info_output + " | NOK - (Event has no datetime!)")
             return [], event_data_id
 
-        parser_name = website_base["parser"]
-        parser = DatetimeParser(parser_name)
-
-        db_datetimes = list(json.loads(event_data_datetime))
+        parser = DatetimeParser(website_base["parser"])
         try:
             processed_datetimes = parser.process_datetimes(db_datetimes)
         except Exception as e:
-            info_output += " | NOK"
+            simple_logger.error(info_output + " | NOK (Exception: {})".format(str(e)))
             if len(parser.error_messages) != 0:
-                info_output += " - ({})".format(" & ".join(parser.error_messages))
-            info_output += "\n\t> Exception: {}".format(str(e))
-            simple_logger.error(info_output)
+                simple_logger.debug("Parser's errors: {}".format(json.dumps(parser.error_messages, indent=4)))
             return [], event_data_id
 
-        info_output += " | {}".format(len(processed_datetimes))
         if len(processed_datetimes) == 0:
-            simple_logger.warning(info_output)
+            simple_logger.warning(info_output + " | 0")
         else:
-            simple_logger.info(info_output)
+            simple_logger.info(info_output + " | {}".format(len(processed_datetimes)))
+        if len(parser.error_messages) != 0:
+            simple_logger.debug("Parser's errors: {}".format(json.dumps(parser.error_messages, indent=4)))
 
         return processed_datetimes, event_data_id
 
-    def store_to_database(self, datetimes_to_insert: list, dry_run: bool) -> None:
-        if not dry_run:
+    def _store_to_database(self, datetimes_to_insert: List[tuple]) -> None:
+        if not self.args.dry_run:
             self.logger.info("Inserting into DB...")
+
         milestones = [10, 30, 50, 70, 90, 100]
-
-        ok = 0
         nok = []
-
         for index, dt_tuple in enumerate(datetimes_to_insert):
             processed_datetimes, event_data_id = dt_tuple
 
             if not processed_datetimes:
                 nok.append(event_data_id)
                 processed_datetimes = [(None, None, None, None)]
-            else:
-                ok += 1
 
             tuples_to_insert = [tpl + (event_data_id,) for tpl in processed_datetimes]
             tuples_to_insert = ", ".join([tpl.__str__().replace('None', 'null') for tpl in set(tuples_to_insert)])
 
-            if not dry_run:
+            if not self.args.dry_run:
                 curr_percentage = (index + 1) / len(datetimes_to_insert) * 100
                 while len(milestones) > 0 and curr_percentage >= milestones[0]:
                     self.logger.debug("...{:.0f} % inserted".format(milestones[0]))
@@ -162,19 +153,19 @@ class ProcessDatetime:
                             INSERT INTO event_data_datetime(start_date, start_time, end_date, end_time, event_data_id)
                             VALUES {}
                         '''.format(tuples_to_insert)
-
                 try:
                     self.connection.execute(query)
                 except sqlite3.Error as e:
-                    ok -= 1
                     nok.append(event_data_id)
-                    self.logger.error("Error occurred when storing {} into 'event_data_datetime' table: {}".format(
-                        tuples_to_insert, str(e)))
+                    self.logger.error(
+                        "Error occurred when storing {} into 'event_data_datetime' table: {}".format(tuples_to_insert,
+                                                                                                     str(e)))
                     continue
+            if not self.args.dry_run:
+                self.connection.commit()
 
-            self.connection.commit()
-
-        self.logger.info(">> Result: {} OKs + {} NOKs / {}".format(ok, len(nok), ok + len(nok)))
+        self.logger.info(">> Result: {} OKs + {} NOKs / {}".format(len(datetimes_to_insert) - len(nok), len(nok),
+                                                                   len(datetimes_to_insert)))
         self.logger.info(">> Failed event_data IDs: {}".format(nok))
 
 

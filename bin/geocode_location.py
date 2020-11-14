@@ -5,6 +5,7 @@ import logging
 import multiprocessing
 import re
 import sqlite3
+from typing import List
 
 from lib import utils, logger
 from lib.arguments_parser import ArgumentsParser
@@ -12,7 +13,9 @@ from lib.constants import MUNICIPALITIES_OF_CR_FILE_PATH, SIMPLE_LOGGER_PREFIX
 
 
 class GeocodeLocation:
-    ONLINE_PATTERN = r'\b(online|Online|ONLINE|On-line|on-line|ON-LINE|Virtuálně|virtuálně)\b'
+    """ Geocodes a location of parsed events without GPS. """
+
+    ONLINE_REGEX = re.compile(r'\b(online|Online|ONLINE|On-line|on-line|ON-LINE|Virtuálně|virtuálně)\b')
     OUTPUT_FILE_PATH = "data/tmp/geocode_location_output.json"
 
     def __init__(self) -> None:
@@ -21,33 +24,26 @@ class GeocodeLocation:
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
-            missing_tables = utils.check_db_tables(self.connection,
-                                                   ["calendar", "event_url", "event_html", "event_data",
-                                                    "event_data_gps"])
-            if len(missing_tables) != 0:
-                exception_msg = "Missing tables in the DB: {}".format(missing_tables)
-                self.logger.critical(exception_msg)
-                raise Exception(exception_msg)
+            utils.check_db_tables(self.connection,
+                                  ["calendar", "event_url", "event_html", "event_data", "event_data_gps"])
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
-
         parser.add_argument('--events-ids', type=int, nargs="*",
-                            help="geocode locations only of the specified events' IDs (possible only in 'dry-run' mode)")
-
+                            help="geocode locations only of events with the specified event_data IDs")
         return parser.parse_args()
 
     def run(self) -> None:
-        events_to_geocode = self.load_events()
-        municipalities = self.load_municipalities_csv()
-        info_to_insert = self.geocode_events(events_to_geocode, municipalities)
-        self.get_stats(info_to_insert, self.args.dry_run)
-        self.store_to_db(info_to_insert, self.args.dry_run)
+        input_events = self._load_input_events()
+        municipalities = self._load_municipalities_csv()
+        info_to_insert = self._geocode_locations(input_events, municipalities)
+        self._get_stats(info_to_insert)
+        self._store_to_db(info_to_insert, )
         self.connection.close()
 
-    def load_events(self) -> list:
-        self.logger.info("Loading events...")
+    def _load_input_events(self) -> List[tuple]:
+        self.logger.info("Loading input events...")
 
         query = '''
                     SELECT ed.id, ed.title, ed.perex, ed.location, 
@@ -68,8 +64,8 @@ class GeocodeLocation:
         cursor = self.connection.execute(query)
         return cursor.fetchall()
 
-    def load_municipalities_csv(self) -> list:
-        self.logger.info("Loading municipalities...")
+    def _load_municipalities_csv(self) -> List[dict]:
+        self.logger.info("Loading czech municipalities...")
 
         municipalities = []
         with open(MUNICIPALITIES_OF_CR_FILE_PATH, 'r') as csv_file:
@@ -82,21 +78,18 @@ class GeocodeLocation:
                 municip_list = [municip, municip.upper()]
 
                 locative_list = []
-                prepositions = ["v", "ve", "V", "VE"]
                 locative_split = locative.split("; ")
                 locative_split = locative_split + [loc.upper() for loc in locative_split]
                 for loc in locative_split:
-                    for prep in prepositions:
+                    for prep in ["v", "ve", "V", "VE"]:
                         locative_list.append(prep + " " + loc)
-
-                pattern_value = "|".join(municip_list + locative_list)
 
                 municip_dict = {
                     "municipality": municip,
                     "district": district,
                     "gps": gps,
                     "ambiguous": False,
-                    "re_pattern": re.compile(r'\b({})\b'.format(pattern_value))
+                    "re_pattern": re.compile(r'\b({})\b'.format("|".join(municip_list + locative_list)))
                 }
                 municipalities.append(municip_dict)
 
@@ -110,24 +103,24 @@ class GeocodeLocation:
 
         return municipalities
 
-    def geocode_events(self, events_to_geocode: list, municipalities: list) -> list:
+    def _geocode_locations(self, input_events: List[tuple], municipalities: List[dict]) -> List[dict]:
         self.logger.info("Geocoding events' locations...")
-        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__)
-        input_tuples = []
-        calendars_with_default_gps = utils.get_base_dict_per_url(utils.get_base_with_default_gps())
 
-        for index, event in enumerate(events_to_geocode):
-            input_tuples.append((index + 1, len(events_to_geocode), event, municipalities, calendars_with_default_gps))
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__, log_file=self.args.log_file, debug=self.args.debug)
+        calendars_with_default_gps = utils.get_base_dict_per_url(utils.get_base_with_default_gps())
+        input_tuples = []
+        for index, event in enumerate(input_events):
+            input_tuples.append((index + 1, len(input_events), event, municipalities, calendars_with_default_gps))
 
         with multiprocessing.Pool(32) as p:
-            return p.map(GeocodeLocation.geocode_event, input_tuples)
+            return p.map(GeocodeLocation._geocode_locations_process, input_tuples)
 
     @staticmethod
-    def geocode_event(input_tuple: tuple) -> dict:
+    def _geocode_locations_process(input_tuple: (int, int, (int, str, str, str, str), List[dict], dict)) -> dict:
         simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
+
         input_index, total_length, event, municipalities, calendars_with_default_gps = input_tuple
         event_id, title, perex, location, calendar_url = event
-
         event_dict = {
             "id": event_id,
             "online": False,
@@ -141,36 +134,32 @@ class GeocodeLocation:
             "location": location
         }
 
-        info_output = "{}/{} | Processing event: {}".format(input_index, total_length, event_id)
-        if not event_dict["has_default"]:
-            info_output += " | ...geocoding"
+        info_output = "{}/{} | Processing location of: {}".format(input_index, total_length, event_id)
 
         for text in [location, title]:
-            event_dict["online"] = GeocodeLocation.match_online_in_text(text)
+            event_dict["online"] = GeocodeLocation._match_online_in_text(text)
             if event_dict["online"]:
                 break
 
         if not event_dict["has_default"]:
+            info_output += " | geocoding"
             priority_order = []
-
             last_location_index = -1
-            if location:  # search for a municip. in location from right to left
+            if location:
                 location_split = location.split(" ")
                 for i in range(len(location_split) - 1, -1, -1):
                     joined_word = " ".join(location_split[i:])
                     priority_order.append(joined_word)
                     last_location_index += 1
-
             priority_order.extend([title, perex])
 
             for i in range(len(priority_order)):
                 text = priority_order[i]
-                matches = GeocodeLocation.match_municipality_in_text(text, municipalities)
+                matches = GeocodeLocation._match_municipality_in_text(text, municipalities)
 
                 for match_dict in matches:
                     match_name = match_dict["municipality"] + ", " + match_dict["district"]
-
-                    if GeocodeLocation.is_ambiguous(text, match_dict):
+                    if GeocodeLocation._is_ambiguous(text, match_dict):
                         event_dict["ambiguous"].add(match_name)
                     else:
                         event_dict["matched"].add(match_name)
@@ -189,7 +178,6 @@ class GeocodeLocation:
             for match in event_dict["geocoded_location"][1:]:
                 if len(match["municipality"]) > len(longest_match["municipality"]):
                     longest_match = match
-
             longest_match_split = longest_match["municipality"].split(" ")
             if len(longest_match_split) > 1:
                 event_dict["geocoded_location"] = longest_match
@@ -206,53 +194,45 @@ class GeocodeLocation:
         event_dict["ambiguous"] = list(event_dict["ambiguous"])
 
         if event_dict["has_default"] or event_dict["geocoded_location"]:
-            info_output += " | OK"
-            simple_logger.info(info_output)
+            simple_logger.info(info_output + " | OK")
         else:
-            info_output += " | NOK"
-            simple_logger.warning(info_output)
+            simple_logger.warning(info_output + " | NOK")
 
         return event_dict
 
     @staticmethod
-    def match_online_in_text(text: str) -> bool:
+    def _match_online_in_text(text: str) -> bool:
         if not text:
             return False
-
-        online_match = re.search(GeocodeLocation.ONLINE_PATTERN, text)
-        if online_match:
+        if GeocodeLocation.ONLINE_REGEX.search(text):
             return True
-
         return False
 
     @staticmethod
-    def match_municipality_in_text(text: str, municipalities: list) -> list:
+    def _match_municipality_in_text(text: str, municipalities: List[dict]) -> List[dict]:
         if not text:
             return []
-
         result = []
         for municip_dict in municipalities:
-            municip_match = municip_dict["re_pattern"].search(text)
-            if municip_match:
+            if municip_dict["re_pattern"].search(text):
                 result.append(municip_dict)
-
         return result
 
     @staticmethod
-    def is_ambiguous(text: str, municip_dict: dict) -> bool:
+    def _is_ambiguous(text: str, municip_dict: dict) -> bool:
         if municip_dict["ambiguous"]:
             if municip_dict["municipality"] == municip_dict["district"]:
-                district_match = re.findall(municip_dict["re_pattern"], text)
-                if len(district_match) < 2:
+                if len(re.findall(municip_dict["re_pattern"], text)) < 2:
                     return True
             else:
-                district_match = re.search(r'\b({})\b'.format(municip_dict["district"]), text)
-                if not district_match:
+                if not re.search(r'\b({})\b'.format(municip_dict["district"]), text):
                     return True
 
         return False
 
-    def get_stats(self, info_to_insert: list, dry_run: bool) -> None:
+    def _get_stats(self, info_to_insert: List[dict]) -> None:
+        self.logger.info("Preparing statistics...")
+
         result_dict = {
             "all": len(info_to_insert),
             "-online": 0,
@@ -295,24 +275,22 @@ class GeocodeLocation:
                 del match_without_default["base"]
                 result_dict["-results"].append(match_without_default)
 
-        if dry_run:
-            self.logger.info(">> Would be stored into an output file:")
-            self.logger.info(json.dumps(result_dict, indent=4, ensure_ascii=False))
+        if self.args.dry_run:
+            print(json.dumps(result_dict, indent=4, ensure_ascii=False))
         else:
             utils.store_to_json_file(result_dict, GeocodeLocation.OUTPUT_FILE_PATH)
-            self.logger.info(">> Online: {} / {}".format(result_dict["-online"], result_dict["all"]))
-            self.logger.info(">> Without default GPS: {} / {}".format(result_dict["without_default_gps"],
-                                                                      result_dict["all"]))
-            self.logger.info(">> Successfully geocoded: {} / {} + {}".format(result_dict["-geocoded"], result_dict[
-                "without_default_gps"] - without_default_online, without_default_online))
+        self.logger.info(">> Online: {} / {}".format(result_dict["-online"], result_dict["all"]))
+        self.logger.info(">> Without default GPS: {} / {}".format(result_dict["without_default_gps"],
+                                                                  result_dict["all"]))
+        self.logger.info(">> Successfully geocoded: {} / {} + {}".format(result_dict["-geocoded"], result_dict[
+            "without_default_gps"] - without_default_online, without_default_online))
 
-    def store_to_db(self, info_to_insert: list, dry_run: bool) -> None:
-        if not dry_run:
-            self.logger.info("Inserting geocoded locations into DB...")
+    def _store_to_db(self, info_to_insert: List[dict]) -> None:
+        if not self.args.dry_run:
+            self.logger.info("Inserting into DB...")
 
         nok_list = set()
         data_to_insert = []
-
         for info in info_to_insert:
             event_id = info["id"]
             online = info["online"]
@@ -336,29 +314,26 @@ class GeocodeLocation:
                 nok_list.add(event_id)
 
             values = (online, has_default, gps, location, municipality, district, event_id)
-            if dry_run:
+            if self.args.dry_run:
                 data_to_insert.append(values)
             else:
                 query = '''
                             INSERT INTO event_data_gps(online, has_default, gps, location, municipality, district, event_data_id)
                             VALUES (?, ?, ?, ?, ?, ?, ?)
                         '''
-
                 try:
                     self.connection.execute(query, values)
                 except sqlite3.Error as e:
                     self.logger.error("Error occurred when inserting event '{}' into DB: {}".format(event_id, str(e)))
                     nok_list.add(event_id)
+        if not self.args.dry_run:
+            self.connection.commit()
 
-        self.connection.commit()
-
-        if dry_run:
-            self.logger.info(">> Data (online, has_default, gps, municipality, district, event_data_id):")
-            self.logger.info("\t{}".format("\n\t".join([str(tpl) for tpl in data_to_insert])))
-
-        ok = len(info_to_insert) - len(nok_list)
-        self.logger.info(">> Result: {} OKs + {} NOKs / {}\n".format(ok, len(nok_list), len(info_to_insert)))
-        self.logger.info(">> Failed event_data IDs: {}\n".format(list(nok_list)))
+        self.logger.debug(">> Data (online, has_default, gps, municipality, district, event_data_id):\n\t{}".format(
+            "\n\t".join([str(tpl) for tpl in data_to_insert])))
+        self.logger.info(">> Result: {} OKs + {} NOKs / {}".format(len(info_to_insert) - len(nok_list), len(nok_list),
+                                                                   len(info_to_insert)))
+        self.logger.info(">> Failed event_data IDs: {}".format(list(nok_list)))
 
 
 if __name__ == "__main__":

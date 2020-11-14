@@ -1,4 +1,5 @@
 import argparse
+import json
 import logging
 import multiprocessing
 import os
@@ -6,6 +7,7 @@ import sqlite3
 import sys
 import urllib.parse as urllib
 from datetime import datetime
+from typing import List
 
 from lxml import etree
 
@@ -16,10 +18,7 @@ from lib.parser import Parser
 
 
 class ParseCalendars:
-    """ Parses an HTML content of a website's calendar page for events' URLs.
-
-    Stores parsed events' URLs into the database.
-    """
+    """ Parses a downloaded calendar page HTML content for events' URLs. """
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
@@ -27,34 +26,27 @@ class ParseCalendars:
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
-            missing_tables = utils.check_db_tables(self.connection, ["calendar", "event_url"])
-            if len(missing_tables) != 0:
-                exception_msg = "Missing tables in the DB: {}".format(missing_tables)
-                self.logger.critical(exception_msg)
-                raise Exception(exception_msg)
+            utils.check_db_tables(self.connection, ["calendar", "event_url"])
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
-
         parser.add_argument('--domain', type=str, default=None,
                             help="parse calendars only of the specified domain")
         parser.add_argument('--parse-all', action='store_true', default=False,
                             help="parse even already parsed calendars")
-
         return parser.parse_args()
 
     def run(self) -> None:
-        input_calendars = self.load_input_calendars()
-        events_to_insert = self.parse_calendars(input_calendars)
-
-        if not self.args.dry_run:
-            events_counts = self.store_to_database(events_to_insert)
-            self.update_database(events_counts)
+        input_calendars = self._load_input_calendars()
+        events_to_insert = self._parse_calendars(input_calendars)
+        events_counts = self._store_to_database(events_to_insert)
+        self._update_database(events_counts)
         self.connection.close()
 
-    def load_input_calendars(self) -> list:
+    def _load_input_calendars(self) -> List[tuple]:
         self.logger.info("Loading input calendars...")
+
         query = '''
                     SELECT id, url, html_file_path 
                     FROM calendar 
@@ -78,19 +70,19 @@ class ParseCalendars:
         cursor = self.connection.execute(query)
         return cursor.fetchall()
 
-    def parse_calendars(self, input_calendars: list) -> dict:
-        self.logger.info("Parsing calendars' content...")
-        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__)
+    def _parse_calendars(self, input_calendars: List[tuple]) -> dict:
+        self.logger.info("Parsing calendars...")
+
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__, log_file=self.args.log_file, debug=self.args.debug)
         timestamp = datetime.now()
         input_tuples = []
-
         for index, calendar_tuple in enumerate(input_calendars):
             _, calendar_url, _ = calendar_tuple
             website_base = utils.get_base_by_url(calendar_url)
             input_tuples.append((index + 1, len(input_calendars), calendar_tuple, timestamp, website_base))
 
         with multiprocessing.Pool(32) as p:
-            events_lists = p.map(ParseCalendars.process_calendar, input_tuples)
+            events_lists = p.map(ParseCalendars._parse_calendars_process, input_tuples)
 
         events_to_insert = {calendar_id: events_list
                             for element in events_lists
@@ -98,21 +90,17 @@ class ParseCalendars:
         return events_to_insert
 
     @staticmethod
-    def process_calendar(input_tuple: tuple) -> dict:
+    def _parse_calendars_process(input_tuple: (int, int, (int, str, str), datetime, dict)) -> dict:
         simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
-        input_index, total_length, calendar_tuple, timestamp, website_base = input_tuple
-        """ (input_index: int, total_length: int, calendar_tuple: (int, str, str), timestamp: datetime, 
-            website_base: dict) """
-        calendar_id, calendar_url, calendar_html_file_path = calendar_tuple
 
-        domain = website_base["domain"]
+        input_index, total_length, calendar_tuple, timestamp, website_base = input_tuple
+        calendar_id, calendar_url, calendar_html_file_path = calendar_tuple
         file = os.path.basename(calendar_html_file_path)
 
-        info_output = "{}/{} | {}/{}".format(input_index, total_length, domain, file)
+        info_output = "{}/{} | {}/{}".format(input_index, total_length, website_base["domain"], file)
 
         if not os.path.isfile(calendar_html_file_path):
-            info_output += " | File '{}' does not exist!".format(calendar_html_file_path)
-            simple_logger.warning(info_output)
+            simple_logger.warning(info_output + " | 0 (File '{}' does not exist!)".format(calendar_html_file_path))
             return {
                 calendar_id: []
             }
@@ -120,30 +108,34 @@ class ParseCalendars:
         with open(calendar_html_file_path, encoding="utf-8") as html_file:
             dom = etree.parse(html_file, etree.HTMLParser())
 
-        parser_name = website_base["parser"]
-        parser = Parser(parser_name)
+        parser = Parser(website_base["parser"])
         parser.set_dom(dom)
-        event_urls = parser.get_event_urls()
 
         events_to_insert = []
-        for index, url_path in enumerate(event_urls):
+        for index, url_path in enumerate(parser.get_event_urls()):
             event_url = urllib.urljoin(calendar_url, url_path)
             events_to_insert.append((event_url, timestamp))
 
-        info_output += " | {}".format(len(events_to_insert))
-        simple_logger.info(info_output)
+        simple_logger.info(info_output + " | {}".format(len(events_to_insert)))
 
         if len(events_to_insert) == 0:
-            simple_logger.debug("\t Parser's errors: {}".format(" & ".join(parser.error_messages)))
-        for event_url, _ in events_to_insert:
-            simple_logger.debug("\t Found URL: {}".format(event_url))
+            simple_logger.debug("Parser's errors: {}".format(json.dumps(parser.error_messages, indent=4)))
+        else:
+            simple_logger.debug(
+                "Found URLs: {}".format(json.dumps([event_url for event_url, _ in events_to_insert], indent=4)))
 
         return {
             calendar_id: events_to_insert
         }
 
-    def store_to_database(self, events_to_insert: dict) -> dict:
+    def _store_to_database(self, events_to_insert: dict) -> dict:
+        if self.args.dry_run:
+            events_count_all_found = len([event for _, event_list in events_to_insert.items() for event in event_list])
+            self.logger.info(">> Number of ALL events found: {}".format(events_count_all_found))
+            return {}
+
         self.logger.info("Inserting into DB...")
+
         events_counts_dict = {}
         count_query = '''
                           SELECT count(*) 
@@ -193,7 +185,10 @@ class ParseCalendars:
 
         return events_counts_dict
 
-    def update_database(self, events_counts: dict) -> None:
+    def _update_database(self, events_counts: dict) -> None:
+        if self.args.dry_run:
+            return
+
         self.logger.info("Updating DB...")
 
         for calendar_id, counts in events_counts.items():
@@ -208,7 +203,7 @@ class ParseCalendars:
                 self.connection.execute(query)
             except sqlite3.Error as e:
                 self.logger.error(
-                    "Error occurred when updating 'is_parsed' value in 'calendar' table: {}".format(str(e)))
+                    "Error occurred when updating 'is_parsed' and counts values in 'calendar' table: {}".format(str(e)))
         self.connection.commit()
 
 

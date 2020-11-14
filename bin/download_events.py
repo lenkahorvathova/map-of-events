@@ -7,6 +7,7 @@ import sqlite3
 import sys
 import time
 from datetime import datetime
+from typing import List
 
 from lib import utils, logger
 from lib.arguments_parser import ArgumentsParser
@@ -14,10 +15,7 @@ from lib.constants import DATA_DIR_PATH, SIMPLE_LOGGER_PREFIX
 
 
 class DownloadEvents:
-    """ Downloads an HTML content of an event's page.
-
-    Stores event's information into the database.
-    """
+    """ Downloads an event's page HTML content of found events' URLs. """
 
     EVENTS_FOLDER_NAME = "events"
 
@@ -27,22 +25,17 @@ class DownloadEvents:
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
-            missing_tables = utils.check_db_tables(self.connection, ["calendar", "event_url", "event_html"])
-            if len(missing_tables) != 0:
-                exception_msg = "Missing tables in the DB: {}".format(missing_tables)
-                self.logger.critical(exception_msg)
-                raise Exception(exception_msg)
+            utils.check_db_tables(self.connection, ["calendar", "event_url", "event_html"])
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
-
         parser.add_argument('--domain', type=str, default=None,
-                            help="download events only for the specified domain")
+                            help="download events only from the specified calendar domain")
         parser.add_argument('--event-url', type=str, default=None,
                             help="download only event with the specified URL")
         parser.add_argument('--redownload-file', action='store_true', default=False,
-                            help="redownload file for the specified URL in --event-url")  # not updating parsed_at
+                            help="redownload content of the specified URL in --event-url")  # not updating 'downloaded_at'
 
         arguments = parser.parse_args()
         if arguments.redownload_file and not arguments.event_url:
@@ -51,17 +44,14 @@ class DownloadEvents:
         return arguments
 
     def run(self) -> None:
-        input_events = self.load_input_events()
-        events_to_insert = self.download_events(input_events)
-        if self.args.redownload_file:
-            _, html_file_path, _ = events_to_insert[0]
-            self.logger.info("File was re-downloaded to: {}".format(html_file_path))
-        else:
-            self.store_to_database(events_to_insert, self.args.dry_run)
+        input_events = self._load_input_events()
+        events_to_insert = self._download_events(input_events)
+        self._store_to_database(events_to_insert)
         self.connection.close()
 
-    def load_input_events(self) -> list:
+    def _load_input_events(self) -> List[tuple]:
         self.logger.info("Loading input events...")
+
         query = '''
                     SELECT eu.id, eu.url,
                            c.url
@@ -91,60 +81,58 @@ class DownloadEvents:
         cursor = self.connection.execute(query)
         return cursor.fetchall()
 
-    def download_events(self, input_events: list) -> list:
-        self.logger.info("Downloading events' content...")
-        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__)
+    def _download_events(self, input_events: List[tuple]) -> List[tuple]:
+        self.logger.info("Downloading events...")
+
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__, log_file=self.args.log_file, debug=self.args.debug)
         timestamp = datetime.now()
         input_tuples = []
-
         for index, event in enumerate(input_events):
             _, _, calendar_url = event
             website_base = utils.get_base_by_url(calendar_url)
-            if website_base is None:
-                self.logger.critical("Unknown calendar URL '{}'!".format(calendar_url))
-                sys.exit()
-
             input_tuples.append((index + 1, len(input_events), event, timestamp, website_base, self.args.dry_run))
         random.shuffle(input_tuples)
 
         with multiprocessing.Pool(32) as p:
-            return p.map(DownloadEvents.process_event_url, input_tuples)
+            return p.map(DownloadEvents._download_events_process, input_tuples)
 
     @staticmethod
-    def process_event_url(input_tuple: tuple) -> (int, str, str):
-        simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
+    def _download_events_process(input_tuple: (int, int, (int, str, str), datetime, dict, bool)) -> (
+            int, str, datetime):
         time.sleep(round(random.uniform(0, 5), 2))
+        simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
 
         input_index, total_length, event, timestamp, website_base, dry_run = input_tuple
-        """ (input_index: int, total_length: int, event: (int, str, str), timestamp: datetime, website_base: dict,
-            dry_run: bool) """
         event_id, event_url, _ = event
 
         current_dir = os.path.join(DATA_DIR_PATH, website_base["domain"])
         event_file_dir = os.path.join(current_dir, DownloadEvents.EVENTS_FOLDER_NAME)
-        os.makedirs(event_file_dir, exist_ok=True)
-
-        timestamp_str = timestamp.strftime("%Y-%m-%d_%H-%M-%S")
-        event_file_name = timestamp_str + "_" + str(event_id)
+        event_file_name = timestamp.strftime("%Y-%m-%d_%H-%M-%S") + "_" + str(event_id)
         html_file_path = os.path.join(event_file_dir, event_file_name + ".html")
 
-        result = utils.download_html_content(event_url, html_file_path, website_base.get("encoding", None), dry_run)
+        os.makedirs(event_file_dir, exist_ok=True)
+        result = utils.download_html_content(event_url, html_file_path,
+                                             encoding=website_base.get("encoding", None), dry_run=dry_run)
         if result != "200":
             html_file_path = None
 
-        info_output = "{}/{}".format(input_index, total_length)
-        info_output += " | Downloading URL: {} | {}".format(str(event_url), str(result))
-        simple_logger.info(info_output)
+        simple_logger.info(
+            "{}/{} | Downloading URL: {} | {}".format(input_index, total_length, str(event_url), str(result)))
 
         return event_id, html_file_path, timestamp
 
-    def store_to_database(self, events_to_insert: list, dry_run: bool) -> None:
-        if not dry_run:
+    def _store_to_database(self, events_to_insert: List[tuple]) -> None:
+        if self.args.redownload_file:
+            if not self.args.dry_run:
+                _, html_file_path, _ = events_to_insert[0]
+                self.logger.info("File was redownloaded to: {}".format(html_file_path))
+            return
+
+        if not self.args.dry_run:
             self.logger.info("Inserting into DB...")
 
         failed_url_ids = []
         event_url_ids = []
-
         for event_info in events_to_insert:
             event_url_id, html_file_path, downloaded_at = event_info
             event_url_ids.append(event_url_id)
@@ -152,7 +140,7 @@ class DownloadEvents:
             if html_file_path is None:
                 failed_url_ids.append(event_url_id)
 
-            if not dry_run:
+            if not self.args.dry_run:
                 query = '''
                             INSERT INTO event_html(html_file_path, downloaded_at, event_url_id)
                             VALUES(?, ?, ?)
@@ -165,7 +153,7 @@ class DownloadEvents:
                     failed_url_ids.append(event_url_id)
                     self.logger.error(
                         "Error occurred when storing {} into 'event_html' table: {}".format(values, str(e)))
-        if not dry_run:
+        if not self.args.dry_run:
             self.connection.commit()
 
         self.logger.info(">> Number of failed events: {}/{}".format(len(failed_url_ids), len(event_url_ids)))

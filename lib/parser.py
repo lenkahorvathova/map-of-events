@@ -1,11 +1,16 @@
 import json
 import os
 import re
+from typing import List
 
 from lxml import etree
 
+from lib import logger
+
 
 class Parser:
+    """ OOP parser encapsulating the logic of data parsing from the specified DOM according to a specific template. """
+
     PARSERS_DIR_PATH = "resources/parsers"
     ORDINATION = ["title", "perex", "datetime", "location", "gps", "organizer", "types"]
     DATE_TIME_DELIMITER = "%;"
@@ -15,6 +20,7 @@ class Parser:
         self.dom = None
         self.metadata = self.load_parser_file(parser_name)
         self.error_messages = []
+        self.logger = logger.set_up_script_logger(__name__)
 
     def set_dom(self, dom: etree.ElementTree) -> None:
         self.dom = dom
@@ -22,26 +28,24 @@ class Parser:
     @staticmethod
     def load_parser_file(parser_name: str) -> dict:
         parser_file_path = os.path.join(Parser.PARSERS_DIR_PATH, parser_name + ".json")
-
         with open(parser_file_path) as parser_file:
-            metadata = json.load(parser_file)
+            return json.load(parser_file)
 
-        return metadata
-
-    def _get_roots(self, page: str) -> list:
+    def _get_roots(self, page: str) -> List[etree._Element]:
         if page not in self.metadata:
-            raise Exception("Page '{}' is not defined for '{}' parser!".format(page, self.name))
+            exception_msg = "Page '{}' is not defined for '{}' parser!".format(page, self.name)
+            self.logger.critical(exception_msg)
+            raise Exception(exception_msg)
 
         if self.dom is None:
-            raise Exception("You have to specify DOM to search (use function Parser.set_dom(etree.ElementTree))!")
+            exception_msg = "You have to specify DOM to search (use function Parser.set_dom(etree.ElementTree))!"
+            self.logger.critical(exception_msg)
+            raise Exception(exception_msg)
 
         page_metadata = self.metadata[page]
         root_xpath_data = page_metadata["root"]["xpath"]
-        root_selectors = root_xpath_data["selectors"]
-        root_match = root_xpath_data["match"] if "match" in root_xpath_data else "ALL"
-
         root_elements = []
-        for selector in root_selectors:
+        for selector in root_xpath_data["selectors"]:
             found_elements = self.dom.xpath(selector)
             root_elements.extend(found_elements)
 
@@ -50,12 +54,13 @@ class Parser:
             if error not in self.error_messages:
                 self.error_messages.append(error)
         else:
+            root_match = root_xpath_data["match"] if "match" in root_xpath_data else "ALL"
             if root_match == "FIRST":
                 root_elements = [root_elements[0]]
 
         return root_elements
 
-    def get_event_urls(self) -> list:
+    def get_event_urls(self) -> List[str]:
         event_url_elements = self._get_xpath_results("calendar", "event_url")
         return event_url_elements
 
@@ -81,7 +86,7 @@ class Parser:
 
         return result_event_data
 
-    def _get_xpath_results(self, page: str, data_key: str) -> list:
+    def _get_xpath_results(self, page: str, data_key: str) -> List[str]:
         page_roots = self._get_roots(page)
         if len(page_roots) == 0:
             return []
@@ -98,29 +103,25 @@ class Parser:
                     data_key_elements.extend(found_elements)
                 except etree.XPathEvalError:
                     pass
-
-            # if len(data_key_elements) == 0:
-            #     error = "No xpath matching values for '{}' where found!".format(data_key)
-            #     if error not in self.error_messages:
-            #         self.error_messages.append(error)
-
         return data_key_elements
 
-    def _sanitize_xpath_event_data(self, data_key: str, xpath_values: list) -> list:
+    def _sanitize_xpath_event_data(self, data_key: str, xpath_values: List[str]) -> List[str]:
         if len(xpath_values) == 0:
             return []
 
         sanitized_values = [el.replace('\xa0', ' ') for el in xpath_values]
         sanitized_values = [el.strip() for el in sanitized_values]
         sanitized_values = filter(None, sanitized_values)
-
         values_to_ignore = self.metadata["event"][data_key]["xpath"].get("ignore", [])
         sanitized_values = filter(lambda x: x not in values_to_ignore, sanitized_values)
 
         return list(sanitized_values)
 
-    def _format_xpath_event_data(self, data_key: str, xpath_values: list) -> list:
+    def _format_xpath_event_data(self, data_key: str, xpath_values: List[str]) -> List[str]:
         if len(xpath_values) == 0:
+            error = "No xpath matching values for '{}' where found!".format(data_key)
+            if error not in self.error_messages:
+                self.error_messages.append(error)
             return []
 
         xpath_event_data = self.metadata["event"][data_key]["xpath"]
@@ -131,7 +132,6 @@ class Parser:
         if "join_separator" in xpath_event_data:
             separator = xpath_event_data["join_separator"]
             joined_value = separator.join(xpath_values)
-
             return [joined_value]
 
         elif "split_separator" in xpath_event_data:
@@ -141,17 +141,15 @@ class Parser:
             for value in xpath_values:
                 split_value = value.split(separator)
                 split_result.extend(split_value)
-
             return split_result
 
         return xpath_values
 
-    def _apply_regex(self, data_key: str, xpath_values: list) -> list:
+    def _apply_regex(self, data_key: str, xpath_values: List[str]) -> List[str]:
         if len(xpath_values) == 0:
             return []
 
         event_key_data = self.metadata["event"][data_key]
-
         if "regex" not in event_key_data:
             return xpath_values
 
@@ -176,12 +174,11 @@ class Parser:
 
         if len(regexed_values) == 0:
             error = "No regex matching values for '{}' where found!".format(data_key)
-            # if error not in self.error_messages:
-            #     self.error_messages.append(error)
+            if error not in self.error_messages:
+                self.error_messages.append(error)
         else:
             if match == "FIRST":
                 regexed_values = [regexed_values[0]]
-
         return regexed_values
 
     @staticmethod

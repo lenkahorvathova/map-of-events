@@ -5,6 +5,7 @@ import multiprocessing
 import re
 import sqlite3
 from collections import defaultdict
+from typing import List
 
 from lib import utils, logger
 from lib.arguments_parser import ArgumentsParser
@@ -12,6 +13,8 @@ from lib.constants import SIMPLE_LOGGER_PREFIX
 
 
 class DeduplicateEvents:
+    """ Deduplicate stored events. """
+
     CANCELLED_REGEX = re.compile(r'\b(zrušen|ZRUŠEN|Zrušen)')
     DEFERRED_REGEX = re.compile(r'\b(odložen|ODLOŽEN|Odložen|přesunut|PŘESUNUT|Přesunut)')
     IS_WORD_REGEX = re.compile(r'\b\w[^\s]+\b')
@@ -23,31 +26,26 @@ class DeduplicateEvents:
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
-            missing_views = utils.check_db_views(self.connection, ["event_data_view"])
-            if len(missing_views) != 0:
-                exception_msg = "Missing views in the DB: {}".format(missing_views)
-                self.logger.critical(exception_msg)
-                raise Exception(exception_msg)
+            utils.check_db_views(self.connection, ["event_data_view"])
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
-
         parser.add_argument('--event-url', type=str, default=None,
-                            help="find duplicates of the specified URL")
+                            help="find duplicates for event from the specified URL")
         parser.add_argument('--deduplicate-all', action='store_true', default=False,
                             help="deduplicate all events in the database")
-
         return parser.parse_args()
 
     def run(self) -> None:
         all_events = self._get_input_events()
-        duplicates_to_mark = self._find_duplicates(self.args.event_url, all_events)
-        self._update_database(duplicates_to_mark, self.args.dry_run)
+        duplicates_to_mark = self._find_duplicates(all_events)
+        self._update_database(duplicates_to_mark)
         self.connection.close()
 
     def _get_input_events(self) -> dict:
-        self.logger.info("Loading events...")
+        self.logger.info("Loading input events...")
+
         query = '''
                     SELECT calendar__url, calendar__downloaded_at,
                            event_url__id, event_url__url,
@@ -63,8 +61,7 @@ class DeduplicateEvents:
 
         if not self.args.deduplicate_all:
             query += ''' AND (event_data_datetime__start_date >= date('now') OR (event_data_datetime__end_date IS NOT NULL AND event_data_datetime__end_date >= date('now')))
-                         AND event_url__duplicate_of IS NULL
-                     '''
+                         AND event_url__duplicate_of IS NULL '''
 
         self.connection.row_factory = sqlite3.Row
         cursor = self.connection.execute(query)
@@ -118,32 +115,34 @@ class DeduplicateEvents:
                     'keywords': {event_keyword} if event_keyword else set(),
                     'types': {event_type} if event_type else set()
                 }
+
         return result_events
 
-    def _find_duplicates(self, event_url: str, input_events: dict) -> list:
+    def _find_duplicates(self, input_events: dict) -> List[dict]:
         self.logger.info("Deduplicating events...")
-        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__)
+
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__, log_file=self.args.log_file, debug=self.args.debug)
         input_tuples = []
-        if event_url is not None:
-            self._find_duplicate((1, 1, event_url, input_events))
-        else:
-            for index, event_url in enumerate(input_events):
-                input_tuples.append((index + 1, len(input_events), event_url, input_events))
+        if self.args.event_url is not None:
+            return [self._find_duplicates_process((1, 1, self.args.event_url, input_events))]
+        for index, event_url in enumerate(input_events):
+            input_tuples.append((index + 1, len(input_events), event_url, input_events))
 
         with multiprocessing.Pool(32) as p:
-            return p.map(DeduplicateEvents._find_duplicate, input_tuples)
+            return p.map(DeduplicateEvents._find_duplicates_process, input_tuples)
 
     @staticmethod
-    def _find_duplicate(input_tuple: tuple) -> dict:
+    def _find_duplicates_process(input_tuple: (int, int, str, dict)) -> dict:
         simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
-        input_index, total_length, this_event_url, all_events = input_tuple
 
+        input_index, total_length, this_event_url, all_events = input_tuple
         this_event_dict = all_events[this_event_url]
-        debug_output = ">>>\n {}\n".format(this_event_dict)
+
         info_output = "{}/{} | De-duplicating URL: {}".format(input_index, total_length, this_event_url)
+        debug_output = "Found duplicates: \n{}\n".format(this_event_dict)
+
         count_same = 0
         duplicates = set()
-
         for other_event_url, other_event_dict in all_events.items():
             if this_event_dict['url'] == other_event_dict['url']:
                 continue
@@ -165,8 +164,7 @@ class DeduplicateEvents:
                 debug_output += "==\n{}\n".format(other_event_dict)
                 duplicates.add(other_event_dict['id'])
 
-        info_output += " | {}".format(count_same)
-        simple_logger.info(info_output)
+        simple_logger.info(info_output + " | {}".format(count_same))
         if count_same != 0:
             simple_logger.debug(debug_output)
 
@@ -242,7 +240,7 @@ class DeduplicateEvents:
         return text
 
     @staticmethod
-    def _are_lists_almost_equal(this_list: list, other_list: list) -> bool:
+    def _are_lists_almost_equal(this_list: List[str], other_list: List[str]) -> bool:
         common_elements_count = len(set(this_list) & set(other_list))
         all_unique_elements_count = len(set(this_list) | set(other_list))
         return (common_elements_count / float(all_unique_elements_count)) >= 0.8 \
@@ -270,15 +268,14 @@ class DeduplicateEvents:
     def degrees_to_radians(degrees: float) -> float:
         return degrees * (math.pi / 180)
 
-    def _update_database(self, duplicates_to_mark: list, dry_run: bool) -> None:
-        if not dry_run:
+    def _update_database(self, duplicates_to_mark: List[dict]) -> None:
+        if not self.args.dry_run:
             self.logger.info("Updating DB...")
 
         sorted_duplicates = sorted(duplicates_to_mark, key=lambda x: x['fetched_at'], reverse=True)
         duplicates_count = 0
         marked_as_duplicates = set()
         output_dict = {}
-
         for duplicate_dict in sorted_duplicates:
             event_id = duplicate_dict['event_id']
             event_duplicates = duplicate_dict['duplicates']
@@ -296,17 +293,17 @@ class DeduplicateEvents:
                         WHERE id IN ({})
                     '''.format(event_id, ', '.join([str(duplicate_id) for duplicate_id in event_duplicates]))
 
-            if not dry_run:
+            if not self.args.dry_run:
                 try:
                     self.connection.execute(query)
                 except sqlite3.Error as e:
                     self.logger.error(
                         "Error occurred when updating 'duplicate_of' value in 'event_url' table: {}".format(str(e)))
-        if not dry_run:
+        if not self.args.dry_run:
             self.connection.commit()
 
-        self.logger.info(">> Number of events{}marked as duplicates: {}".format("that would be" if dry_run else " ",
-                                                                                duplicates_count))
+        info_text = " that would be " if self.args.dry_run else " "
+        self.logger.info(">> Number of events{}marked as duplicates: {}".format(info_text, duplicates_count))
         self.logger.info(">> Events with its duplicates' event_url IDs: {}".format(output_dict))
 
 

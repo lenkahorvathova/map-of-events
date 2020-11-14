@@ -1,12 +1,14 @@
 import locale
 import re
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List, Set
 
 from lib.parser import Parser
 
 
 class DatetimeParser:
+    """ OOP parser encapsulating the logic of event's datetime parsing. """
+
     DEFAULT_DATETIME_FORMAT = "%d.%m.%Y %H:%M"
     DEFAULT_DATE_FORMAT = "%d.%m.%Y"
     DEFAULT_TIME_FORMAT = "%H:%M"
@@ -34,7 +36,7 @@ class DatetimeParser:
         self.metadata = Parser.load_parser_file(parser_name)
         self.error_messages = []
 
-    def process_datetimes(self, db_datetimes: list) -> list:
+    def process_datetimes(self, db_datetimes: List[str]) -> List[tuple]:
         formats = self._prepare_formats()
         parsed_datetimes = []
 
@@ -55,7 +57,7 @@ class DatetimeParser:
 
         return parsed_datetimes
 
-    def _prepare_formats(self) -> set:
+    def _prepare_formats(self) -> Set[str]:
         datetime_metadata = self.metadata["event"].get("datetime", None)
         datetime_formats = set()
 
@@ -77,7 +79,6 @@ class DatetimeParser:
                     datetime_formats.add(dt_format)
 
         datetime_formats.add(self.DEFAULT_DATE_FORMAT)
-
         return set([self._replace_hyphen_to_dash(self._remove_whitespaces(dt_format))
                     for dt_format in datetime_formats])
 
@@ -118,14 +119,14 @@ class DatetimeParser:
             datetime_str = re.sub(r"{}\b".format(month), replacement, datetime_str)
         return datetime_str
 
-    def _get_range_delimiter_from_format(self, formats: set) -> Optional[str]:
+    def _get_range_delimiter_from_format(self, formats: Set[str]) -> Optional[str]:
         for format in formats:
             range_match = re.search(self.RANGE_MATCH_REGEX, format)
             if range_match:
                 return range_match.group(2)
         return None
 
-    def _process_datetime(self, datetime_str: str, formats: set) -> tuple:
+    def _process_datetime(self, datetime_str: str, formats: Set[str]) -> (datetime, datetime, datetime, datetime):
         start_date, start_time, end_date, end_time = None, None, None, None
 
         for dt_format in formats:

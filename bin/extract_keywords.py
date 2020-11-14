@@ -4,6 +4,7 @@ import logging
 import multiprocessing
 import re
 import sqlite3
+from typing import List
 
 from lib import utils, logger
 from lib.arguments_parser import ArgumentsParser
@@ -11,6 +12,8 @@ from lib.constants import SIMPLE_LOGGER_PREFIX
 
 
 class ExtractKeywords:
+    """ Extract keywords of parsed events. """
+
     EVENT_KEYWORDS_JSON_FILE_PATH = "resources/event_keywords.json"
 
     def __init__(self) -> None:
@@ -19,32 +22,27 @@ class ExtractKeywords:
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
-            missing_tables = utils.check_db_tables(self.connection, ["event_data", "event_data_keywords"])
-            if len(missing_tables) != 0:
-                exception_msg = "Missing tables in the DB: {}".format(missing_tables)
-                self.logger.critical(exception_msg)
-                raise Exception(exception_msg)
+            utils.check_db_tables(self.connection, ["event_data", "event_data_keywords"])
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
-
         parser.add_argument('--events-ids', type=int, nargs="*",
-                            help="extract keywords only from the specified events' IDs")
+                            help="extract keywords only from events with the specified event_data IDs")
         parser.add_argument('--extract-all', action='store_true', default=False,
                             help="extract keywords even from already processed events")
-
         return parser.parse_args()
 
     def run(self) -> None:
         input_events = self._load_input_events()
         keywords_dict = self._prepare_keywords_dict()
-        keywords_to_insert = self._extract_events_keywords(input_events, keywords_dict)
+        keywords_to_insert = self._extract_keywords(input_events, keywords_dict)
         self._store_to_db(keywords_to_insert)
         self.connection.close()
 
-    def _load_input_events(self) -> list:
-        self.logger.info("Loading events...")
+    def _load_input_events(self) -> List[tuple]:
+        self.logger.info("Loading input events...")
+
         query = '''
                     SELECT ed.id, ed.title, ed.perex, ed.types
                     FROM event_data ed
@@ -63,30 +61,34 @@ class ExtractKeywords:
         return cursor.fetchall()
 
     def _prepare_keywords_dict(self) -> dict:
-        self.logger.info("Preparing keywords...")
+        self.logger.info("Preparing custom keywords...")
+
         with open(ExtractKeywords.EVENT_KEYWORDS_JSON_FILE_PATH, 'r') as keywords_file:
             keywords_mapping = json.load(keywords_file)
             for keyword in keywords_mapping:
                 keywords_mapping[keyword].append(keyword)
             return dict(keywords_mapping)
 
-    def _extract_events_keywords(self, input_events: list, keywords_dict: dict) -> list:
+    def _extract_keywords(self, input_events: List[tuple], keywords_dict: dict) -> List[tuple]:
         self.logger.info("Extracting events' keywords...")
-        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__)
+
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__, log_file=self.args.log_file, debug=self.args.debug)
         input_tuples = []
         for index, event in enumerate(input_events):
             input_tuples.append((index + 1, len(input_events), event, keywords_dict))
 
         with multiprocessing.Pool(32) as p:
-            return p.map(ExtractKeywords._extract_event_keywords, input_tuples)
+            return p.map(ExtractKeywords._extract_keywords_process, input_tuples)
 
     @staticmethod
-    def _extract_event_keywords(input_tuple: tuple) -> tuple:
+    def _extract_keywords_process(input_tuple: (int, int, (int, str, str, str),
+                                                dict)) -> (int, List[tuple], str, str, str):
         simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
+
         input_index, total_length, event, keywords_dict = input_tuple
         event_data_id, title, perex, types = event
 
-        info_output = "{}/{} | Extracting keywords from event: {}".format(input_index, total_length, event_data_id)
+        info_output = "{}/{} | Extracting keywords from: {}".format(input_index, total_length, event_data_id)
 
         matched_keywords = set()
         event_data = {
@@ -122,20 +124,18 @@ class ExtractKeywords:
                             matched_keywords.add((keyword, source))
 
         if len(matched_keywords) == 0:
-            info_output += " | NOK"
-            simple_logger.warning(info_output)
+            simple_logger.warning(info_output + " | NOK")
         else:
-            info_output += " | OK"
-            simple_logger.info(info_output)
+            simple_logger.info(info_output + " | OK")
 
         return event_data_id, list(matched_keywords), title, perex, types
 
-    def _store_to_db(self, keywords_to_insert: list) -> None:
+    def _store_to_db(self, keywords_to_insert: List[tuple]) -> None:
         self.logger.info("Inserting into DB...")
+
         events_without_keywords = []
         results = {}
         nok = 0
-
         for event_data_id, matched_keywords, title, perex, types in keywords_to_insert:
             results[event_data_id] = {
                 'title': title,
@@ -162,9 +162,8 @@ class ExtractKeywords:
                 except sqlite3.Error as e:
                     self.logger.error(
                         "Error occurred when storing {} into 'event_data_types' table: {}".format(values, str(e)))
-
         if self.args.dry_run:
-            self.logger.info(json.dumps(results, indent=4, ensure_ascii=False))
+            print(json.dumps(results, indent=4, ensure_ascii=False))
         else:
             self.connection.commit()
 

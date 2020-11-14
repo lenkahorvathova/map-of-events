@@ -7,6 +7,7 @@ import sqlite3
 import sys
 from collections import defaultdict
 from datetime import datetime
+from typing import List
 
 from lxml import etree
 
@@ -17,48 +18,37 @@ from lib.parser import Parser
 
 
 class ParseEvents:
-    """ Parses an HTML content of downloaded events for more information.
-
-    Stores parsed events' information into the database.
-    """
+    """ Parses a downloaded event's page HTML content for events' detail information. """
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
         self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
-        self.base = utils.get_active_base()
 
         if not self.args.dry_run:
-            missing_tables = utils.check_db_tables(self.connection,
-                                                   ["calendar", "event_url", "event_html", "event_data"])
-            if len(missing_tables) != 0:
-                exception_msg = "Missing tables in the DB: {}".format(missing_tables)
-                self.logger.critical(exception_msg)
-                raise Exception(exception_msg)
+            utils.check_db_tables(self.connection, ["calendar", "event_url", "event_html", "event_data"])
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
-
         parser.add_argument('--domain', type=str, default=None,
-                            help="parse events only of the specified domain")
+                            help="parse events only of the specified calendar domain")
         parser.add_argument('--event-url', type=str, default=None,
-                            help="parse events' data of the specified URL")
+                            help="parse data only of the specified event URL")
         parser.add_argument('--parse-all', action='store_true', default=False,
                             help="parse even already parsed events")
-
         return parser.parse_args()
 
     def run(self) -> None:
-        input_events = self.load_input_events()
-        events_to_insert = self.parse_events(input_events)
-        self.store_to_database(events_to_insert, self.args.dry_run)
-        if not self.args.dry_run:
-            self.update_database(input_events)
+        input_events = self._load_input_events()
+        events_to_insert = self._parse_events(input_events)
+        self._store_to_database(events_to_insert)
+        self._update_database(input_events)
         self.connection.close()
 
-    def load_input_events(self) -> list:
+    def _load_input_events(self) -> List[tuple]:
         self.logger.info("Loading input events...")
+
         query = '''
                     SELECT eh.id, eh.html_file_path, 
                            eu.url, 
@@ -89,80 +79,71 @@ class ParseEvents:
         cursor = self.connection.execute(query)
         return cursor.fetchall()
 
-    def parse_events(self, input_events: list) -> list:
-        self.logger.info("Parsing events' content...")
-        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__)
+    def _parse_events(self, input_events: List[tuple]) -> List[tuple]:
+        self.logger.info("Parsing events...")
+
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__, log_file=self.args.log_file, debug=self.args.debug)
         timestamp = datetime.now()
         input_tuples = []
-
         for index, event_tuple in enumerate(input_events):
             _, _, _, calendar_url = event_tuple
             website_base = utils.get_base_by_url(calendar_url)
             input_tuples.append((index + 1, len(input_events), event_tuple, timestamp, website_base))
 
         with multiprocessing.Pool(32) as p:
-            return p.map(ParseEvents.process_event, input_tuples)
+            return p.map(ParseEvents._parse_events_process, input_tuples)
 
     @staticmethod
-    def process_event(input_tuple: tuple) -> (dict, str, tuple):
+    def _parse_events_process(input_tuple: (int, int, (int, str, str, str), datetime, dict)) -> (dict, datetime, tuple):
         simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
+
         input_index, total_length, event_tuple, timestamp, website_base = input_tuple
-        """ (input_index: int, total_length: int, event_tuple: (int, str, str, str), timestamp: datetime, 
-            website_base: dict) """
         event_html_id, event_html_file_path, event_url, _ = event_tuple
 
         info_output = "{}/{} | Parsing event: {}".format(input_index, total_length, event_url)
 
         if not event_html_file_path:
-            info_output += " | NOK - (File path for the event '{}' is None!)".format(event_url)
-            simple_logger.error(info_output)
+            simple_logger.error(info_output + " | NOK - (File path for the event '{}' is None!)".format(event_url))
             return {"error": "Filepath is None!"}, timestamp, event_tuple
 
         elif not os.path.isfile(event_html_file_path):
-            info_output += " | NOK - (File '{}' does not exist!)".format(event_html_file_path)
-            simple_logger.error(info_output)
+            simple_logger.error(info_output + " | NOK - (File '{}' does not exist!)".format(event_html_file_path))
             return {"error": "File does not exist!"}, timestamp, event_tuple
 
         with open(event_html_file_path, encoding="utf-8") as html_file:
             dom = etree.parse(html_file, etree.HTMLParser(encoding="utf-8"))
 
-        parser_name = website_base["parser"]
-        parser = Parser(parser_name)
+        parser = Parser(website_base["parser"])
         parser.set_dom(dom)
 
         try:
             parsed_event_data = parser.get_event_data()
         except Exception as e:
-            info_output += " | NOK"
+            simple_logger.error(info_output + " | NOK (Exception: {})".format(str(e)))
             if len(parser.error_messages) != 0:
-                info_output += " - ({})".format(" & ".join(parser.error_messages))
-            info_output += "\n\t> Exception: {}".format(str(e))
-            simple_logger.error(info_output)
+                simple_logger.debug("Parser's errors: {}".format(json.dumps(parser.error_messages, indent=4)))
             return {"error": "Exception occurred during parsing!"}, timestamp, event_tuple
 
         if len(parsed_event_data) == 0:
-            info_output += " | NOK - ({})".format(" & ".join(parser.error_messages))
-            simple_logger.error(info_output)
+            simple_logger.error(info_output + " | NOK")
+            if len(parser.error_messages) != 0:
+                simple_logger.debug("Parser's errors: {}".format(json.dumps(parser.error_messages, indent=4)))
             return {"error": "No data were parsed!"}, timestamp, event_tuple
 
-        info_output += " | OK".format(input_index, total_length, event_url)
-        simple_logger.info(info_output)
+        simple_logger.info(info_output + " | OK")
         if len(parser.error_messages) != 0:
-            debug_output = "Parser's errors: {}".format(" & ".join(parser.error_messages))
-            simple_logger.debug(debug_output)
+            simple_logger.debug("Parser's errors: {}".format(json.dumps(parser.error_messages, indent=4)))
 
         return parsed_event_data, timestamp, event_tuple
 
-    def store_to_database(self, events_to_insert: list, dry_run: bool) -> None:
-        if not dry_run:
+    def _store_to_database(self, events_to_insert: List[tuple]) -> None:
+        if not self.args.dry_run:
             self.logger.info("Inserting into DB...")
 
-        debug_output = ""
         parsed_data = []
         error_dict = defaultdict(int)
         nok_list = []
         ok = 0
-
         for event_data in events_to_insert:
             data_dict, parsed_at, event_tuple = event_data
             event_html_id, event_html_file_path, event_url, _ = event_tuple
@@ -179,7 +160,6 @@ class ParseEvents:
 
             title = data_dict.get("title", None)
             datetime = data_dict.get("datetime", None)
-
             if not title or not datetime:
                 nok_list.append(event_html_id)
                 error_dict["Doesn't contain title or datetime!"] += 1
@@ -191,7 +171,7 @@ class ParseEvents:
                 })
                 continue
 
-            if not dry_run:
+            if not self.args.dry_run:
                 query = '''
                             INSERT INTO event_data(title, perex, datetime, location, gps, organizer, types, event_html_id)
                             VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -203,10 +183,10 @@ class ParseEvents:
                 try:
                     self.connection.execute(query, values)
                 except sqlite3.Error as e:
-                    nok_list.append(event_html_id)
-                    error_dict["Error occurred during storing!"] += 1
                     self.logger.error(
                         "Error occurred when storing {} into 'event_data' table: {}".format(values, str(e)))
+                    nok_list.append(event_html_id)
+                    error_dict["Error occurred during storing!"] += 1
                     parsed_data.append({
                         "file": event_html_file_path,
                         "url": event_url,
@@ -220,18 +200,20 @@ class ParseEvents:
                 "url": event_url,
                 "data": data_dict
             })
-        self.connection.commit()
+        if self.args.dry_run:
+            print(json.dumps(parsed_data, indent=4, ensure_ascii=False))
+        else:
+            self.connection.commit()
 
-        if dry_run:
-            debug_output += ">> Data:\n"
-            debug_output += "{}\n".format(json.dumps(parsed_data, indent=4, ensure_ascii=False))
-        self.logger.info(debug_output)
-
-        self.logger.info(">> Errors stats: {}".format(json.dumps(error_dict, indent=4, ensure_ascii=False)))
+        if len(error_dict) > 0:
+            self.logger.info(">> Errors stats: {}".format(json.dumps(error_dict, indent=4, ensure_ascii=False)))
         self.logger.info(">> Result: {} OKs + {} NOKs / {}".format(ok, len(nok_list), ok + len(nok_list)))
         self.logger.info(">> Failed event_html IDs: {}".format(nok_list))
 
-    def update_database(self, input_events: list) -> None:
+    def _update_database(self, input_events: List[tuple]) -> None:
+        if self.args.dry_run:
+            return
+
         self.logger.info("Updating DB...")
 
         input_ids = [event[0] for event in input_events]
