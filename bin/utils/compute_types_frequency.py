@@ -5,19 +5,19 @@ from lib import utils
 
 
 class ComputeTypesFrequency:
+    """ Gets all event's types and computes their frequency. """
 
     def __init__(self) -> None:
         self.connection = utils.create_connection()
-
-        missing_views = utils.check_db_views(self.connection, ["event_data_view"])
-        if len(missing_views) != 0:
-            raise Exception("Missing views in the DB: {}".format(missing_views))
+        utils.check_db_views(self.connection, ["event_data_view"])
 
     def run(self) -> None:
-        result_dict = self.get_type_counts()
+        result_dict = self._get_type_counts()
         print(json.dumps(result_dict, indent=4, ensure_ascii=False))
 
-    def get_type_counts(self) -> dict:
+    def _get_type_counts(self) -> dict:
+        print("Computing types' frequency...")
+
         query = '''
                 SELECT event_data__types, calendar__url
                 FROM event_data_view

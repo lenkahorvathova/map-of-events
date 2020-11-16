@@ -253,7 +253,7 @@ def check_file(file_path: str) -> None:
     """
 
     if not os.path.isfile(file_path):
-        exception_msg = "Missing an input base file: '{}'".format(INPUT_SITES_BASE_FILE_PATH)
+        exception_msg = "Missing file: '{}'".format(INPUT_SITES_BASE_FILE_PATH)
         LOGGER.critical(exception_msg)
         raise Exception(exception_msg)
 

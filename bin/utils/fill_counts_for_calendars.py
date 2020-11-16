@@ -5,6 +5,7 @@ import os
 import sqlite3
 import urllib.parse as urllib
 from datetime import datetime
+from typing import List
 
 from lxml import etree
 
@@ -13,78 +14,68 @@ from lib.parser import Parser
 
 
 class FillCountsForCalendars:
+    """ Fills columns for ALL and NEW counts of events parsed from calendars. """
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
-            missing_tables = utils.check_db_tables(self.connection, ["calendar", "event_url"])
-            if len(missing_tables) != 0:
-                raise Exception("Missing tables in the DB: {}".format(missing_tables))
+            utils.check_db_tables(self.connection, ["calendar", "event_url"])
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
         parser.add_argument('--dry-run', action='store_true', default=False,
                             help="don't store any output and print to stdout")
-
         return parser.parse_args()
 
     def run(self) -> None:
-        input_calendars = self.load_input_calendars()
-        events_to_insert = self.parse_calendars(input_calendars)
-        events_counts = self.get_new_counts(events_to_insert)
-
-        if self.args.dry_run:
-            print(json.dumps(events_to_insert, indent=4))
-        else:
-            self.update_database(events_counts)
+        input_calendars = self._load_input_calendars()
+        events_to_insert = self._parse_calendars(input_calendars)
+        self._update_database(events_to_insert)
         self.connection.close()
 
-    def load_input_calendars(self) -> list:
+    def _load_input_calendars(self) -> List[tuple]:
         print("Loading input calendars...")
+
         query = '''
                     SELECT id, url, html_file_path 
                     FROM calendar 
                 '''
-
         cursor = self.connection.execute(query)
+
         return cursor.fetchall()
 
-    @staticmethod
-    def parse_calendars(input_calendars: list) -> dict:
+    def _parse_calendars(self, input_calendars: List[tuple]) -> dict:
+        print("Parsing input calendars...")
+
         timestamp = datetime.now()
         input_tuples = []
-
         for index, calendar_tuple in enumerate(input_calendars):
             _, calendar_url, _ = calendar_tuple
             website_base = utils.get_base_by_url(calendar_url)
             input_tuples.append((index + 1, len(input_calendars), calendar_tuple, timestamp, website_base))
 
         with multiprocessing.Pool(32) as p:
-            events_lists = p.map(FillCountsForCalendars.process_calendar, input_tuples)
+            events_lists = p.map(FillCountsForCalendars._parse_calendars_process, input_tuples)
 
         events_to_insert = {calendar_id: {'all': len(events_list), 'new': 0}
                             for element in events_lists
                             for calendar_id, events_list in element.items()}
-        return events_to_insert
+
+        return self._get_new_counts(events_to_insert)
 
     @staticmethod
-    def process_calendar(input_tuple: tuple) -> dict:
+    def _parse_calendars_process(input_tuple: (int, int, (int, str, str), datetime, dict)) -> dict:
         input_index, total_length, calendar_tuple, timestamp, website_base = input_tuple
-        """ (input_index: int, total_length: int, calendar_tuple: (int, str, str), timestamp: datetime, 
-            website_base: dict) """
         calendar_id, calendar_url, calendar_html_file_path = calendar_tuple
-
-        domain = website_base["domain"]
         file = os.path.basename(calendar_html_file_path)
 
-        debug_output = "{}/{} | {}/{}".format(input_index, total_length, domain, file)
+        debug_output = "{}/{} | {}/{}".format(input_index, total_length, website_base["domain"], file)
 
         if not os.path.isfile(calendar_html_file_path):
-            debug_output += " | File '{}' does not exist!".format(calendar_html_file_path)
+            debug_output += " | 0 (File '{}' does not exist!)".format(calendar_html_file_path)
             print(debug_output)
             return {
                 calendar_id: []
@@ -93,8 +84,7 @@ class FillCountsForCalendars:
         with open(calendar_html_file_path, encoding="utf-8") as html_file:
             dom = etree.parse(html_file, etree.HTMLParser())
 
-        parser_name = website_base["parser"]
-        parser = Parser(parser_name)
+        parser = Parser(website_base["parser"])
         parser.set_dom(dom)
         event_urls = parser.get_event_urls()
 
@@ -103,18 +93,17 @@ class FillCountsForCalendars:
             event_url = urllib.urljoin(calendar_url, url_path)
             events_to_insert.append((event_url, timestamp))
 
-        debug_output += " | {}\n".format(len(events_to_insert))
-        print(debug_output, end="")
+        debug_output += " | {}".format(len(events_to_insert))
+        print(debug_output)
 
         return {
             calendar_id: events_to_insert
         }
 
-    def get_new_counts(self, events_to_insert: dict) -> dict:
+    def _get_new_counts(self, events_to_insert: dict) -> dict:
         query = '''
-                    SELECT 
-                        c.id AS calendar_id,
-                        count(eu.url) AS events_count
+                    SELECT c.id AS calendar_id,
+                           count(eu.url) AS events_count
                     FROM calendar c
                         LEFT OUTER JOIN event_url eu ON c.id = eu.calendar_id
                     WHERE eu.url IS NOT NULL
@@ -128,10 +117,14 @@ class FillCountsForCalendars:
 
         return events_to_insert
 
-    def update_database(self, events_counts: dict) -> None:
+    def _update_database(self, events_to_insert: dict) -> None:
+        if self.args.dry_run:
+            print(json.dumps(events_to_insert, indent=4))
+            return
+
         print("Updating DB...")
 
-        for calendar_id, counts in events_counts.items():
+        for calendar_id, counts in events_to_insert.items():
             query = '''
                         UPDATE calendar
                         SET all_event_url_count = {}, 
