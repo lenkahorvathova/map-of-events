@@ -1,0 +1,8 @@
+Hello,
+
+We couldn't send you Map of Events weekly reminder as an email file 'data/tmp/email.txt' doesn't exist. Please, check if it's generated correctly.
+
+This email was sent to you via the crontab using a script 'bin/send_email.sh'.
+
+Kind regards,
+Lenka Horvathova (445291)

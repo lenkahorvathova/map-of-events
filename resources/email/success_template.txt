@@ -1,0 +1,10 @@
+Hello,
+
+%LAST_WEEK_EVENTS_COUNT% events were acquired last week (%LAST_WEEK_NUMBER%).
+
+For more detailed statistics and possible failures check: https://nlp.fi.muni.cz/projekty/event_map/crawler_status.html
+
+This email was sent to you via crontab using a script 'bin/send_email.sh'.
+
+Kind regards,
+Lenka Horvathova (445291)

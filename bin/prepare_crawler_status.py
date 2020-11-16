@@ -12,6 +12,8 @@ class PrepareCrawlerStatus:
     """ Prepare statistics for a crawler's status. """
 
     OUTPUT_FILE_PATH = "data/tmp/crawler_status_info.json"
+    EMAIL_TEMPLATE_FILE_PATH = "resources/email_template.txt"
+    EMAIL_RESULT_FILE_PATH = "data/tmp/email.txt"
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
@@ -35,6 +37,7 @@ class PrepareCrawlerStatus:
             print(json.dumps(crawler_status_dict, indent=4, ensure_ascii=False))
         else:
             utils.store_to_json_file(crawler_status_dict, PrepareCrawlerStatus.OUTPUT_FILE_PATH)
+        self._generate_email(crawler_status_dict['statistics']['count_per_week'][1])
 
         self.logger.info("DONE")
 
@@ -364,6 +367,15 @@ class PrepareCrawlerStatus:
         base_dict = utils.get_base_dict_per_url()
 
         return base_dict
+
+    @staticmethod
+    def _generate_email(last_week_dict: dict) -> None:
+        with open(PrepareCrawlerStatus.EMAIL_TEMPLATE_FILE_PATH, 'r') as email_template:
+            email = email_template.read()
+        email = email.replace('%LAST_WEEK_NUMBER%', str(last_week_dict['week']))
+        email = email.replace('%LAST_WEEK_EVENTS_COUNT%', str(last_week_dict['count']))
+        with open(PrepareCrawlerStatus.EMAIL_RESULT_FILE_PATH, 'w') as email_result:
+            email_result.write(email)
 
 
 if __name__ == '__main__':
