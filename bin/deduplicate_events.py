@@ -34,7 +34,7 @@ class DeduplicateEvents:
         parser.add_argument('--event-url', type=str, default=None,
                             help="find duplicates for event from the specified URL")
         parser.add_argument('--deduplicate-all', action='store_true', default=False,
-                            help="deduplicate all events in the database")
+                            help="deduplicate all events in the database; if not used, deduplicate only future ones")
         return parser.parse_args()
 
     def run(self) -> None:
@@ -57,11 +57,13 @@ class DeduplicateEvents:
                     FROM event_data_view
                     WHERE event_data_datetime__start_date IS NOT NULL 
                       AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1))
+                      AND event_url__duplicate_of IS NULL
                 '''
 
         if not self.args.deduplicate_all:
-            query += ''' AND (event_data_datetime__start_date >= date('now') OR (event_data_datetime__end_date IS NOT NULL AND event_data_datetime__end_date >= date('now')))
-                         AND event_url__duplicate_of IS NULL '''
+            query += ''' AND (event_data_datetime__start_date >= date('now') 
+                      OR (event_data_datetime__end_date IS NOT NULL AND event_data_datetime__end_date >= date('now'))) 
+                     '''
 
         self.connection.row_factory = sqlite3.Row
         cursor = self.connection.execute(query)

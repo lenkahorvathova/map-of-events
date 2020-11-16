@@ -37,7 +37,16 @@ class ParseEvents:
                             help="parse data only of the specified event URL")
         parser.add_argument('--parse-all', action='store_true', default=False,
                             help="parse even already parsed events")
-        return parser.parse_args()
+
+        arguments = parser.parse_args()
+        if arguments.domain and not arguments.dry_run:
+            parser.error("--domain requires --dry-run")
+        if arguments.event_url and not arguments.dry_run:
+            parser.error("--event-url requires --dry-run")
+        if arguments.extract_all and not arguments.dry_run:
+            parser.error("--extract-all requires --dry-run")
+
+        return arguments
 
     def run(self) -> None:
         input_events = self._load_input_events()

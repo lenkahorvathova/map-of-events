@@ -318,7 +318,7 @@ class GeocodeLocation:
                 data_to_insert.append(values)
             else:
                 query = '''
-                            INSERT INTO event_data_gps(online, has_default, gps, location, municipality, district, event_data_id)
+                            INSERT OR IGNORE INTO event_data_gps(online, has_default, gps, location, municipality, district, event_data_id)
                             VALUES (?, ?, ?, ?, ?, ?, ?)
                         '''
                 try:

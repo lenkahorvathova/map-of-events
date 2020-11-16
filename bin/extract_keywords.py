@@ -31,7 +31,12 @@ class ExtractKeywords:
                             help="extract keywords only from events with the specified event_data IDs")
         parser.add_argument('--extract-all', action='store_true', default=False,
                             help="extract keywords even from already processed events")
-        return parser.parse_args()
+
+        arguments = parser.parse_args()
+        if arguments.extract_all and not arguments.dry_run:
+            parser.error("--extract-all requires --dry-run")
+
+        return arguments
 
     def run(self) -> None:
         input_events = self._load_input_events()

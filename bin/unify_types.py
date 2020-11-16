@@ -30,7 +30,12 @@ class UnifyTypes:
                             help="unify types only of events with the specified event_data IDs")
         parser.add_argument('--unify-all', action='store_true', default=False,
                             help="unify types even of already processed events")
-        return parser.parse_args()
+
+        arguments = parser.parse_args()
+        if arguments.unify_all and not arguments.dry_run:
+            parser.error("--unify-all requires --dry-run")
+
+        return arguments
 
     def run(self) -> None:
         input_events = self._load_input_events()
