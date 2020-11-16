@@ -1,5 +1,7 @@
 import argparse
 import json
+from collections import defaultdict
+from datetime import datetime, timedelta
 from typing import Optional, List
 
 from lib import utils, logger
@@ -42,7 +44,7 @@ class PrepareCrawlerStatus:
                 'total_count': self._get_total_events_count(),
                 'future_count': self._get_future_events_count(),
                 'count_per_day': self._get_events_count_per_day(14),
-                'count_per_week': self._get_events_count_per_week(53),
+                'count_per_week': self._get_events_count_per_week(52),
                 'count_per_calendar': self._get_events_count_per_calendar(),
                 'count_per_parser': []
             },
@@ -101,27 +103,56 @@ class PrepareCrawlerStatus:
                     LIMIT {}
                 '''.format(last_n)
         cursor = self.connection.execute(query)
-        return [{
-            'day': tpl[0],
-            'count': tpl[1]
-        } for tpl in cursor.fetchall()]
+        db_result = {tpl[0]: tpl[1] for tpl in cursor.fetchall()}
+
+        curr_date = datetime.now()
+        for i in range(last_n):
+            date_string = curr_date.strftime("%Y/%m/%d")
+            if date_string not in db_result:
+                db_result[date_string] = 0
+            curr_date = curr_date - timedelta(days=1)
+
+        result_dict = list(sorted([{
+            'day': key,
+            'count': value
+        } for key, value in db_result.items()], key=lambda item: item['day'], reverse=True))
+
+        return result_dict[:last_n]
 
     def _get_events_count_per_week(self, last_n: int) -> List[dict]:
         query = '''
-                    SELECT strftime('%Y-%W', calendar__downloaded_at) AS week, count(DISTINCT event_data__id) AS events_count
+                    SELECT strftime('%Y/%m/%d', calendar__downloaded_at) AS day, count(DISTINCT event_data__id) AS events_count
                     FROM event_data_view
                     WHERE event_data_datetime__start_date IS NOT NULL
                       AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1))
                       AND event_url__duplicate_of IS NULL
-                    GROUP BY week
-                    ORDER BY week DESC
+                    GROUP BY day
+                    ORDER BY day DESC
                     LIMIT {}
-                '''.format(last_n)
+                '''.format(last_n * 7)
         cursor = self.connection.execute(query)
-        return [{
-            'week': tpl[0],
-            'count': tpl[1]
-        } for tpl in cursor.fetchall()]
+        counts_per_day = cursor.fetchall()
+
+        tmp_dict = defaultdict(int)
+        for day, count in counts_per_day:
+            curr_date = datetime.strptime(day, '%Y/%m/%d')
+            curr_year, curr_week, _ = curr_date.isocalendar()
+            week_string = "{}-{}".format(str(curr_year), '0' + str(curr_week) if curr_week < 10 else str(curr_week))
+            tmp_dict[week_string] += count
+
+        curr_date = datetime.now()
+        for i in range(last_n):
+            curr_year, curr_week, _ = curr_date.isocalendar()
+            week_string = "{}-{}".format(str(curr_year), '0' + str(curr_week) if curr_week < 10 else str(curr_week))
+            if week_string not in tmp_dict:
+                tmp_dict[week_string] = 0
+            curr_date = curr_date - timedelta(days=7)
+
+        result_dict = list(sorted([{
+            'week': key,
+            'count': value
+        } for key, value in tmp_dict.items()], key=lambda item: item['week'], reverse=True))
+        return result_dict[:last_n]
 
     def _get_events_count_per_calendar(self) -> dict:
         query = '''
