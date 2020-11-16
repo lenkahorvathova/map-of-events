@@ -12,7 +12,7 @@ class PrepareCrawlerStatus:
     """ Prepare statistics for a crawler's status. """
 
     OUTPUT_FILE_PATH = "data/tmp/crawler_status_info.json"
-    EMAIL_TEMPLATE_FILE_PATH = "resources/email_template.txt"
+    EMAIL_TEMPLATE_FILE_PATH = "resources/email/success_template.txt"
     EMAIL_RESULT_FILE_PATH = "data/tmp/email.txt"
 
     def __init__(self) -> None:
