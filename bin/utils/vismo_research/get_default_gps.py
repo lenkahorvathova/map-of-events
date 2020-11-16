@@ -4,8 +4,8 @@ import json
 import multiprocessing
 import os
 import re
-import sys
 import urllib.parse as urllib
+from typing import List
 
 import requests
 from lxml import etree
@@ -16,11 +16,7 @@ from lib.constants import VISMO_RESEARCH_DATA_DIR_PATH
 
 
 class GetDefaultGPS:
-    """ Parses a location from the main page of a Vismo websites,
-            geocodes GPS and updates the base file of input websites.
-
-    Outputs a json file with statistics about location on Vismo websites.
-    """
+    """ Parses a location from the home Vismo page, geocodes to GPS and updates the base information. """
 
     OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "get_default_gps_output.json")
     GEOCODING_TEMPLATE_HTML_FILE = "resources/research/vismo_geocoding_template.html"
@@ -38,14 +34,8 @@ class GetDefaultGPS:
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-
         parser.add_argument('--part', required=True, type=str, choices=GetDefaultGPS.SCRIPT_PARTS,
                             help='specifies a part of the scripts to be performed')
-        parser.add_argument('--dry-run', action='store_true', default=False,
-                            help="don't store any output and print to stdout")
-        parser.add_argument('--domain', type=str, default=None,
-                            help="get GPS only for the specified domain")
-
         return parser.parse_args()
 
     def run(self) -> None:
@@ -53,12 +43,8 @@ class GetDefaultGPS:
             input_domains = self.load_domains()
             found_info = self.get_addresses(input_domains)
             stats_output = self.compute_statistics(found_info)
-
-            if self.args.dry_run:
-                print(json.dumps(stats_output, indent=4))
-            else:
-                utils.store_to_json_file(stats_output, GetDefaultGPS.OUTPUT_FILE_PATH)
-            self.geocode_address(found_info, self.args.dry_run)
+            utils.store_to_json_file(stats_output, GetDefaultGPS.OUTPUT_FILE_PATH)
+            self.geocode_address(found_info)
 
         if self.args.part == "2":
             print("Manually perform following steps:\n"
@@ -66,35 +52,27 @@ class GetDefaultGPS:
                   "\t2. right-click on the loaded site;\n"
                   "\t3. choose 'Inspect' option;\n"
                   "\t4. go to 'Console' tab;\n"
-                  "\t5. wait until geocoding of addresses ends and json appears;\n"
+                  "\t5. wait until geocoding of addresses ends and JSON appears;\n"
                   "\t6. copy the resulting json into '{}'.".format(GetDefaultGPS.GEOCODING_RESULT_HTML_FILE,
                                                                    GetDefaultGPS.GEOCODING_OUTPUT_JSON_FILE))
 
         if self.args.part == "3":
             input_domains = self.load_domains()
             default_locations = self.get_default_locations()
-            self.update_base(input_domains, default_locations, self.args.dry_run)
+            self.update_base(input_domains, default_locations)
 
-    def load_domains(self) -> list:
-        if self.args.domain:
-            website_base = utils.get_base_by_domain(self.args.domain)
-            if website_base is None:
-                sys.exit("Unknown domain '{}'!".format(self.args.domain))
-            calendar_url = website_base.get('url', None)
-            if calendar_url is None:
-                sys.exit("Specified domain '{}' is no longer active!".format(self.args.domain))
-            return [website_base]
-
+    @staticmethod
+    def load_domains() -> List[dict]:
         with open(GenerateInput.OUTPUT_FILE_PATH, 'r') as vismo_base_file:
             return json.load(vismo_base_file)
 
     @staticmethod
-    def get_addresses(input_domains: list) -> list:
+    def get_addresses(input_domains: List[dict]) -> List[dict]:
         with multiprocessing.Pool(32) as p:
-            return p.map(GetDefaultGPS.get_address, input_domains)
+            return p.map(GetDefaultGPS.get_addresses_process, input_domains)
 
     @staticmethod
-    def get_address(input_website: dict) -> dict:
+    def get_addresses_process(input_website: dict) -> dict:
         parsed_url = urllib.urlparse(input_website["url"])
         base_url = '{uri.scheme}://{uri.netloc}/'.format(uri=parsed_url)
 
@@ -167,7 +145,7 @@ class GetDefaultGPS:
         return result
 
     @staticmethod
-    def compute_statistics(found_info: list) -> dict:
+    def compute_statistics(found_info: List[dict]) -> dict:
         output = {
             "statistics": {
                 "all": len(found_info),
@@ -212,7 +190,7 @@ class GetDefaultGPS:
         return output
 
     @staticmethod
-    def geocode_address(found_info: list, dry_run: bool) -> None:
+    def geocode_address(found_info: List[dict]) -> None:
         output = {}
         regex = re.compile(r'[\n\r\t]')
 
@@ -225,18 +203,15 @@ class GetDefaultGPS:
                     domain = input_website["domain"]
                     output[domain] = regex.sub(' ', address)
 
-        if dry_run:
-            print("Geocoding HTML file would be updated with this dataset: {}".format(json.dumps(output, indent=4)))
-        else:
-            with open(GetDefaultGPS.GEOCODING_TEMPLATE_HTML_FILE) as html_file:
-                file = ''.join(html_file.readlines())
-                file = file.replace('<<address_dataset>>', json.dumps(output, indent=4))
+        with open(GetDefaultGPS.GEOCODING_TEMPLATE_HTML_FILE) as html_file:
+            file = ''.join(html_file.readlines())
+            file = file.replace('<<address_dataset>>', json.dumps(output, indent=4))
 
-            with open(GetDefaultGPS.GEOCODING_RESULT_HTML_FILE, 'w') as f:
-                f.write(file)
+        with open(GetDefaultGPS.GEOCODING_RESULT_HTML_FILE, 'w') as f:
+            f.write(file)
 
     @staticmethod
-    def get_default_locations():
+    def get_default_locations() -> dict:
         with open(GetDefaultGPS.OUTPUT_FILE_PATH, 'r') as json_file:
             stats_dict = json.load(json_file)
 
@@ -252,7 +227,7 @@ class GetDefaultGPS:
         return default_locations
 
     @staticmethod
-    def update_base(input_domains: list, default_locations: dict, dry_run: bool) -> None:
+    def update_base(input_domains: List[dict], default_locations: dict) -> None:
         with open(GetDefaultGPS.GEOCODING_OUTPUT_JSON_FILE) as json_file:
             dataset = json.load(json_file)
             found_gps = {}
@@ -276,24 +251,22 @@ class GetDefaultGPS:
             else:
                 without_gps.append(website["domain"])
 
-        if dry_run:
-            print("Input base file would be updated with this dataset: {}".format(json.dumps(input_domains, indent=4)))
-            print("Found GPS: {}/{}".format(gps_count, len(input_domains)))
-            print("Websites left without GPS: {} ({})".format(len(without_gps), without_gps))
-        else:
-            utils.store_to_json_file(input_domains, GenerateInput.OUTPUT_FILE_PATH)
+        utils.store_to_json_file(input_domains, GenerateInput.OUTPUT_FILE_PATH)
 
-            with open(GetDefaultGPS.OUTPUT_FILE_PATH) as file:
-                stat_data = json.load(file)
+        with open(GetDefaultGPS.OUTPUT_FILE_PATH) as file:
+            stat_data = json.load(file)
 
-            stat_data["geocoding_info"] = {
-                "all_websites": len(input_domains),
-                "websites_with_gps": gps_count,
-                "websites_without_gps": len(without_gps),
-                "websites_without_gps_list": without_gps
-            }
+        stat_data["geocoding_info"] = {
+            "all_websites": len(input_domains),
+            "websites_with_gps": gps_count,
+            "websites_without_gps": len(without_gps),
+            "websites_without_gps_list": without_gps
+        }
 
-            utils.store_to_json_file(stat_data, GetDefaultGPS.OUTPUT_FILE_PATH)
+        utils.store_to_json_file(stat_data, GetDefaultGPS.OUTPUT_FILE_PATH)
+
+        print(">> Found GPS: {}/{}".format(gps_count, len(input_domains)))
+        print(">> Websites left without GPS: {} ({})".format(len(without_gps), without_gps))
 
     @staticmethod
     def convert_gps_to_dec(gps: str) -> str:

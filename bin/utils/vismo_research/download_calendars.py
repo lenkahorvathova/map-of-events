@@ -1,6 +1,7 @@
 import multiprocessing
 import os
 from datetime import datetime
+from typing import List
 
 import requests
 
@@ -9,10 +10,7 @@ from lib.constants import VISMO_RESEARCH_DATA_DIR_PATH
 
 
 class DownloadCalendars:
-    """ Downloads an HTML content of a calendar page of input Vismo websites.
-
-    Outputs a json file with information from a downloading process about each website.
-    """
+    """ Downloads a calendar page HTML content of Vismo websites. """
 
     INPUT_URLS_FILE_PATH = "resources/research/vismo_urls.txt"
     HTML_CONTENT_DIR_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "html_content")
@@ -24,12 +22,12 @@ class DownloadCalendars:
         utils.store_to_json_file(download_info, DownloadCalendars.OUTPUT_FILE_PATH)
 
     @staticmethod
-    def load_input_urls() -> list:
+    def load_input_urls() -> List[str]:
         with open(DownloadCalendars.INPUT_URLS_FILE_PATH, 'r', encoding="utf-8") as vismo_urls:
             return [line.strip() for line in vismo_urls]
 
     @staticmethod
-    def download_calendars(input_urls: list) -> list:
+    def download_calendars(input_urls: List[str]) -> List[dict]:
         os.makedirs(DownloadCalendars.HTML_CONTENT_DIR_PATH, exist_ok=True)
 
         with multiprocessing.Pool(32) as p:
@@ -37,12 +35,6 @@ class DownloadCalendars:
 
     @staticmethod
     def download_html_content(url: str) -> dict:
-        """ Downloads an HTML content from the specified URL.
-
-        :param url: a website's URL address with a calendar (e.g. http://dolnibezdekov.cz/ap)
-        :return: results from a downloading process (url, downloaded_at, response_code, -/html_file_path/exception)
-        """
-
         domain = utils.generate_domain_name(url)
         info = {
             "url": url,

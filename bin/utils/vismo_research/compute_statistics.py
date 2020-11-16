@@ -1,5 +1,6 @@
 import json
 import os
+from typing import List
 
 from bs4 import BeautifulSoup
 
@@ -9,12 +10,7 @@ from lib.constants import VISMO_RESEARCH_DATA_DIR_PATH
 
 
 class ComputeStatistics:
-    """ Computes statistics about Vismo websites by analysing downloaded HTML contents of their calendar pages.
-
-    Statistics - sites returning an error, sites without the Vismo '/ap' page,
-        sites with the '/ap' page but without calendar, usable sites with calendar
-    Outputs a json file with counts and lists for these statistics.
-    """
+    """ Computes statistics about Vismo websites by analysing downloaded HTML contents of their calendar pages. """
 
     OUTPUT_FILE_PATH = os.path.join(VISMO_RESEARCH_DATA_DIR_PATH, "compute_statistics_output.json")
 
@@ -24,12 +20,7 @@ class ComputeStatistics:
         utils.store_to_json_file(output_dict, ComputeStatistics.OUTPUT_FILE_PATH)
 
     @staticmethod
-    def compute_statistics() -> list:
-        """ Analyses downloaded HTML contents and prepares resulting statistics about Vismo websites.
-
-        :return: a list of prepared statistics tuples for an output file (statistic's description, count, list)
-        """
-
+    def compute_statistics() -> List[tuple]:
         error_sites_count, error_sites_list = 0, []
         without_ap_page_sites_count, without_ap_page_sites_list = 0, []
         without_calendar_sites_count, without_calendar_sites_list = 0, []
@@ -91,7 +82,7 @@ class ComputeStatistics:
         return False
 
     @staticmethod
-    def prepare_output(statistics_results: list) -> dict:
+    def prepare_output(statistics_results: List[tuple]) -> dict:
         all_sites_count = 0
         output = {}
 

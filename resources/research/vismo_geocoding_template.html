@@ -1,30 +1,21 @@
 <!DOCTYPE html>
-<html>
+<html lang="cz">
     <head>
         <meta charset="utf-8"/>
-        <title>api4.mapy.cz - geokódování</title>
+        <title>api4.mapy.cz - geocoding</title>
         <script type="text/javascript" src="https://api.mapy.cz/loader.js"></script>
         <script type="text/javascript">Loader.load();</script>
     </head>
     <body id="advanced-geocoding">
-        <div id="m" style="height:360px"></div>
-        <form id="form">
-            <p>
-                <label>Hledaná oblast: <input type="text" id="query" value="Radlická 2"/></label>
-                <input type="submit" value="Hledat"/>
-            </p>
-            <p>
-                <label>Hledat v omezené oblasti dané bounding boxem: <input type="text" id="queryAdv" value="Brno"/></label>
-                <input type="button" class="search-adv" value="Hledat"/>
-            </p>
-        </form>
+        <ul>
+            <li>Right-click on the screen.</li>
+            <li>Click 'Inspect' option.</li>
+            <li>Go to 'Console' tab.</li>
+            <li>Wait until geocoding ends and JSON appears.</li>
+            <li>Copy the resulting JSON.</li>
+        </ul>
 
         <script>
-            var m = new SMap(JAK.gel("m"));
-            m.addControl(new SMap.Control.Sync());
-            m.addDefaultLayer(SMap.DEF_BASE).enable();
-            m.addDefaultControls();
-
             function geokoduj(obec, address) {
                 return new Promise(resolve => {
                     new SMap.Geocoder(address, (geocoder) => {
@@ -35,10 +26,10 @@
                         }
                         console.log(obec);
 
-                        var vysledky = geocoder.getResults()[0].results;
-                        var data = [];
+                        const vysledky = geocoder.getResults()[0].results;
+                        const data = [];
                         while (vysledky.length) {
-                            var item = vysledky.shift()
+                            const item = vysledky.shift();
                             data.push(item.label + " (" + item.coords.toWGS84(2).reverse().join(", ") + ")");
                         }
                         resolve(data);
@@ -53,14 +44,13 @@
             }
 
             async function get_gps() {
-                output = {};
+                const output = {};
 
-                for (const obec in dataset) {
-                    // console.log(obec);
-                    const address = await geokoduj(obec, dataset[obec]);
-                    output[obec] = address
-                    await sleep(100);
-                    // console.log('done');
+                for (let obec in dataset) {
+                    if (dataset.hasOwnProperty(obec)) {
+                        output[obec] = await geokoduj(obec, dataset[obec]);
+                        await sleep(100);
+                    }
                 }
 
                 console.log(JSON.stringify(output, null, 4));
