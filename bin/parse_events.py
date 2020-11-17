@@ -43,8 +43,8 @@ class ParseEvents:
             parser.error("--domain requires --dry-run")
         if arguments.event_url and not arguments.dry_run:
             parser.error("--event-url requires --dry-run")
-        if arguments.extract_all and not arguments.dry_run:
-            parser.error("--extract-all requires --dry-run")
+        if arguments.parse_all and not arguments.dry_run:
+            parser.error("--parse-all requires --dry-run")
 
         return arguments
 

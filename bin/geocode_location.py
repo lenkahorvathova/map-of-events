@@ -32,7 +32,11 @@ class GeocodeLocation:
         parser = ArgumentsParser()
         parser.add_argument('--events-ids', type=int, nargs="*",
                             help="geocode locations only of events with the specified event_data IDs")
-        return parser.parse_args()
+
+        arguments = parser.parse_args()
+        if arguments.events_ids and not arguments.dry_run:
+            parser.error("--events-ids requires --dry-run")
+        return arguments
 
     def run(self) -> None:
         input_events = self._load_input_events()

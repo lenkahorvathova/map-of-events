@@ -35,7 +35,7 @@ class DownloadEvents:
         parser.add_argument('--event-url', type=str, default=None,
                             help="download only event with the specified URL")
         parser.add_argument('--redownload-file', action='store_true', default=False,
-                            help="redownload content of the specified URL in --event-url")  # doesn't update 'downloaded_at'
+                            help="redownload content of the specified URL in --event-url; doesn't update the database")
 
         arguments = parser.parse_args()
         if arguments.redownload_file and not arguments.event_url:

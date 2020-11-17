@@ -35,18 +35,7 @@ class ProcessDatetime:
                             help="process datetime only of events with the specified event_data IDs")
         parser.add_argument('--process-all', action='store_true', default=False,
                             help="process datetime of even already processed events")
-
-        arguments = parser.parse_args()
-        if arguments.domain and not arguments.dry_run:
-            parser.error("--domain requires --dry-run")
-        if arguments.event_url and not arguments.dry_run:
-            parser.error("--event-url requires --dry-run")
-        if arguments.event_ids and not arguments.dry_run:
-            parser.error("--event-ids requires --dry-run")
-        if arguments.process_all and not arguments.dry_run:
-            parser.error("--process-all requires --dry-run")
-
-        return arguments
+        return parser.parse_args()
 
     def run(self) -> None:
         input_events = self._load_input_events()
@@ -161,7 +150,7 @@ class ProcessDatetime:
                     milestones = milestones[1:]
 
                 query = '''
-                            INSERT INTO event_data_datetime(start_date, start_time, end_date, end_time, event_data_id)
+                            INSERT OR IGNORE INTO event_data_datetime(start_date, start_time, end_date, end_time, event_data_id)
                             VALUES {}
                         '''.format(tuples_to_insert)
                 try:
