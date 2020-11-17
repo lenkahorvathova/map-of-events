@@ -2,9 +2,9 @@ function handleSidebarToggleButtonClick() {
     $('#sidebar, #content, #sidebar-collapse-btn').toggleClass('active');
     const sidebarBtn = document.getElementById('sidebar-collapse-btn');
     if (sidebarBtn.classList.contains('active')) {
-        sidebarBtn.innerHTML = `<i class="fa fa-angle-double-left"> ${getLocalizedString('content_search_form_bookmark')}</i>`;
+        sidebarBtn.innerHTML = `<i class="fa fa-angle-double-left"></i> ${getLocalizedString('content_search_form_bookmark')}`;
     } else {
-        sidebarBtn.innerHTML = `<i class="fa fa-angle-double-right"> ${getLocalizedString('content_search_form_bookmark')}</i>`;
+        sidebarBtn.innerHTML = `<i class="fa fa-angle-double-right"></i> ${getLocalizedString('content_search_form_bookmark')}`;
     }
 
     $('.collapse.in').toggleClass('in');

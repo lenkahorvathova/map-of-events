@@ -175,19 +175,15 @@ function addShowTableButton() {
         type: "button",
         textContent: getLocalizedString('content_map_show_table_btn')
     }, {
-        fontSize: "17px",
         lineHeight: "27px",
-        fontWeight: "400",
-        background: "#fff",
-        color: "#6b7580",
+        background: "#FFFFFF",
+        color: "#6B7580",
         border: "none",
         outline: "0",
         borderRadius: "2px",
         padding: "0 8px 0 8px",
-        fontStyle: "normal",
-        fontSmooth: "antialiased",
-        "-webkit-font-smoothing": "antialiased"
-
+        fontFamily: "'Open Sans', sans-serif",
+        fontSize: ".875rem"
     });
     button.onclick = function () {
         $("#modal--events-table").modal('show');
@@ -195,8 +191,8 @@ function addShowTableButton() {
     showTable.appendChild(button);
     customLayer.addItem(showTable, {
         position: "absolute",
-        right: "97px",
-        top: "17px",
+        right: "17px",
+        top: "140px",
         borderRadius: "2px",
         boxShadow: "0 0 2px 0 rgba(0,0,0,.3)"
     });
