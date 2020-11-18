@@ -13,7 +13,7 @@ from lib.constants import SIMPLE_LOGGER_PREFIX
 
 
 class DeduplicateEvents:
-    """ Deduplicate stored events. """
+    """ De-duplicates stored events. """
 
     CANCELLED_REGEX = re.compile(r'\b(zrušen|ZRUŠEN|Zrušen)')
     DEFERRED_REGEX = re.compile(r'\b(odložen|ODLOŽEN|Odložen|přesunut|PŘESUNUT|Přesunut)')
@@ -31,6 +31,7 @@ class DeduplicateEvents:
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
+        parser.set_description("De-duplicates stored events.")
         parser.add_argument('--event-url', type=str, default=None,
                             help="find duplicates for event from the specified URL")
         parser.add_argument('--deduplicate-all', action='store_true', default=False,

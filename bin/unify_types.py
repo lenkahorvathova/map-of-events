@@ -13,7 +13,7 @@ from lib.constants import EVENT_TYPES_JSON_FILE_PATH, SIMPLE_LOGGER_PREFIX
 
 
 class UnifyTypes:
-    """ Unify types of parsed events. """
+    """ Unifies types of parsed events. """
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
@@ -26,6 +26,7 @@ class UnifyTypes:
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
+        parser.set_description("Unifies types of parsed events.")
         parser.add_argument('--events-ids', type=int, nargs="*",
                             help="unify types only of events with the specified event_data IDs")
         parser.add_argument('--unify-all', action='store_true', default=False,

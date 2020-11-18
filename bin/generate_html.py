@@ -13,7 +13,7 @@ from lib.constants import EVENT_TYPES_JSON_FILE_PATH
 
 
 class GenerateHTML:
-    """ Generate website's HTML. """
+    """ Generates website's HTML. """
 
     TEMP_WEB_FOLDER = "data/tmp/web"
     INDEX_TEMPLATE_HTML_FILE_PATH = "web/index_template.html"
@@ -35,6 +35,7 @@ class GenerateHTML:
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
+        parser.set_description("Generates website's HTML.")
         return parser.parse_args()
 
     def run(self) -> None:

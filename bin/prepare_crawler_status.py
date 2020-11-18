@@ -9,7 +9,7 @@ from lib.arguments_parser import ArgumentsParser
 
 
 class PrepareCrawlerStatus:
-    """ Prepare statistics for a crawler's status. """
+    """ Prepares statistics for a crawler's status. """
 
     OUTPUT_FILE_PATH = "data/tmp/crawler_status_info.json"
     EMAIL_TEMPLATE_FILE_PATH = "resources/email/success_template.txt"
@@ -27,6 +27,7 @@ class PrepareCrawlerStatus:
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
+        parser.set_description("Prepares statistics for a crawler's status.")
         return parser.parse_args()
 
     def run(self):

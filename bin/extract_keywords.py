@@ -12,7 +12,7 @@ from lib.constants import SIMPLE_LOGGER_PREFIX
 
 
 class ExtractKeywords:
-    """ Extract keywords of parsed events. """
+    """ Extracts keywords of parsed events. """
 
     EVENT_KEYWORDS_JSON_FILE_PATH = "resources/event_keywords.json"
 
@@ -27,6 +27,7 @@ class ExtractKeywords:
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
+        parser.set_description("Extracts keywords of parsed events.")
         parser.add_argument('--events-ids', type=int, nargs="*",
                             help="extract keywords only from events with the specified event_data IDs")
         parser.add_argument('--extract-all', action='store_true', default=False,

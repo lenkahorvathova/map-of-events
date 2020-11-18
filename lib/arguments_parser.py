@@ -11,3 +11,6 @@ class ArgumentsParser(argparse.ArgumentParser):
                           help="set a logging level to DEBUG; if not specified, set a level as INFO")
         self.add_argument('--dry-run', action='store_true', default=False,
                           help="don't store anything permanently")
+
+    def set_description(self, text: str) -> None:
+        self.description = text

@@ -8,7 +8,7 @@ from lib.arguments_parser import ArgumentsParser
 
 
 class DeleteHtmlFiles:
-    """ Deletes all HTML files related to calendars downloaded more than the specified days ago. """
+    """ Deletes HTML files related to calendars downloaded more than the specified days ago. """
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
@@ -22,6 +22,7 @@ class DeleteHtmlFiles:
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
+        parser.set_description("Deletes HTML files related to calendars downloaded more than the specified days ago.")
         parser.add_argument('days_ago', type=int, help="delete HTML files older than the specified days ago")
         return parser.parse_args()
 

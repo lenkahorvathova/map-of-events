@@ -30,6 +30,7 @@ class DownloadEvents:
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
+        parser.set_description("Downloads an event's page HTML content of found events' URLs.")
         parser.add_argument('--domain', type=str, default=None,
                             help="download events only from the specified calendar domain")
         parser.add_argument('--event-url', type=str, default=None,

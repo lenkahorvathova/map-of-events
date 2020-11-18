@@ -27,6 +27,7 @@ class ProcessDatetime:
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
+        parser.set_description("Processes datetime of parsed events.")
         parser.add_argument('--domain', type=str, default=None,
                             help="process datetime only of events from the specified calendar domain")
         parser.add_argument('--event-url', type=str, default=None,

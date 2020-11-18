@@ -13,7 +13,7 @@ from lib.constants import MUNICIPALITIES_OF_CR_FILE_PATH, SIMPLE_LOGGER_PREFIX
 
 
 class GeocodeLocation:
-    """ Geocodes a location of parsed events without GPS. """
+    """ Geo-codes a location of parsed events without GPS. """
 
     ONLINE_REGEX = re.compile(r'\b(online|Online|ONLINE|On-line|on-line|ON-LINE|Virtuálně|virtuálně)\b')
     OUTPUT_FILE_PATH = "data/tmp/geocode_location_output.json"
@@ -30,6 +30,7 @@ class GeocodeLocation:
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = ArgumentsParser()
+        parser.set_description("Geo-codes a location of parsed events without GPS.")
         parser.add_argument('--events-ids', type=int, nargs="*",
                             help="geocode locations only of events with the specified event_data IDs")
 
