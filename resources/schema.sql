@@ -6,7 +6,8 @@ CREATE TABLE IF NOT EXISTS calendar
     is_parsed           INTEGER   DEFAULT 0,
     all_event_url_count INTEGER   DEFAULT 0,
     new_event_url_count INTEGER   DEFAULT 0,
-    downloaded_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    downloaded_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_deleted          INTEGER   DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS event_url
@@ -28,6 +29,7 @@ CREATE TABLE IF NOT EXISTS event_html
     html_file_path TEXT,
     is_parsed      INTEGER   DEFAULT 0,
     downloaded_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_deleted     INTEGER   DEFAULT 0,
     event_url_id   INTEGER,
     FOREIGN KEY (event_url_id) REFERENCES event_url (id)
 );
