@@ -34,7 +34,7 @@ class GetDefaultGPS:
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
-        parser.add_argument('--part', required=True, type=str, choices=GetDefaultGPS.SCRIPT_PARTS,
+        parser.add_argument('part', type=str, choices=GetDefaultGPS.SCRIPT_PARTS,
                             help='specifies a part of the scripts to be performed')
         return parser.parse_args()
 

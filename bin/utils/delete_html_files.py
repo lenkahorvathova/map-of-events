@@ -18,15 +18,16 @@ class DeleteHTMLFiles:
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
         parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+        parser.add_argument('type', type=str, choices=DeleteHTMLFiles.FILE_TYPES,
+                            help='delete HTML files of the specified content type')
+        parser.add_argument('-file-name-prefix', type=str, required=True,
+                            help="delete HTML files with the specified name prefix; "
+                                 "timestamp can be as specific as needed "
+                                 "- e.g. '2020-01-17', '2020-01-21_22-47-02'")
         parser.add_argument('--dry-run', action='store_true', default=False,
                             help="don't store anything permanently")
-        parser.add_argument('--type', required=True, type=str, choices=DeleteHTMLFiles.FILE_TYPES,
-                            help='delete HTML files of the specified type')
-        parser.add_argument('--timestamp', required=True, type=str,
-                            help="delete HTML file with a name prefix as the specified timestamp, "
-                                 "can be as specific as needed (e.g. '2020-01-17', '2020-01-21_22-47-02')")
         parser.add_argument('--domain', type=str, default=None,
-                            help="delete HTML file of only the specified domain")
+                            help="delete HTML file of only the specified calendar domain")
         return parser.parse_args()
 
     def run(self) -> None:
@@ -48,7 +49,7 @@ class DeleteHTMLFiles:
             domain_removed_files = self._delete_html_files_helper(domain)
             all_removed_files.extend(domain_removed_files)
 
-        print("{} files{}deleted".format(len(all_removed_files), " would be deleted " if self.args.dry_run else " "))
+        print(">> {} files{}deleted:".format(len(all_removed_files), " would be " if self.args.dry_run else " "))
         print(*all_removed_files, sep='\n')
 
     def _delete_html_files_helper(self, domain: str) -> List[str]:
@@ -65,7 +66,7 @@ class DeleteHTMLFiles:
             files = sorted([file for file in os.listdir(current_dir) if file.endswith('.html')], key=str.lower)
             for filename in files:
                 file_path = os.path.join(current_dir, filename)
-                if os.path.isfile(file_path) and filename.startswith(self.args.timestamp):
+                if os.path.isfile(file_path) and filename.startswith(self.args.file_name_prefix):
                     if not self.args.dry_run:
                         os.remove(file_path)
                     removed_files.append(file_path)
