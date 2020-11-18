@@ -1,5 +1,5 @@
-PROJECT_DIR="/Users/lenkahorvathova/Documents/mgr/SDIPR"
-REPOSITORY_DIR="${PROJECT_DIR}/map_of_events"
+PROJECT_DIR="/nlp/projekty/event_map"
+REPOSITORY_DIR="${PROJECT_DIR}/repository"
 PYTHON_ENV_SCRIPTS_DIR="venv/bin"
 LOG_DATA_DIR="data/log"
 
