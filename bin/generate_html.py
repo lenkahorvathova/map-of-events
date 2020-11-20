@@ -1,4 +1,5 @@
 import argparse
+import glob
 import json
 import os
 import re
@@ -319,8 +320,7 @@ class GenerateHTML:
 
     @staticmethod
     def _get_latest_execution_log_path() -> str:
-        logs_paths = [os.path.join('data/log', basename) for basename in os.listdir('data/log')]
-        return max(logs_paths, key=os.path.getctime)
+        return max(glob.iglob("data/log/cron_process_*.txt"), key=os.path.getctime)
 
 
 if __name__ == '__main__':
