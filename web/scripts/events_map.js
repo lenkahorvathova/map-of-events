@@ -255,7 +255,7 @@ function filterEventsAndLoadMap() {
     const startDate = document.getElementById('sidebar__form--filter__datetime__start--date-picker').value;
     let specifiedStartTime = document.getElementById('sidebar__form--filter__datetime__start--time-picker').value;
     if (specifiedStartTime === "") specifiedStartTime = "00:00";
-    const specifiedStartDatetime = new Date(startDate + ' ' + specifiedStartTime);
+    const specifiedStartDatetime = new Date((startDate + ' ' + specifiedStartTime).replace(/ /g, "T"));
 
     const endDate = document.getElementById('sidebar__form--filter__datetime__end--date-picker').value;
     let specifiedEndTime = document.getElementById('sidebar__form--filter__datetime__end--time-picker').value;
@@ -264,7 +264,7 @@ function filterEventsAndLoadMap() {
     if (endDate === "") {
         specifiedEndDatetime = new Date(8640000000000000);
     } else {
-        specifiedEndDatetime = new Date(endDate + ' ' + specifiedEndTime);
+        specifiedEndDatetime = new Date((endDate + ' ' + specifiedEndTime).replace(/ /g, "T"));
     }
 
     const marks = [];
@@ -309,13 +309,13 @@ function filterEventsAndLoadMap() {
             const eventsStartDate = startDate;
             let eventsStartTime = startTime;
             if (eventsStartTime === null) eventsStartTime = ongoingChecked ? specifiedStartTime : "00:00";
-            const eventsStartDatetime = new Date(eventsStartDate + ' ' + eventsStartTime);
+            const eventsStartDatetime = new Date((eventsStartDate + ' ' + eventsStartTime).replace(/ /g, "T"));
 
             let eventsEndDate = endDate;
             if (eventsEndDate === null) eventsEndDate = eventsStartDate;
             let eventsEndTime = endTime;
             if (eventsEndTime === null) eventsEndTime = ongoingChecked ? specifiedEndTime : "23:59";
-            const eventsEndDatetime = new Date(eventsEndDate + ' ' + eventsEndTime);
+            const eventsEndDatetime = new Date((eventsEndDate + ' ' + eventsEndTime).replace(/ /g, "T"));
 
             eventDatetimes.push({
                 'start': eventsStartDatetime,

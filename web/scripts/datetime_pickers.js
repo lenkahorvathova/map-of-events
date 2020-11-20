@@ -84,7 +84,7 @@ function setNext10DaysIntoDatetimePickers() {
     const startDate = document.getElementById('sidebar__form--filter__datetime__start--date-picker').value;
     const startTime = document.getElementById('sidebar__form--filter__datetime__start--time-picker').value;
 
-    const date = new Date(startDate + ' ' + (startTime !== null ? startTime : '00:00'));
+    const date = new Date((startDate + ' ' + (startTime !== null ? startTime : '00:00')).replace(/ /g,"T"));
     date.setDate(date.getDate() + 10);
     const dateIn10Days = getDateString(date);
 

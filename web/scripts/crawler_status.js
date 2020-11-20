@@ -84,9 +84,9 @@ function initializeFailedEventsTable() {
                 width: 80,
                 render: function (data, type) {
                     if (type === 'display')
-                        return new Date(data).toLocaleDateString();
+                        return new Date(data.replace(/ /g,"T")).toLocaleDateString();
                     else
-                        return new Date(data);
+                        return new Date(data.replace(/ /g,"T"));
                 }
             },
             {

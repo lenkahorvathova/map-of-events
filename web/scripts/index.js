@@ -155,9 +155,9 @@ function getDatetime(dateString, timeString) {
         let datetimeString = dateString;
         if (timeString != null) {
             datetimeString += " " + timeString;
-            datetime = new Date(datetimeString).toLocaleString();
+            datetime = new Date(datetimeString.replace(/ /g, "T")).toLocaleString();
         } else {
-            datetime = new Date(datetimeString).toLocaleDateString();
+            datetime = new Date(datetimeString.replace(/ /g, "T")).toLocaleDateString();
         }
     }
     return datetime;
@@ -264,7 +264,7 @@ function prepareEventDetailsModal(eventData) {
     source.innerText = eventData['calendar_url'];
 
     const fetchedAt = document.getElementById('modal--event-details__calendar--downloaded-at');
-    fetchedAt.innerText = new Date(eventData['calendar_downloaded_at']).toLocaleString();
+    fetchedAt.innerText = new Date(eventData['calendar_downloaded_at'].replace(/ /g, "T")).toLocaleString();
 
     const eventButton = document.getElementById('modal--event-details__url');
     eventButton.href = eventData['event_url'];
@@ -284,9 +284,9 @@ function prepareDatetimeDisplayForEventsTable(date, time) {
         return null;
     } else {
         if (time == null) {
-            return new Date(date).toLocaleDateString();
+            return new Date(date.replace(/ /g, "T")).toLocaleDateString();
         } else {
-            return new Date(date + ' ' + time).toLocaleString();
+            return new Date((date + ' ' + time).replace(/ /g, "T")).toLocaleString();
         }
     }
 }
@@ -296,9 +296,9 @@ function prepareDatetimeFilterForEventsTable(date, time) {
         return null;
     } else {
         if (time == null) {
-            return new Date(date);
+            return new Date(date.replace(/ /g, "T"));
         } else {
-            return new Date(date + ' ' + time);
+            return new Date((date + ' ' + time).replace(/ /g, "T"));
         }
     }
 }
