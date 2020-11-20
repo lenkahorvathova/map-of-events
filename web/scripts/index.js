@@ -267,7 +267,10 @@ function prepareEventDetailsModal(eventData) {
     fetchedAt.innerText = new Date(eventData['calendar_downloaded_at'].replace(/ /g, "T")).toLocaleString();
 
     const eventButton = document.getElementById('modal--event-details__url');
-    eventButton.href = eventData['event_url'];
+    eventButton.onclick = function () {
+        window.open(eventData['event_url']);
+        return false;
+    };
 }
 
 function showEventDetailsFromEventsTable(element) {
