@@ -91,6 +91,10 @@ const localizationStrings = {
         'en': "Fetched at",
         'cs': "Získáno"
     },
+    'modal_event_details_event_page_button': {
+        'en': "Go to event's page",
+        'cs': "Přejít na stránku události"
+    },
     'modal_calendar_sources_title': {
         'en': "Calendar Sources",
         'cs': "Zdroje kalendářů"
