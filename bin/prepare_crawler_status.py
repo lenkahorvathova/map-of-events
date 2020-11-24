@@ -22,7 +22,7 @@ class PrepareCrawlerStatus:
 
         if not self.args.dry_run:
             utils.check_db_tables(self.connection, ["calendar"])
-            utils.check_db_views(self.connection, ["event_data_view"])
+            utils.check_db_views(self.connection, ["event_data_view", "event_data_view_valid_events_only"])
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -75,10 +75,7 @@ class PrepareCrawlerStatus:
     def _get_total_events_count(self) -> int:
         query = '''
                     SELECT count(DISTINCT event_data__id)
-                    FROM event_data_view
-                    WHERE event_data_datetime__start_date IS NOT NULL
-                      AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1))
-                      AND event_url__duplicate_of IS NULL
+                    FROM event_data_view_valid_events_only
                 '''
         cursor = self.connection.execute(query)
         return cursor.fetchone()[0]
@@ -86,22 +83,18 @@ class PrepareCrawlerStatus:
     def _get_future_events_count(self) -> int:
         query = '''
                     SELECT count(DISTINCT event_data__id)
-                    FROM event_data_view
-                    WHERE event_data_datetime__start_date IS NOT NULL
-                      AND (event_data_datetime__start_date >= date('now') OR (event_data_datetime__end_date IS NOT NULL AND event_data_datetime__end_date >= date('now')))
-                      AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1))
-                      AND event_url__duplicate_of IS NULL
+                    FROM event_data_view_valid_events_only
+                    WHERE event_data_datetime__start_date >= date('now')
+                       OR (event_data_datetime__end_date IS NOT NULL AND event_data_datetime__end_date >= date('now'))
                 '''
         cursor = self.connection.execute(query)
         return cursor.fetchone()[0]
 
     def _get_events_count_per_day(self, last_n: int) -> List[dict]:
         query = '''
-                    SELECT strftime('%Y/%m/%d', calendar__downloaded_at) AS day, count(DISTINCT event_data__id) AS events_count
-                    FROM event_data_view
-                    WHERE event_data_datetime__start_date IS NOT NULL
-                      AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1))
-                      AND event_url__duplicate_of IS NULL
+                    SELECT strftime('%Y/%m/%d', calendar__downloaded_at) AS day,
+                           count(DISTINCT event_data__id)                AS events_count
+                    FROM event_data_view_valid_events_only
                     GROUP BY day
                     ORDER BY day DESC
                     LIMIT {}
@@ -125,11 +118,9 @@ class PrepareCrawlerStatus:
 
     def _get_events_count_per_week(self, last_n: int) -> List[dict]:
         query = '''
-                    SELECT strftime('%Y/%m/%d', calendar__downloaded_at) AS day, count(DISTINCT event_data__id) AS events_count
-                    FROM event_data_view
-                    WHERE event_data_datetime__start_date IS NOT NULL
-                      AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1))
-                      AND event_url__duplicate_of IS NULL
+                    SELECT strftime('%Y/%m/%d', calendar__downloaded_at) AS day,
+                           count(DISTINCT event_data__id)                AS events_count
+                    FROM event_data_view_valid_events_only
                     GROUP BY day
                     ORDER BY day DESC
                     LIMIT {}

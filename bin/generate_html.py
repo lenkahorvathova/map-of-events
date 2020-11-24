@@ -31,7 +31,7 @@ class GenerateHTML:
         self.latest_execution_log_path = self._get_latest_execution_log_path()
 
         if not self.args.dry_run:
-            utils.check_db_views(self.connection, ["event_data_view"])
+            utils.check_db_views(self.connection, ["event_data_view_valid_events_only"])
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -59,11 +59,10 @@ class GenerateHTML:
                            event_data_gps__online, event_data_gps__has_default, event_data_gps__gps, event_data_gps__location, event_data_gps__municipality, event_data_gps__district,
                            event_data_keywords__keyword,
                            event_data_types__type
-                    FROM event_data_view
-                    WHERE event_data_datetime__start_date IS NOT NULL 
-                      AND (event_data_datetime__start_date >= date('now') OR (event_data_datetime__end_date IS NOT NULL AND event_data_datetime__end_date >= date('now')))
-                      AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1))
-                      AND event_url__duplicate_of IS NULL
+                    FROM event_data_view_valid_events_only
+                    WHERE event_data_datetime__start_date >= date('now') 
+                       OR (event_data_datetime__end_date IS NOT NULL AND event_data_datetime__end_date >= date('now'))
+
                 '''
 
         cursor = self.connection.execute(query)

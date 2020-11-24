@@ -136,3 +136,11 @@ CREATE VIEW event_data_view AS
          LEFT OUTER JOIN event_data_gps edg ON edg.event_data_id = ed.id
          LEFT OUTER JOIN event_data_keywords edk ON edk.event_data_id = ed.id
          LEFT OUTER JOIN event_data_types edt ON edt.event_data_id = ed.id;
+
+DROP VIEW IF EXISTS event_data_view_valid_events_only;
+CREATE VIEW event_data_view_valid_events_only AS
+    SELECT *
+    FROM event_data_view
+    WHERE event_url__duplicate_of IS NULL
+      AND event_data_datetime__start_date IS NOT NULL
+      AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1));

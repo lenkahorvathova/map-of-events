@@ -26,7 +26,7 @@ class DeduplicateEvents:
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
-            utils.check_db_views(self.connection, ["event_data_view"])
+            utils.check_db_views(self.connection, ["event_data_view_valid_events_only"])
 
     @staticmethod
     def _parse_arguments() -> argparse.Namespace:
@@ -55,10 +55,7 @@ class DeduplicateEvents:
                            event_data_gps__online, event_data_gps__has_default, event_data_gps__gps, event_data_gps__location, event_data_gps__municipality, event_data_gps__district,
                            event_data_keywords__keyword,
                            event_data_types__type
-                    FROM event_data_view
-                    WHERE event_data_datetime__start_date IS NOT NULL 
-                      AND (event_data__gps IS NOT NULL OR (event_data_gps__gps IS NOT NULL OR event_data_gps__online == 1))
-                      AND event_url__duplicate_of IS NULL
+                    FROM event_data_view_valid_events_only
                 '''
 
         if not self.args.deduplicate_all:
