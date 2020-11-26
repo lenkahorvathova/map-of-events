@@ -56,12 +56,13 @@ class DeduplicateEvents:
                            event_data_keywords__keyword,
                            event_data_types__type
                     FROM event_data_view_valid_events_only
+                    WHERE 1 == 1
                 '''
 
         if not self.args.deduplicate_all:
             query += ''' AND (event_data_datetime__start_date >= date('now') 
-                      OR (event_data_datetime__end_date IS NOT NULL AND event_data_datetime__end_date >= date('now'))) 
-                     '''
+                         OR (event_data_datetime__end_date IS NOT NULL 
+                         AND event_data_datetime__end_date >= date('now')))'''
 
         self.connection.row_factory = sqlite3.Row
         cursor = self.connection.execute(query)
