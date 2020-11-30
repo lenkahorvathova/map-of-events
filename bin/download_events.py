@@ -89,41 +89,52 @@ class DownloadEvents:
 
         logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__, log_file=self.args.log_file, debug=self.args.debug)
         timestamp = datetime.now()
-        input_tuples = []
-        for index, event in enumerate(input_events):
+        events_by_calendar = defaultdict(list)
+        for event in input_events:
             _, _, calendar_url = event
-            website_base = utils.get_base_by_url(calendar_url)
-            input_tuples.append((index + 1, len(input_events), event, timestamp, website_base, self.args.dry_run))
-        random.shuffle(input_tuples)
+            events_by_calendar[calendar_url].append(event)
+
+        input_tuples = []
+        for index, calendar_url in enumerate(events_by_calendar):
+            events_list = events_by_calendar[calendar_url]
+            input_tuples.append((index + 1, len(events_by_calendar), events_list, timestamp, self.args.dry_run))
 
         with multiprocessing.Pool(32) as p:
-            return p.map(DownloadEvents._download_events_process, input_tuples)
+            result = p.map(DownloadEvents._download_events_process, input_tuples)
+
+        return [result_tuple for result_list in result for result_tuple in result_list]
 
     @staticmethod
-    def _download_events_process(input_tuple: (int, int, (int, str, str), datetime, dict, bool)) -> (
-            int, str, datetime, str):
+    def _download_events_process(input_tuple: (int, int, List[tuple], datetime, bool)) -> (int, str, datetime, str):
         time.sleep(round(random.uniform(0, 5), 2))
         simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
 
-        input_index, total_length, event, timestamp, website_base, dry_run = input_tuple
-        event_id, event_url, _ = event
+        calendar_index, total_length, events_list, timestamp, dry_run = input_tuple
+        _, _, calendar_url = events_list[0]
+        website_base = utils.get_base_by_url(calendar_url)
 
         current_dir = os.path.join(DATA_DIR_PATH, website_base["domain"])
         event_file_dir = os.path.join(current_dir, DownloadEvents.EVENTS_FOLDER_NAME)
-        event_file_name = timestamp.strftime("%Y-%m-%d_%H-%M-%S") + "_" + str(event_id)
-        html_file_path = os.path.join(event_file_dir, event_file_name + ".html")
-
         os.makedirs(event_file_dir, exist_ok=True)
-        result = utils.download_html_content(event_url, html_file_path,
-                                             encoding=website_base.get("encoding", None),
-                                             verify=website_base.get("verify", None), dry_run=dry_run)
-        if result != "200":
-            html_file_path = None
 
-        simple_logger.info(
-            "{}/{} | Downloading URL: {} | {}".format(input_index, total_length, str(event_url), str(result)))
+        result_list = []
+        for event_index, event in enumerate(events_list):
+            event_id, event_url, _ = event
+            event_file_name = timestamp.strftime("%Y-%m-%d_%H-%M-%S") + "_" + str(event_id)
+            html_file_path = os.path.join(event_file_dir, event_file_name + ".html")
 
-        return event_id, html_file_path, timestamp, result
+            result = utils.download_html_content(event_url, html_file_path,
+                                                 encoding=website_base.get("encoding", None),
+                                                 verify=website_base.get("verify", None), dry_run=dry_run)
+            if result != "200":
+                html_file_path = None
+
+            simple_logger.info(
+                "{}/{} ({}/{}) | Downloading URL: {} | {}".format(calendar_index, total_length, event_index + 1,
+                                                                  len(events_list), str(event_url), str(result)))
+
+            result_list.append((event_id, html_file_path, timestamp, result))
+        return result_list
 
     def _store_to_database(self, events_to_insert: List[tuple]) -> None:
         if self.args.redownload_file:

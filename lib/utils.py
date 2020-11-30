@@ -172,7 +172,8 @@ def download_html_content(url: str, html_file_path: str, encoding: str = None, v
 
         r = requests.get(url, timeout=30, verify=verify, allow_redirects=True)
 
-        print(r.history)
+        if len(r.history) > 1:
+            LOGGER.warning("URL redirected: [{}]".format(", ".join([redirected_r.url for redirected_r in r.history])))
 
         if encoding is not None:
             r.encoding = encoding
