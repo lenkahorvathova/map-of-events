@@ -1,0 +1,101 @@
+{
+    "calendar": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//*[@id=\"telo\"]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "event_url": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@class=\"akce\"]/div[@class=\"akce_nazev\"]/a/@href"
+                ]
+            }
+        }
+    },
+    "event": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//*[@id=\"address\"]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "title": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@id=\"address_title\"]/h1/text()"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "perex": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@id=\"address_content\"]//td/div[@class=\"description\"]/text()",
+                    ".//div[@id=\"address_content\"]//td/strong[text()=\"Poznámka:\"]/parent::td/following-sibling::td/text()"
+                ],
+                "join_separator": "\n"
+            }
+        },
+        "datetime": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@id=\"address_content\"]//*[@id=\"budouci\"]/li/strong"
+                ]
+            },
+            "formats": [
+                "%a %d.%m.%Y",
+                "%a %d.%m.%Y %H:%M",
+                "%a %d.%m.%Y %H:%M %range{-} %H:%M",
+                "%a %d.%m.%Y %range{-} %a %d.%m.%Y"
+            ]
+        },
+        "location": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@id=\"address_content\"]//td/*[@class=\"location\"]/descendant-or-self::*/text()"
+                ],
+                "join_separator": ", "
+            }
+        },
+        "gps": {
+            "xpath": {
+                "selectors": [
+                    "/html/head/script/text()"
+                ]
+            },
+            "regex": {
+                "expressions": [
+                    "GLatLng\\((\\-?\\d+.\\d+),(\\-?\\d+.\\d+)\\)"
+                ],
+                "match": "FIRST",
+                "group": {
+                    "1": "Lat",
+                    "2": "Lon"
+                }
+            }
+        },
+        "organizer": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@id=\"address_content\"]//td/strong[text()=\"Pořadatel:\"]/parent::td/following-sibling::td/descendant-or-self::*/text()"
+                ],
+                "join_separator": " & "
+            }
+        },
+        "types": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@id=\"address_content\"]//td/strong[text()=\"Typ:\"]/parent::td/following-sibling::td/text()"
+                ],
+                "match": "FIRST",
+                "split_separator": ","
+            }
+        }
+    }
+}

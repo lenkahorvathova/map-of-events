@@ -6,11 +6,12 @@ import urllib.parse as urllib
 from typing import Union, Optional, List
 
 import requests
+import urllib3
 
 from lib.constants import DATABASE_PATH, INPUT_SITES_BASE_FILE_PATH
 from lib.logger import set_up_script_logger
 
-LOGGER = set_up_script_logger(__file__)
+LOGGER = set_up_script_logger(__name__)
 
 
 def create_connection() -> sqlite3.Connection:
@@ -153,18 +154,25 @@ def get_base_dict_per_url(base: list = None) -> dict:
     return base_dict
 
 
-def download_html_content(url: str, html_file_path: str, encoding: str = None, dry_run: bool = False) -> str:
+def download_html_content(url: str, html_file_path: str, encoding: str = None, verify: bool = True,
+                          dry_run: bool = False) -> str:
     """ Downloads an HTML content from the specified URL to the specified file path.
 
     :param url: an URL address from where an HTML will be downloaded
     :param html_file_path: a path for a file to be created
     :param encoding: a desired encoding for the request specified in the base file
+    :param verify: a boolean to determine if a request to the URL should verify a website's certificate
     :param dry_run: a flag that determines whether to download a file or just to check URL response
     :return: a result of the download process (request's status code)
     """
 
     try:
-        r = requests.get(url, timeout=30)
+        if not verify:
+            urllib3.disable_warnings()
+
+        r = requests.get(url, timeout=30, verify=verify, allow_redirects=True)
+
+        print(r.history)
 
         if encoding is not None:
             r.encoding = encoding
@@ -176,8 +184,9 @@ def download_html_content(url: str, html_file_path: str, encoding: str = None, d
         result = str(r.status_code)
 
     except Exception as e:
-        result = getattr(e, 'message', repr(e))
-        LOGGER.error("Exception: {}".format(result))
+        result = type(e).__name__
+        error_msg = getattr(e, 'message', repr(e))
+        LOGGER.error("Exception: {}".format(error_msg))
 
     return result
 

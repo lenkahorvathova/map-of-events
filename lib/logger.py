@@ -4,7 +4,9 @@ import sys
 
 def set_up_script_logger(script_name: str, log_file: str = None, debug: bool = False) -> logging.LoggerAdapter:
     logger = logging.getLogger(script_name)
-    extra = {'scriptName': script_name[:-3].replace('/', '.')}
+    if script_name[-3:] == ".py":
+        script_name = script_name[:-3].replace('/', '.')
+    extra = {'scriptName': script_name}
     log_format = "%(asctime)s - %(scriptName)s.%(funcName)s:%(lineno)s - %(levelname)s: %(message)s"
     logger = _set_up_logger(logger, log_format, log_file, debug)
     return logging.LoggerAdapter(logger, extra)

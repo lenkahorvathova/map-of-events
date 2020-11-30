@@ -114,13 +114,16 @@ class ParseCalendars:
 
         events_to_insert = []
         for index, url_path in enumerate(parser.get_event_urls()):
-            event_url = urllib.urljoin(calendar_url, url_path)
+            event_url = url_path
+            if not bool(urllib.urlparse(event_url).netloc):
+                event_url = urllib.urljoin(calendar_url, url_path)
             events_to_insert.append((event_url, timestamp))
 
         simple_logger.info(info_output + " | {}".format(len(events_to_insert)))
 
         if len(events_to_insert) == 0:
-            simple_logger.debug("Parser's errors: {}".format(json.dumps(parser.error_messages, indent=4)))
+            if len(parser.error_messages) != 0:
+                simple_logger.debug("Parser's errors: {}".format(json.dumps(parser.error_messages, indent=4)))
         else:
             simple_logger.debug(
                 "Found URLs: {}".format(json.dumps([event_url for event_url, _ in events_to_insert], indent=4)))

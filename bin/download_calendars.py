@@ -77,7 +77,8 @@ class DownloadCalendars:
         html_file_path = os.path.join(html_file_dir, timestamp.strftime("%Y-%m-%d_%H-%M-%S") + ".html")
 
         os.makedirs(html_file_dir, exist_ok=True)
-        result = utils.download_html_content(url, html_file_path, dry_run=dry_run)
+        result = utils.download_html_content(url, html_file_path,
+                                             verify=website_base.get("verify", True), dry_run=dry_run)
         if result != "200":
             html_file_path = None
 

@@ -1,4 +1,5 @@
 import argparse
+import json
 import logging
 import multiprocessing
 import os
@@ -6,6 +7,7 @@ import random
 import sqlite3
 import sys
 import time
+from collections import defaultdict
 from datetime import datetime
 from typing import List
 
@@ -99,7 +101,7 @@ class DownloadEvents:
 
     @staticmethod
     def _download_events_process(input_tuple: (int, int, (int, str, str), datetime, dict, bool)) -> (
-            int, str, datetime):
+            int, str, datetime, str):
         time.sleep(round(random.uniform(0, 5), 2))
         simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
 
@@ -113,14 +115,15 @@ class DownloadEvents:
 
         os.makedirs(event_file_dir, exist_ok=True)
         result = utils.download_html_content(event_url, html_file_path,
-                                             encoding=website_base.get("encoding", None), dry_run=dry_run)
+                                             encoding=website_base.get("encoding", None),
+                                             verify=website_base.get("verify", None), dry_run=dry_run)
         if result != "200":
             html_file_path = None
 
         simple_logger.info(
             "{}/{} | Downloading URL: {} | {}".format(input_index, total_length, str(event_url), str(result)))
 
-        return event_id, html_file_path, timestamp
+        return event_id, html_file_path, timestamp, result
 
     def _store_to_database(self, events_to_insert: List[tuple]) -> None:
         if self.args.redownload_file:
@@ -132,11 +135,13 @@ class DownloadEvents:
         if not self.args.dry_run:
             self.logger.info("Inserting into DB...")
 
+        error_dict = defaultdict(int)
         failed_url_ids = []
         event_url_ids = []
         for event_info in events_to_insert:
-            event_url_id, html_file_path, downloaded_at = event_info
+            event_url_id, html_file_path, downloaded_at, status_code = event_info
             event_url_ids.append(event_url_id)
+            error_dict[status_code] += 1
 
             if html_file_path is None:
                 failed_url_ids.append(event_url_id)
@@ -157,6 +162,7 @@ class DownloadEvents:
         if not self.args.dry_run:
             self.connection.commit()
 
+        self.logger.debug(">> Error stats: {}".format(json.dumps(error_dict, indent=4)))
         self.logger.info(">> Number of failed events: {}/{}".format(len(failed_url_ids), len(event_url_ids)))
         self.logger.info(">> Failed event_url IDs: {}".format(failed_url_ids))
 

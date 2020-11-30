@@ -1,7 +1,7 @@
 import json
 import os
 import re
-from typing import List
+from typing import List, Union
 
 from lxml import etree
 
@@ -14,6 +14,7 @@ class Parser:
     PARSERS_DIR_PATH = "resources/parsers"
     ORDINATION = ["title", "perex", "datetime", "location", "gps", "organizer", "types"]
     DATE_TIME_DELIMITER = "%;"
+    COORDINATE_REGEX = re.compile(r'\\-?\d+.\d+')
 
     def __init__(self, parser_name: str) -> None:
         self.name = parser_name
@@ -100,10 +101,22 @@ class Parser:
             for selector in data_key_selectors:
                 try:
                     found_elements = root.xpath(selector)
+                    found_elements = self._remove_html_tags(found_elements)
                     data_key_elements.extend(found_elements)
                 except etree.XPathEvalError:
                     pass
         return data_key_elements
+
+    @staticmethod
+    def _remove_html_tags(elements: List[Union[str, etree._Element]]) -> List[str]:
+        result_elements = []
+        for element in elements:
+            if isinstance(element, etree._Element):
+                inner_text = ''.join(element.itertext())
+            else:
+                inner_text = str(element)
+            result_elements.append(inner_text)
+        return result_elements
 
     def _sanitize_xpath_event_data(self, data_key: str, xpath_values: List[str]) -> List[str]:
         if len(xpath_values) == 0:
@@ -182,7 +195,7 @@ class Parser:
         return regexed_values
 
     @staticmethod
-    def _finalize_data(all_data: dict):
+    def _finalize_data(all_data: dict) -> dict:
         if "date" in all_data:
             joined_datetime = None
             if all_data["date"]:
@@ -200,9 +213,15 @@ class Parser:
             result = []
 
             for data in all_data["gps"]:
-                if "Lat" in data and "Lon" in data:
-                    found_gps = "{},{}".format(str(data["Lat"]), str(data["Lon"]))
-                    result.append(found_gps)
+                if isinstance(data, dict):
+                    if "Lat" in data and "Lon" in data:
+                        found_gps = "{},{}".format(str(data["Lat"]), str(data["Lon"]))
+                        result.append(found_gps)
+                elif isinstance(data, str):
+                    split_data = data.split(',')
+                    if len(split_data) == 2 and Parser.COORDINATE_REGEX.search(split_data[0]) \
+                            and Parser.COORDINATE_REGEX.search(split_data[1]):
+                        result.append(data)
 
             all_data["gps"] = result
 

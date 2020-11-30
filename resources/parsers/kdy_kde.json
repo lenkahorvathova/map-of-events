@@ -1,0 +1,84 @@
+{
+    "calendar": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//*[@id=\"main\"]/div[contains(@class, \"list-calendar\")]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "event_url": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"event\")]/div[contains(@class, \"heading\")]/h2/a/@href"
+                ]
+            }
+        }
+    },
+    "event": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//*[@id=\"main\"]/div/div/div[contains(@class, \"size-content\")]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "title": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"main\")]/h1/text()"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "perex": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"description\")]/p/text()",
+                    ".//div[contains(@class, \"detail\")]/p"
+                ],
+                "join_separator": "\n"
+            }
+        },
+        "datetime": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"main\")]/div[contains(@class, \"delta\")]/text()"
+                ]
+            },
+            "formats": [
+                "%d.%m.%Y",
+                "%d.%m.%Y, %H:%M",
+                "%d.%m.%Y, %H:%M %range{–} %H:%M",
+                "%d.%m.%Y %range{–} %d.%m.%Y",
+                "%d.%m.%Y %range{–} %d.%m.%Y, %H:%M",
+                "%d.%m.%Y, %H:%M %range{–} %d.%m.%Y, %H:%M"
+            ]
+        },
+        "location": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"main\")]/div/div[contains(@class, \"category-calendar\")]//ul/li/a/text()"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "gps": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@itemprop=\"geo\"]/meta[@itemprop=\"latitude\" or @itemprop=\"longitude\"]/@content"
+                ],
+                "join_separator": ","
+            }
+        },
+        "types": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"main\")]/div[contains(@class, \"category-calendar\")]/div/ul/li/span/a/text()"
+                ]
+            }
+        }
+    }
+}

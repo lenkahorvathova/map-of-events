@@ -1,0 +1,75 @@
+{
+    "calendar": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//*[@id=\"katalog\"]//div[contains(@class, \"ajax-loader\")]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "event_url": {
+            "xpath": {
+                "selectors": [
+                    ".//div/div[contains(@class, \"list-item\")]/div[contains(@class, \"content\")]//h3/a/@href"
+                ]
+            }
+        }
+    },
+    "event": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//section[@class=\"intro\"]/div[contains(@class, \"container\")]",
+                    "//section[@class=\"detail-col3\"]/div[contains(@class, \"container\")]",
+                    "//section[@class=\"detail-description\"]/div[contains(@class, \"container\")]"
+                ]
+            }
+        },
+        "title": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"content\")]/h1/strong/text()"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "perex": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"detail\")]/p"
+                ],
+                "join_separator": "\n"
+            }
+        },
+        "datetime": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"content\")]/*[contains(@class, \"date\")]"
+                ]
+            },
+            "formats": [
+                "%d. %m. '%y   %H:%M %range{—} %H:%M",
+                "%d. %m. %range{—} %d. %m. '%y",
+                "%d. %m. '%y ",
+                "%d. %m. '%y   %H:%M",
+                "%d. %m. %range{—} %d. %m. '%y   %H:%M %range{—} %H:%M"
+            ]
+        },
+        "location": {
+            "xpath": {
+                "selectors": [
+                    ".//div[contains(@class, \"icon-address\")]//a/text()"
+                ]
+            }
+        },
+        "gps": {
+            "xpath": {
+                "selectors": [
+                    ".//*[@id=\"smap\"]/@*[name()=\"data-lat\" or name()=\"data-lon\"]"
+                ],
+                "join_separator": ","
+            }
+        }
+    }
+}

@@ -1,0 +1,92 @@
+{
+    "calendar": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//*[@id=\"page_start\"]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "event_url": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@class=\"article\"]/div[@class=\"article_text\"]/h4/a[not(@class=\"itinerar_add_link\")]/@href"
+                ]
+            }
+        }
+    },
+    "event": {
+        "root": {
+            "xpath": {
+                "selectors": [
+                    "//*[@id=\"page_start\"]"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "title": {
+            "xpath": {
+                "selectors": [
+                    ".//div/h1/text()"
+                ],
+                "match": "FIRST"
+            }
+        },
+        "perex": {
+            "xpath": {
+                "selectors": [
+                    ".//div[@class=\"accommodation_detail\"]/p/text()"
+                ],
+                "join_separator": "\n"
+            }
+        },
+        "datetime": {
+            "xpath": {
+                "selectors": [
+                    ".//*[@id=\"panel_informace\"]/table//th[text()=\"Datum a čas konání\"]/following-sibling::td/text()"
+                ]
+            },
+            "formats": [
+                "%a %d.%m.%Y",
+                "%a %d.%m.%Y %H:%M",
+                "%a %d.%m.%Y %H:%M %range{-} %H:%M",
+                "%a %d.%m.%Y %range{-} %a %d.%m.%Y"
+            ]
+        },
+        "location": {
+            "xpath": {
+                "selectors": [
+                    ".//*[@id=\"panel_informace\"]/table//th[text()=\"Místo konání\"]/following-sibling::td/descendant-or-self::*/text()"
+                ],
+                "join_separator": ", "
+            }
+        },
+        "gps": {
+            "xpath": {
+                "selectors": [
+                    "/html/head/script/text()"
+                ]
+            },
+            "regex": {
+                "expressions": [
+                    ".*SMap\\.Coords\\.fromWGS84\\((\\-?\\d+.\\d+),(\\-?\\d+.\\d+)\\);"
+                ],
+                "match": "FIRST",
+                "group": {
+                    "1": "Lon",
+                    "2": "Lat"
+                }
+            }
+        },
+        "types": {
+            "xpath": {
+                "selectors": [
+                    ".//*[@id=\"panel_informace\"]/table//th[text()=\"Typ\"]/following-sibling::td/text()"
+                ],
+                "match": "FIRST",
+                "split_separator": ","
+            }
+        }
+    }
+}

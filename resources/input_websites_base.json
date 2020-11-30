@@ -2543,5 +2543,32 @@
         "parser": "akce_v_cr",
         "encoding": "utf-8",
         "note": "Event's time is hard to get. Doesn't contain GPS."
+    },
+    {
+        "domain": "unesco_czech_cz",
+        "url": "https://www.unesco-czech.cz/praha/akce/",
+        "parser": "unesco_czech"
+    },
+    {
+        "domain": "aktivni_turistika_cz",
+        "url": "http://www.aktivni-turistika.cz/kalendar-akci/",
+        "parser": "aktivni_turistika"
+    },
+    {
+        "domain": "jizni_morava_cz",
+        "url": "https://www.jizni-morava.cz/kalendar-akci",
+        "parser": "jizni_morava",
+        "verify": false
+    },
+    {
+        "domain": "kdykde_cz",
+        "url": "https://www.kdykde.cz/calendar/all/list",
+        "parser": "kdy_kde"
+    },
+    {
+        "domain": "npu_cz",
+        "url": "https://www.npu.cz/cs/npu-a-pamatkova-pece/npu-jako-instituce/akce",
+        "parser": "npu",
+        "note": "Types are only on the calendar page."
     }
 ]
