@@ -15,7 +15,7 @@ from lib.constants import MUNICIPALITIES_OF_CR_FILE_PATH, SIMPLE_LOGGER_PREFIX
 class GeocodeLocation:
     """ Geo-codes a location of parsed events without GPS. """
 
-    ONLINE_REGEX = re.compile(r'\b(online|Online|ONLINE|On-line|on-line|ON-LINE|Virtuálně|virtuálně)\b')
+    ONLINE_REGEX = re.compile(r'\bonlin|Onlin|ONLIN|On-line|on-line|ON-LINE|Virtuáln|virtuáln\w*')
     OUTPUT_FILE_PATH = "data/tmp/geocode_location_output.json"
 
     def __init__(self) -> None:
@@ -57,7 +57,6 @@ class GeocodeLocation:
                          INNER JOIN event_html eh ON ed.event_html_id = eh.id
                          INNER JOIN event_url eu ON eh.event_url_id = eu.id
                          INNER JOIN calendar c ON eu.calendar_id = c.id
-                    WHERE ed.gps IS NULL
                 '''
 
         if self.args.events_ids:
