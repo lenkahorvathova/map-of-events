@@ -44,7 +44,8 @@
         "datetime": {
             "xpath": {
                 "selectors": [
-                    ".//*[@id=\"panel_informace\"]/table//th[text()=\"Datum a čas konání\"]/following-sibling::td/text()"
+                    ".//*[@id=\"panel_informace\"]/table//th[text()=\"Datum a čas konání\"]/following-sibling::td/text()",
+                    ".//*[@id=\"panel_informace\"]/table//th[text()=\"Datum a čas konání\"]/following-sibling::td/ul[@id=\"budouci\"]/li/text()"
                 ]
             },
             "formats": [

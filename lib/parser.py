@@ -14,7 +14,7 @@ class Parser:
     PARSERS_DIR_PATH = "resources/parsers"
     ORDINATION = ["title", "perex", "datetime", "location", "gps", "organizer", "types"]
     DATE_TIME_DELIMITER = "%;"
-    COORDINATE_REGEX = re.compile(r'\\-?\d+.\d+')
+    COORDINATE_REGEX = re.compile(r'-?\d+.\d+')
 
     def __init__(self, parser_name: str) -> None:
         self.name = parser_name

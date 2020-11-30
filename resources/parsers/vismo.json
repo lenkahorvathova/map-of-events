@@ -38,7 +38,7 @@
             "xpath": {
                 "selectors": [
                     ".//div[@id=\"akce\"]//div[contains(@class, \"perex\")]/text()",
-                    ".//div[@id=\"akce\"]//div[contains(@class, \"obsah\")]/div/text()"
+                    ".//div[@id=\"akce\"]//div[contains(@class, \"obsah\")]/div[not(contains(@class, \"perex\"))]/text()"
                 ],
                 "join_separator": "\n"
             }

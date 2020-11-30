@@ -60,7 +60,7 @@
         "location": {
             "xpath": {
                 "selectors": [
-                    ".//div[contains(@class, \"box\")]/ul[contains(@class, \"icon-list\")]/li/*[name()=\"svg\" and contains(@class, \"icon-place\")]/parent::li/a/text("
+                    ".//div[@class=\"box element-desktop\"]/ul[contains(@class, \"icon-list\")]/li/*[name()=\"svg\" and contains(@class, \"icon-place\")]/parent::li/a/text()"
                 ],
                 "join_separator": " "
             }
@@ -68,7 +68,7 @@
         "gps": {
             "xpath": {
                 "selectors": [
-                    "//div[@class=\"map-wrap\"]/div[contains(@class, \"smap\")]/@*[name()=\"data-lat\" or name()=\"data-lng\"]'"
+                    ".//div[@class=\"map-wrap\"]/div[contains(@class, \"smap\")]/@*[name()=\"data-lat\" or name()=\"data-lng\"]"
                 ],
                 "join_separator": ","
             }
@@ -76,7 +76,7 @@
         "types": {
             "xpath": {
                 "selectors": [
-                    ".div[@class=\"container\"]//div[contains(@class, \"box\")]/div[contains(@class, \"box-head\")]/div/h2/text()"
+                    ".//div[@class=\"container\"]//div[@class=\"box element-desktop\"]/div[contains(@class, \"box-head\")]/div/h2/text()"
                 ]
             }
         }

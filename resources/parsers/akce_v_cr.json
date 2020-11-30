@@ -36,7 +36,7 @@
         "perex": {
             "xpath": {
                 "selectors": [
-                    ".//p/descendant-or-self::*/text()",
+                    ".//p",
                     "text()"
                 ],
                 "join_separator": "\n",

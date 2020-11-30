@@ -45,7 +45,8 @@
         "datetime": {
             "xpath": {
                 "selectors": [
-                    ".//div[@id=\"address_content\"]//*[@id=\"budouci\"]/li/strong"
+                    ".//div[@id=\"address_content\"]//td/strong[text()=\"Datum a čas konání:\"]/parent::td/following-sibling::td/strong",
+                    ".//div[@id=\"address_content\"]//td/strong[text()=\"Datum a čas konání:\"]/parent::td/following-sibling::td/ul[@id=\"budouci\"]/li/strong"
                 ]
             },
             "formats": [

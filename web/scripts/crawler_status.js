@@ -76,7 +76,7 @@ function initializeFailedEventsTable() {
             {
                 targets: 3,
                 orderable: true,
-                width: 150
+                width: 180
             },
             {
                 targets: 4,

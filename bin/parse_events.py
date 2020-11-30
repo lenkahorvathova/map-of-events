@@ -113,7 +113,7 @@ class ParseEvents:
         info_output = "{}/{} | Parsing event: {}".format(input_index, total_length, event_url)
 
         if not event_html_file_path:
-            simple_logger.error(info_output + " | NOK - (File path for the event '{}' is None!)".format(event_url))
+            simple_logger.error(info_output + " | NOK - (Filepath is None!)".format(event_url))
             return {"error": "Filepath is None!"}, timestamp, event_tuple
 
         elif not os.path.isfile(event_html_file_path):
@@ -171,12 +171,21 @@ class ParseEvents:
             title = data_dict.get("title", None)
             datetime = data_dict.get("datetime", None)
             if not title or not datetime:
+                error_msg = ""
+                if not title and not datetime:
+                    error_msg = "Doesn't contain title nor datetime!"
+                    error_dict["Doesn't contain title nor datetime!"] += 1
+                if not title:
+                    error_msg = "Doesn't contain title!"
+                    error_dict["Doesn't contain title!"] += 1
+                if not datetime:
+                    error_msg = "Doesn't contain datetime!"
+                    error_dict["Doesn't contain datetime!"] += 1
                 nok_list.append(event_html_id)
-                error_dict["Doesn't contain title or datetime!"] += 1
                 parsed_data.append({
                     "file": event_html_file_path,
                     "url": event_url,
-                    "error": "Doesn't contain title or datetime!",
+                    "error": error_msg,
                     "data": data_dict
                 })
                 continue
