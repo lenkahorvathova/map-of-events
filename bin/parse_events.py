@@ -168,17 +168,17 @@ class ParseEvents:
                 })
                 continue
 
-            title = data_dict.get("title", None)
-            datetime = data_dict.get("datetime", None)
-            if not title or not datetime:
+            event_title = data_dict.get("title", None)
+            event_datetime = data_dict.get("datetime", None)
+            if not event_title or not event_datetime:
                 error_msg = ""
-                if not title and not datetime:
+                if not event_title and not event_datetime:
                     error_msg = "Doesn't contain title nor datetime!"
                     error_dict["Doesn't contain title nor datetime!"] += 1
-                if not title:
+                if not event_title:
                     error_msg = "Doesn't contain title!"
                     error_dict["Doesn't contain title!"] += 1
-                if not datetime:
+                if not event_datetime:
                     error_msg = "Doesn't contain datetime!"
                     error_dict["Doesn't contain datetime!"] += 1
                 nok_list.append(event_html_id)

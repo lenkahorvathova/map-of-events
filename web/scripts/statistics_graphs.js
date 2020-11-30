@@ -49,19 +49,19 @@ function loadEventsPerCalendarAndParserGraph(data) {
        })
        .attr("class", "slice")
        .style("opacity", 1)
-       .on("mouseover", function (d, i) {
+       .on("mouseover", function (d) {
            labelTextGroup.append("text")
                          .style("text-anchor", "middle")
                          .style("font-size", labelTextFontSize)
                          .attr("class", "mouseoutHide")
-                         .style("fill", function (d, i) {
+                         .style("fill", function () {
                              return "black";
                          })
                          .text(function () {
                              return d.data.key + " (" + d.data.value.toLocaleString() + ")";
                          });
        })
-       .on("mouseout", function (d) {
+       .on("mouseout", function () {
            svg.selectAll(".mouseoutHide").remove();
        });
 
@@ -158,7 +158,7 @@ function loadEventsPerWeekGraph() {
            return height - y(d.count);
        })
        .attr("fill", "#69b3a2")
-       .on("mouseover", function (d, i) {
+       .on("mouseover", function (d) {
            svg.append("text")
               .style("font-size", 15)
               .style("fill", function () {

@@ -223,7 +223,7 @@ function filterEventsAndLoadMap() {
     initializeMap();
 
     const typesPickedOptions = document.getElementById('sidebar__form--filter__select-picker--types').selectedOptions;
-    typesPicked = [];
+    let typesPicked = [];
     if (typesPickedOptions !== undefined) {
         for (let i = 0; i < typesPickedOptions.length; i++) {
             typesPicked.push(typesPickedOptions[i].label.toLowerCase());
@@ -231,7 +231,7 @@ function filterEventsAndLoadMap() {
     }
 
     const keywordsPickedOptions = document.getElementById('sidebar__form--filter__select-picker--keywords').selectedOptions;
-    keywordsPicked = [];
+    let keywordsPicked = [];
     if (keywordsPickedOptions !== undefined) {
         for (let i = 0; i < keywordsPickedOptions.length; i++) {
             keywordsPicked.push(keywordsPickedOptions[i].label);

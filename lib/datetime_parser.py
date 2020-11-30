@@ -120,8 +120,8 @@ class DatetimeParser:
         return datetime_str
 
     def _get_range_delimiter_from_format(self, formats: Set[str]) -> Optional[str]:
-        for format in formats:
-            range_match = re.search(self.RANGE_MATCH_REGEX, format)
+        for dt_format in formats:
+            range_match = re.search(self.RANGE_MATCH_REGEX, dt_format)
             if range_match:
                 return range_match.group(2)
         return None
