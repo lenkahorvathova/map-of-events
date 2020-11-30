@@ -123,10 +123,16 @@ function reloadEventsTable(eventsData) {
     eventsDatatable.draw();
 }
 
+function toggleOnlineOverlay() {
+    const onlineSearched = document.getElementById('sidebar__form--filter__location__options--online').checked;
+    document.getElementById("content__online-overlay").hidden = !onlineSearched;
+}
+
 function handleSearchFormSubmission(event) {
     event.preventDefault();
 
     const filteredEventsData = filterEventsAndLoadMap();
+    toggleOnlineOverlay();
     reloadEventsTable(filteredEventsData);
     handleSidebarToggleButtonClick();
 }

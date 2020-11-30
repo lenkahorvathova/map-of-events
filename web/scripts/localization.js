@@ -239,6 +239,10 @@ const localizationStrings = {
         'en': "Search",
         'cs': "Vyhledat"
     },
+    'content_overlay_for_online': {
+        'en': "To search through online events open Events Table!",
+        'cs': "Chcete-li prohledávat online události, otevřete tabulku událostí!"
+    },
     'content_search_form_bookmark': {
         'en': "Search Form",
         'cs': "Vyhledávací formulář"
