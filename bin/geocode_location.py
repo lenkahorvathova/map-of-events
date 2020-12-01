@@ -51,7 +51,7 @@ class GeocodeLocation:
         self.logger.info("Loading input events...")
 
         query = '''
-                    SELECT ed.id, ed.title, ed.perex, ed.location, 
+                    SELECT ed.id, ed.title, ed.perex, ed.location, ed.gps,
                            c.url
                     FROM event_data ed
                          INNER JOIN event_html eh ON ed.event_html_id = eh.id
@@ -120,14 +120,15 @@ class GeocodeLocation:
             return p.map(GeocodeLocation._geocode_locations_process, input_tuples)
 
     @staticmethod
-    def _geocode_locations_process(input_tuple: (int, int, (int, str, str, str, str), List[dict], dict)) -> dict:
+    def _geocode_locations_process(input_tuple: (int, int, (int, str, str, str, str, str), List[dict], dict)) -> dict:
         simple_logger = logging.getLogger(SIMPLE_LOGGER_PREFIX + __file__)
 
         input_index, total_length, event, municipalities, calendars_with_default_gps = input_tuple
-        event_id, title, perex, location, calendar_url = event
+        event_id, title, perex, location, gps, calendar_url = event
         event_dict = {
             "id": event_id,
             "online": False,
+            "has_gps": gps is not None,
             "has_default": calendar_url in calendars_with_default_gps,
             "base": calendars_with_default_gps[calendar_url] if calendar_url in calendars_with_default_gps else None,
             "geocoded_location": [],
@@ -145,7 +146,7 @@ class GeocodeLocation:
             if event_dict["online"]:
                 break
 
-        if not event_dict["has_default"]:
+        if not event_dict["has_gps"] and not event_dict["has_default"]:
             info_output += " | geocoding"
             priority_order = []
             last_location_index = -1
@@ -197,7 +198,7 @@ class GeocodeLocation:
         event_dict["matched"] = list(event_dict["matched"])
         event_dict["ambiguous"] = list(event_dict["ambiguous"])
 
-        if event_dict["has_default"] or event_dict["geocoded_location"]:
+        if event_dict["has_gps"] or event_dict["has_default"] or event_dict["geocoded_location"]:
             simple_logger.info(info_output + " | OK")
         else:
             simple_logger.warning(info_output + " | NOK")
@@ -240,13 +241,14 @@ class GeocodeLocation:
         result_dict = {
             "all": len(info_to_insert),
             "-online": 0,
-            "without_default_gps": 0,
-            "-geocoded": 0,
-            "-no_match": 0,
-            "-distinct_match": 0,
-            "-ambiguous_match": 0,
-            "-more_than_one_match": 0,
-            "-results": []
+            "-without_gps": 0,
+            "--without_default_gps": 0,
+            "---geocoded": 0,
+            "---no_match": 0,
+            "---distinct_match": 0,
+            "---ambiguous_match": 0,
+            "---more_than_one_match": 0,
+            "---results": []
         }
         without_default_online = 0
 
@@ -254,50 +256,60 @@ class GeocodeLocation:
             if match["online"]:
                 result_dict["-online"] += 1
 
-            if not match["has_default"]:
-                result_dict["without_default_gps"] += 1
+            if not match["has_gps"]:
+                result_dict["-without_gps"] += 1
 
+                if not match["has_default"]:
+                    result_dict["--without_default_gps"] += 1
+
+            if not match["has_gps"] and not match["has_default"]:
                 if match["online"]:
                     without_default_online += 1
 
                 if match["geocoded_location"]:
-                    result_dict["-geocoded"] += 1
+                    result_dict["---geocoded"] += 1
 
                 if len(match["matched"]) == 0:
                     if len(match["ambiguous"]) == 0:
-                        result_dict["-no_match"] += 1
+                        result_dict["---no_match"] += 1
                     else:
-                        result_dict["-ambiguous_match"] += 1
+                        result_dict["---ambiguous_match"] += 1
                 else:
                     if len(match["ambiguous"]) == 0:
-                        result_dict["-distinct_match"] += 1
+                        result_dict["---distinct_match"] += 1
                     else:
-                        result_dict["-more_than_one_match"] += 1
+                        result_dict["---more_than_one_match"] += 1
 
                 match_without_default = dict(match)
+                del match_without_default["has_gps"]
                 del match_without_default["has_default"]
                 del match_without_default["base"]
-                result_dict["-results"].append(match_without_default)
+                result_dict["---results"].append(match_without_default)
 
         if self.args.dry_run:
             print(json.dumps(result_dict, indent=4, ensure_ascii=False))
         else:
             utils.store_to_json_file(result_dict, GeocodeLocation.OUTPUT_FILE_PATH)
         self.logger.info(">> Online: {} / {}".format(result_dict["-online"], result_dict["all"]))
-        self.logger.info(">> Without default GPS: {} / {}".format(result_dict["without_default_gps"],
-                                                                  result_dict["all"]))
-        self.logger.info(">> Successfully geocoded: {} / {} + {}".format(result_dict["-geocoded"], result_dict[
-            "without_default_gps"] - without_default_online, without_default_online))
+        self.logger.info(">> No GPS: {} / {}".format(result_dict["-without_gps"], result_dict["all"]))
+        self.logger.info(">> No GPS and no default GPS: {} / {}".format(result_dict["--without_default_gps"],
+                                                                        result_dict["-without_gps"]))
+        without_default_not_online = result_dict["--without_default_gps"] - without_default_online
+        self.logger.info(">> Successfully geocoded: {} / ({} + {})".format(result_dict["---geocoded"],
+                                                                           without_default_not_online,
+                                                                           without_default_online))
 
     def _store_to_db(self, info_to_insert: List[dict]) -> None:
         if not self.args.dry_run:
             self.logger.info("Inserting into DB...")
 
+        geocoded = 0
         nok_list = set()
         data_to_insert = []
         for info in info_to_insert:
             event_id = info["id"]
             online = info["online"]
+            has_gps = info["has_gps"]
             has_default = info["has_default"]
             gps = None
             location = None
@@ -309,12 +321,15 @@ class GeocodeLocation:
                     gps = info["base"]["default_gps"]
                     if "default_location" in info["base"]:
                         location = info["base"]["default_location"]
-                elif info["geocoded_location"]:
+                elif info["geocoded_location"] is not None:
                     gps = info["geocoded_location"]["gps"]
                     municipality = info["geocoded_location"]["municipality"]
                     district = info["geocoded_location"]["district"]
 
-            if not online and not has_default and not municipality:
+            if not has_gps and not has_default:
+                geocoded += 1
+
+            if not has_gps and not has_default and not online and not municipality:
                 nok_list.add(event_id)
 
             values = (online, has_default, gps, location, municipality, district, event_id)
@@ -335,8 +350,7 @@ class GeocodeLocation:
 
         self.logger.debug(">> Data (online, has_default, gps, municipality, district, event_data_id):\n\t{}".format(
             "\n\t".join([str(tpl) for tpl in data_to_insert])))
-        self.logger.info(">> Result: {} OKs + {} NOKs / {}".format(len(info_to_insert) - len(nok_list), len(nok_list),
-                                                                   len(info_to_insert)))
+        self.logger.info(">> Result: {} OKs + {} NOKs / {}".format(geocoded - len(nok_list), len(nok_list), geocoded))
         self.logger.info(">> Failed event_data IDs: {}".format(list(nok_list)))
 
 
