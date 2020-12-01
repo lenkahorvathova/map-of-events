@@ -2539,7 +2539,10 @@
     },
     {
         "domain": "akcevcr_cz",
-        "url": "https://www.akcevcr.cz/",
+        "url": "https://www.kultura365.cz/",
+        "old_urls": [
+            "https://www.akcevcr.cz/"
+        ],
         "parser": "akce_v_cr",
         "encoding": "utf-8",
         "note": "Event's time is hard to get. Doesn't contain GPS."

@@ -45,7 +45,8 @@
         "datetime": {
             "xpath": {
                 "selectors": [
-                    ".//div[contains(@class, \"main\")]/div[contains(@class, \"delta\")]/text()"
+                    ".//div[contains(@class, \"main\")]/div[contains(@class, \"delta\")]/text()",
+                    ".//div[contains(@class, \"main\")]/div[contains(@class, \"delta\")]/span[@id=\"js-terms-placeholder\"]/text()"
                 ]
             },
             "formats": [
