@@ -2546,7 +2546,10 @@
     },
     {
         "domain": "unesco_czech_cz",
-        "url": "https://www.unesco-czech.cz/praha/akce/",
+        "url": "https://www.unesco-czech.cz/kalendar-akci/",
+        "old_urls": [
+            "https://www.unesco-czech.cz/praha/akce/"
+        ],
         "parser": "unesco_czech"
     },
     {
