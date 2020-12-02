@@ -2,7 +2,7 @@ import json
 import os
 from typing import List
 
-from bs4 import BeautifulSoup
+from lxml import etree
 
 from bin.utils.vismo_research.download_calendars import DownloadCalendars
 from lib import utils
@@ -68,14 +68,11 @@ class ComputeStatistics:
     @staticmethod
     def has_calendar(html_file_path: str) -> bool:
         with open(html_file_path, 'r', encoding="utf-8") as content:
-            document = BeautifulSoup(content, 'html.parser')
+            document = etree.parse(content, etree.HTMLParser(encoding="utf-8"))
 
-        calendar = document.find('div', {'id': 'kalendarAkci'})
-
-        if calendar:
-            warning = calendar.find('span', {'class': 'vystraha'})
-            """ some websites contain a calendar but with a warning that its content is unavailable """
-
+        calendars = document.xpath('//div[contains(@id, "kalendarAkci")]')
+        for calendar in calendars:
+            warning = calendar.xpath('.//span[contains(@class, "vystraha")]')
             if not warning:
                 return True
 
