@@ -18,10 +18,8 @@ This is a tool for parsing of events from provided web calendars. Found events a
     > Python environment is for a project isolation, so all packages can be installed locally only for a particular project.
     ```console
     user@server:your_path/repository$ python3 -m venv venv
-    user@server:your_path/repository$ source venv/bin/activate (for Mac)
-    user@server:your_path/repository$ source venv\Scripts\activate (for Windows)
+    user@server:your_path/repository$ source venv/bin/activate
     ```
-    * To later deactivate the environment use command: `deactivate`
 
 4. Install requirements for the project:
     ```console
@@ -82,9 +80,9 @@ This is a tool for parsing of events from provided web calendars. Found events a
 1. Add a calendar's definition into main input file *your_path/repository/resources/input_website_base.json*:
     ```json
         {
-            "domain": <UNIQUE_CALENDAR_DOMAIN_STRING>,
-            "url": <CALENDAR_URL>,
-            "parser": <PARSER_TEMPLATE_FOR_CALENDAR>
+            "domain": "<UNIQUE_CALENDAR_DOMAIN_STRING>",
+            "url": "<CALENDAR_URL>",
+            "parser": "<PARSER_TEMPLATE_FOR_CALENDAR>"
         }
     ```
 
@@ -112,7 +110,7 @@ This is a tool for parsing of events from provided web calendars. Found events a
             ```
         - for each of the keys you can specify this information:  
             ```json
-                    <KEY>: {
+                    "<KEY>": {
                         "xpath": {
                             "selectors": [],
                             "match": "",
