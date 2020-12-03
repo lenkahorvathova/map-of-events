@@ -211,8 +211,8 @@ class GenerateHTML:
             calendar_card = "<div id=\"heading-parser-{}\" class=\"card-header\" style=\"padding: 0;\">\n" \
                             "  <h5 class=\"mb-0\">\n" \
                             "      <a class=\"btn btn-link\" role=\"button\"" \
-                            "               href=\"{}\" {}" \
-                            "              aria-expanded=\"true\" aria-controls=\"collapse-parser-{}\">" \
+                            "         href=\"{}\" {} style=\"text-align: left\"" \
+                            "         aria-expanded=\"true\" aria-controls=\"collapse-parser-{}\">" \
                             "          {}\n" \
                             "      </a>\n" \
                             "  </h5>\n" \
