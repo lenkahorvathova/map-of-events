@@ -183,7 +183,11 @@ class Parser:
                             result[group_name] = matched_value.group(int(group_num))
                             regexed_values.append(result)
                     else:
-                        regexed_values.append(matched_value.group(0))
+                        if len(matched_value.groups()) > 0:
+                            regexed_values.extend(
+                                [matched_value.group(i) for i in range(1, len(matched_value.groups()) + 1)])
+                        else:
+                            regexed_values.append(matched_value.group(0))
 
         if len(regexed_values) == 0:
             error = "No regex matching values for '{}' where found!".format(data_key)

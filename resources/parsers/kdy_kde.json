@@ -56,7 +56,12 @@
                 "%d.%m.%Y %range{–} %d.%m.%Y",
                 "%d.%m.%Y %range{–} %d.%m.%Y, %H:%M",
                 "%d.%m.%Y, %H:%M %range{–} %d.%m.%Y, %H:%M"
-            ]
+            ],
+            "regex": {
+                "expressions": [
+                    "(?:(?:Pondělí|Úterý|Středa|Čtvrtek|Pátek|Sobota|Neděle), )?(.+)"
+                ]
+            }
         },
         "location": {
             "xpath": {
