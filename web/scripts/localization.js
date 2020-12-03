@@ -27,6 +27,10 @@ const localizationStrings = {
         'en': "Log from Geocoding",
         'cs': "Záznam z geokódování"
     },
+    'top_navigation_bar_latest_logs_clean_up': {
+        'en': "Log from Clean Up",
+        'cs': "Záznam z vyčištění"
+    },
     'gps_latitude': {
         'en': "Latitude",
         'cs': "Zeměpisná šířka"

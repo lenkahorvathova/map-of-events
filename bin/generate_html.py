@@ -29,6 +29,7 @@ class GenerateHTML:
         self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
         self.latest_execution_log_path = self._get_latest_execution_log_path()
+        self.latest_clean_up_log_path = self._get_latest_clean_up_log_path()
 
         if not self.args.dry_run:
             utils.check_db_views(self.connection, ["event_data_view_valid_events_only"])
@@ -279,6 +280,11 @@ class GenerateHTML:
         datetime_obj = datetime.strptime(datetime_str, '%Y-%m-%d_%H-%M-%S')
         file = file.replace('{{latest_execution_datetime}}', datetime.strftime(datetime_obj, '%d %B %Y %H:%M'))
 
+        base_name = os.path.basename(self.latest_clean_up_log_path)
+        datetime_str = re.search(r'^cron_clean_up_files_([\d\-_]*).txt$', base_name).group(1)
+        datetime_obj = datetime.strptime(datetime_str, '%Y-%m-%d_%H-%M-%S')
+        file = file.replace('{{latest_clean_up_datetime}}', datetime.strftime(datetime_obj, '%d %B %Y %H:%M'))
+
         os.makedirs(GenerateHTML.TEMP_WEB_FOLDER, exist_ok=True)
         with open(GenerateHTML.CRAWLER_STATUS_GENERATED_HTML_FILE_PATH, 'w') as crawler_status_generated_file:
             crawler_status_generated_file.write(file)
@@ -307,10 +313,16 @@ class GenerateHTML:
                      os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'assets/execution_log.txt'))
         shutil.copy2('data/tmp/geocode_location_output.json',
                      os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'assets/geocoding_log.json'))
+        shutil.copy2(self.latest_clean_up_log_path,
+                     os.path.join(GenerateHTML.TEMP_WEB_FOLDER, 'assets/clean_up_log.txt'))
 
     @staticmethod
     def _get_latest_execution_log_path() -> str:
         return max(glob.iglob("data/log/cron_process_*.txt"), key=os.path.getctime)
+
+    @staticmethod
+    def _get_latest_clean_up_log_path() -> str:
+        return max(glob.iglob("data/log/cron_clean_up_files_*.txt"), key=os.path.getctime)
 
 
 if __name__ == '__main__':
