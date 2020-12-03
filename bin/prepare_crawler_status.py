@@ -19,6 +19,8 @@ class PrepareCrawlerStatus:
         self.args = self._parse_arguments()
         self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
         self.connection = utils.create_connection()
+        self.active_calendars = [base['url'] for base in utils.get_active_base()]
+        self.all_calendars_bases = utils.get_base_dict_per_url()
 
         if not self.args.dry_run:
             utils.check_db_tables(self.connection, ["calendar"])
@@ -34,10 +36,7 @@ class PrepareCrawlerStatus:
         self.logger.info('Preparing Crawler Status...')
 
         crawler_status_dict = self._prepare_crawler_status_dict()
-        if self.args.dry_run:
-            print(json.dumps(crawler_status_dict, indent=4, ensure_ascii=False))
-        else:
-            utils.store_to_json_file(crawler_status_dict, PrepareCrawlerStatus.OUTPUT_FILE_PATH)
+        self._write_to_output(crawler_status_dict)
         self._generate_email(crawler_status_dict['statistics']['count_per_week'][1])
 
         self.logger.info("DONE")
@@ -149,6 +148,16 @@ class PrepareCrawlerStatus:
         } for key, value in tmp_dict.items()], key=lambda item: item['week'], reverse=True))
         return result_dict[:last_n]
 
+    def _get_active_url(self, calendar_url: str) -> str:
+        if calendar_url in self.active_calendars:
+            return calendar_url
+        else:
+            current_url = self.all_calendars_bases[calendar_url].get('url', None)
+            if current_url is not None:
+                return current_url
+            else:
+                return self.all_calendars_bases[calendar_url]['old_urls'][-1]
+
     def _get_events_count_per_calendar(self) -> dict:
         query = '''
                     SELECT calendar__url AS calendar, count(DISTINCT event_data__id) AS events_count
@@ -159,21 +168,20 @@ class PrepareCrawlerStatus:
                 '''
         cursor = self.connection.execute(query)
 
-        result_dict = {}
-        for tpl in cursor.fetchall():
-            result_dict[tpl[0]] = tpl[1]
+        result_dict = defaultdict(int)
+        for calendar_url, events_count in cursor.fetchall():
+            current_active_url = self._get_active_url(calendar_url)
+            result_dict[current_active_url] += events_count
         return result_dict
 
-    def _get_events_count_per_parser(self, events_per_calendar: dict) -> dict:
-        events_per_parser_dict = {}
+    @staticmethod
+    def _get_events_count_per_parser(events_per_calendar: dict) -> dict:
+        events_per_parser_dict = defaultdict(int)
 
         for calendar_url, events_count in events_per_calendar.items():
             calendar_base = utils.get_base_by_url(calendar_url)
             calendar_parser = calendar_base['parser']
-            if calendar_parser in events_per_parser_dict:
-                events_per_parser_dict[calendar_parser] += events_count
-            else:
-                events_per_parser_dict[calendar_parser] = events_count
+            events_per_parser_dict[calendar_parser] += events_count
 
         return events_per_parser_dict
 
@@ -186,11 +194,9 @@ class PrepareCrawlerStatus:
         cursor = self.connection.execute(query)
 
         downloaded_calendars = [calendar[0] for calendar in cursor.fetchall()]
-        base_calendars = [base['url'] for base in utils.get_active_base()]
-
         return [{
             'calendar_url': calendar
-        } for calendar in base_calendars if calendar not in downloaded_calendars]
+        } for calendar in self.active_calendars if calendar not in downloaded_calendars]
 
     def _get_empty_calendars(self) -> list:
         last_2_weeks_empty_calendars = self._get_empty_calendars_helper(14)
@@ -224,12 +230,10 @@ class PrepareCrawlerStatus:
                 '''.format(query_last_n)
         cursor = self.connection.execute(query)
 
-        base_dict = utils.get_base_dict_per_url()
-
         return [{
             'calendar_url': calendar[0],
-            'parser': base_dict[calendar[0]]['parser']
-        } for calendar in cursor.fetchall()]
+            'parser': self.all_calendars_bases[calendar[0]]['parser']
+        } for calendar in cursor.fetchall() if calendar[0] in self.active_calendars]
 
     def _get_failed_events_errors(self, last_n: int) -> List[dict]:
         failed_events_dict = {}
@@ -298,18 +302,24 @@ class PrepareCrawlerStatus:
                     GROUP BY calendar__url
                 '''
         cursor = self.connection.execute(query)
-        all_events_per_calendar = cursor.fetchall()
-        all_events_per_calendar_dict = dict(all_events_per_calendar)
+        all_events_per_calendar = dict(cursor.fetchall())
 
-        calendars_over_failure_treshold = []
-        for calendar, events_count in parsed_events_per_calendar.items():
-            all_events_count = all_events_per_calendar_dict[calendar]
-            failed_events_count = all_events_count - events_count
-            failure_percentage = (failed_events_count / all_events_count) * 100
+        all_events_per_active_calendar = defaultdict(int)
+        for calendar_url, all_events_count in all_events_per_calendar.items():
+            current_active_url = self._get_active_url(calendar_url)
+            all_events_per_active_calendar[current_active_url] += all_events_count
+
+        calendars_over_failure_threshold = []
+        for calendar_url in all_events_per_active_calendar:
+            all_events_count = all_events_per_active_calendar[calendar_url]
+            failed_events_count = all_events_count - parsed_events_per_calendar[calendar_url]
+            failure_percentage = -1
+            if all_events_count > 0:
+                failure_percentage = (failed_events_count / all_events_count) * 100
 
             if failure_percentage >= failure_threshold:
-                calendars_over_failure_treshold.append({
-                    'calendar_url': calendar,
+                calendars_over_failure_threshold.append({
+                    'calendar_url': calendar_url,
                     'events_failure': {
                         'all_events_count': all_events_count,
                         'failed_events_count': failed_events_count,
@@ -317,7 +327,7 @@ class PrepareCrawlerStatus:
                     }
                 })
 
-        return calendars_over_failure_treshold
+        return calendars_over_failure_threshold
 
     def _get_related_events_info(self, list_with_event_url_ids: List[dict]) -> dict:
         events_url_ids = []
@@ -354,11 +364,14 @@ class PrepareCrawlerStatus:
 
         return events_dict
 
-    @staticmethod
-    def _get_related_calendars_info() -> dict:
-        base_dict = utils.get_base_dict_per_url()
+    def _get_related_calendars_info(self) -> dict:
+        return self.all_calendars_bases
 
-        return base_dict
+    def _write_to_output(self, crawler_status_dict: dict) -> None:
+        if self.args.dry_run:
+            print(json.dumps(crawler_status_dict, indent=4, ensure_ascii=False))
+        else:
+            utils.store_to_json_file(crawler_status_dict, PrepareCrawlerStatus.OUTPUT_FILE_PATH)
 
     @staticmethod
     def _generate_email(last_week_dict: dict) -> None:
