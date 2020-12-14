@@ -20,7 +20,7 @@ class GeocodeLocation:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
-        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
+        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, log_level=self.args.log_level)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
@@ -110,7 +110,8 @@ class GeocodeLocation:
     def _geocode_locations(self, input_events: List[tuple], municipalities: List[dict]) -> List[dict]:
         self.logger.info("Geocoding events' locations...")
 
-        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__, log_file=self.args.log_file, debug=self.args.debug)
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__,
+                                    log_file=self.args.log_file, log_level=self.args.log_level)
         calendars_with_default_gps = utils.get_base_dict_per_url(utils.get_base_with_default_gps())
         input_tuples = []
         for index, event in enumerate(input_events):

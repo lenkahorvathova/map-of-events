@@ -22,7 +22,7 @@ class DeduplicateEvents:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
-        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
+        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, log_level=self.args.log_level)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
@@ -122,7 +122,8 @@ class DeduplicateEvents:
     def _find_duplicates(self, input_events: dict) -> List[dict]:
         self.logger.info("Deduplicating events...")
 
-        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__, log_file=self.args.log_file, debug=self.args.debug)
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__,
+                                    log_file=self.args.log_file, log_level=self.args.log_level)
         input_tuples = []
         if self.args.event_url is not None:
             return [self._find_duplicates_process((1, 1, self.args.event_url, input_events))]

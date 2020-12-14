@@ -18,7 +18,7 @@ class ExtractKeywords:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
-        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
+        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, log_level=self.args.log_level)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
@@ -73,7 +73,8 @@ class ExtractKeywords:
     def _extract_keywords(self, input_events: List[tuple], keywords_dict: dict) -> List[tuple]:
         self.logger.info("Extracting events' keywords...")
 
-        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__, log_file=self.args.log_file, debug=self.args.debug)
+        logger.set_up_simple_logger(SIMPLE_LOGGER_PREFIX + __file__,
+                                    log_file=self.args.log_file, log_level=self.args.log_level)
         input_tuples = []
         for index, event in enumerate(input_events):
             input_tuples.append((index + 1, len(input_events), event, keywords_dict))

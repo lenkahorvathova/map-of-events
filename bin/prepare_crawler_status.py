@@ -17,7 +17,7 @@ class PrepareCrawlerStatus:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
-        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
+        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, log_level=self.args.log_level)
         self.connection = utils.create_connection()
         self.active_calendars = [base['url'] for base in utils.get_active_base()]
         self.all_calendars_bases = utils.get_base_dict_per_url()

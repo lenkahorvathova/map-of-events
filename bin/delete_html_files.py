@@ -12,7 +12,7 @@ class DeleteHtmlFiles:
 
     def __init__(self) -> None:
         self.args = self._parse_arguments()
-        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, debug=self.args.debug)
+        self.logger = logger.set_up_script_logger(__file__, log_file=self.args.log_file, log_level=self.args.log_level)
         self.connection = utils.create_connection()
 
         if not self.args.dry_run:
