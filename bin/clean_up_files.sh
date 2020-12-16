@@ -23,7 +23,6 @@ mkdir -p "${LOG_DATA_DIR}"
 {
   echo "====================$current_time====================="
   echo "============================================================"
-  echo "CLEAN UP HTML FILES:"
-  echo "============================================================"
+  echo "CLEAN UP HTML FILES"
   python3 -u bin/delete_html_files.py 366 --log-file "${log_file_path}"
 } >>"${log_file_path}"
