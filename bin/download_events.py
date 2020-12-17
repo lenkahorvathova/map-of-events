@@ -141,7 +141,7 @@ class DownloadEvents:
         if self.args.redownload_file:
             if not self.args.dry_run:
                 _, html_file_path, _ = events_to_insert[0]
-                self.logger.info("File was redownloaded to: {}".format(html_file_path))
+                print("File was re-downloaded to: {}".format(html_file_path))
             return
 
         if not self.args.dry_run:
@@ -176,7 +176,8 @@ class DownloadEvents:
 
         self.logger.debug(">> Error stats: {}".format(json.dumps(error_dict, indent=4)))
         self.logger.info(">> Number of failed events: {}/{}".format(len(failed_url_ids), len(event_url_ids)))
-        self.logger.info(">> Failed event_url IDs: {}".format(failed_url_ids))
+        if len(failed_url_ids) > 0:
+            self.logger.warning(">> Failed event_url IDs: {}".format(failed_url_ids))
 
 
 if __name__ == '__main__':

@@ -199,10 +199,9 @@ class GeocodeLocation:
         event_dict["matched"] = list(event_dict["matched"])
         event_dict["ambiguous"] = list(event_dict["ambiguous"])
 
-        if event_dict["has_gps"] or event_dict["has_default"] or event_dict["geocoded_location"]:
-            simple_logger.info(info_output + " | OK")
-        else:
-            simple_logger.warning(info_output + " | NOK")
+        result = "OK" if event_dict["has_gps"] or event_dict["has_default"] or event_dict["geocoded_location"] \
+            else "NOK"
+        simple_logger.info(info_output + " | " + result)
 
         return event_dict
 
@@ -352,7 +351,8 @@ class GeocodeLocation:
         self.logger.debug(">> Data (online, has_default, gps, municipality, district, event_data_id):\n\t{}".format(
             "\n\t".join([str(tpl) for tpl in data_to_insert])))
         self.logger.info(">> Result: {} OKs + {} NOKs / {}".format(geocoded - len(nok_list), len(nok_list), geocoded))
-        self.logger.info(">> Failed event_data IDs: {}".format(list(nok_list)))
+        if len(nok_list) > 0:
+            self.logger.warning(">> Failed event_data IDs: {}".format(list(nok_list)))
 
 
 if __name__ == "__main__":

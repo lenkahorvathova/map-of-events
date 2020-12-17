@@ -125,10 +125,8 @@ class ExtractKeywords:
                         if match:
                             matched_keywords.add((keyword, source))
 
-        if len(matched_keywords) == 0:
-            simple_logger.warning(info_output + " | NOK")
-        else:
-            simple_logger.info(info_output + " | OK")
+        result = "NOK" if len(matched_keywords) == 0 else "OK"
+        simple_logger.info(info_output + " | " + result)
 
         return event_data_id, list(matched_keywords), title, perex, types
 
@@ -171,7 +169,8 @@ class ExtractKeywords:
 
         self.logger.info(">> Result: {} OKs + {} NOKs / {}".format(len(keywords_to_insert) - nok, nok,
                                                                    len(keywords_to_insert)))
-        self.logger.info(">> Events without keywords's event_data IDs: {}".format(events_without_keywords))
+        if len(events_without_keywords) > 0:
+            self.logger.warning(">> Events without keywords' event_data IDs: {}".format(events_without_keywords))
 
 
 if __name__ == '__main__':

@@ -120,10 +120,7 @@ class ProcessDatetime:
                 simple_logger.debug("Parser's errors: {}".format(json.dumps(parser.error_messages, indent=4)))
             return [], event_data_id
 
-        if len(processed_datetimes) == 0:
-            simple_logger.warning(info_output + " | 0")
-        else:
-            simple_logger.info(info_output + " | {}".format(len(processed_datetimes)))
+        simple_logger.info(info_output + " | {}".format(len(processed_datetimes)))
         if len(parser.error_messages) != 0:
             simple_logger.debug("Parser's errors: {}".format(json.dumps(parser.error_messages, indent=4)))
 
@@ -168,7 +165,8 @@ class ProcessDatetime:
 
         self.logger.info(">> Result: {} OKs + {} NOKs / {}".format(len(datetimes_to_insert) - len(nok), len(nok),
                                                                    len(datetimes_to_insert)))
-        self.logger.info(">> Failed event_data IDs: {}".format(nok))
+        if len(nok) > 0:
+            self.logger.warning(">> Failed event_data IDs: {}".format(nok))
 
 
 if __name__ == '__main__':

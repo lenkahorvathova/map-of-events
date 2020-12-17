@@ -132,10 +132,8 @@ class UnifyTypes:
                     if UnifyTypes._type_matches_keywords(types_mapping[type_word], keywords_from_title):
                         matched_types.add(type_word)
 
-        if len(matched_types) == 0:
-            simple_logger.warning(info_output + " | NOK")
-        else:
-            simple_logger.info(info_output + " | OK")
+        result = "NOK" if len(matched_types) == 0 else "OK"
+        simple_logger.info(info_output + " | " + result)
 
         return event_id, list(matched_types), event_dict['types']
 
@@ -183,7 +181,8 @@ class UnifyTypes:
 
         self.logger.info(">> Result: {} OKs + {} NOKs / {}".format(len(types_to_insert) - nok, nok,
                                                                    len(types_to_insert)))
-        self.logger.info(">> Events without type's event_data IDs: {}".format(events_without_type))
+        if len(events_without_type) > 0:
+            self.logger.warning(">> Events without type's event_data IDs: {}".format(events_without_type))
 
 
 if __name__ == '__main__':

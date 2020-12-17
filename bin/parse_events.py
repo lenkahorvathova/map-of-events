@@ -228,7 +228,8 @@ class ParseEvents:
         if len(error_dict) > 0:
             self.logger.info(">> Errors stats: {}".format(json.dumps(error_dict, indent=4, ensure_ascii=False)))
         self.logger.info(">> Result: {} OKs + {} NOKs / {}".format(ok, len(nok_list), ok + len(nok_list)))
-        self.logger.info(">> Failed event_html IDs: {}".format(nok_list))
+        if len(nok_list) > 0:
+            self.logger.warning(">> Failed event_html IDs: {}".format(nok_list))
 
     def _update_database(self, input_events: List[tuple]) -> None:
         if self.args.dry_run:

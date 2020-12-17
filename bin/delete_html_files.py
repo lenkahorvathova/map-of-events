@@ -64,12 +64,14 @@ class DeleteHtmlFiles:
                 if os.path.isfile(file_path):
                     os.remove(file_path)
 
-        debug_msg = "Files that would be deleted" if self.args.dry_run else "Deleted files"
-        self.logger.info(">> {} count: {}".format(debug_msg, len(all_file_paths)))
+        debug_msg = ">> {} files count: {}".format("Would-be-deleted" if self.args.dry_run else "Deleted",
+                                                   len(all_file_paths))
+        if len(all_file_paths) == 0:
+            self.logger.warning(debug_msg)
+        else:
+            self.logger.info(debug_msg)
         if len(all_file_paths) > 0:
             self.logger.info('\n'.join(["List of the files:"] + all_file_paths))
-        else:
-            self.logger.info("List of the files: []")
 
     def _update_database(self, calendar_ids: List[int], event_html_ids: List[int]) -> None:
         if self.args.dry_run:

@@ -115,7 +115,8 @@ class DownloadCalendars:
             self.connection.commit()
 
         self.logger.info(">> Number of failed calendars: {}/{}".format(len(failed_calendars), len(calendars_to_insert)))
-        self.logger.info(">> Failed calendar URLs: {}".format(failed_calendars))
+        if len(failed_calendars) > 0:
+            self.logger.warning(">> Failed calendar URLs: {}".format(failed_calendars))
 
 
 if __name__ == '__main__':

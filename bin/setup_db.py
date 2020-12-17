@@ -12,7 +12,7 @@ class SetupDB:
 
     def run(self) -> None:
         self.logger.info("Setting up DB...")
-        
+
         self.connection.execute('''PRAGMA foreign_keys = ON''')
 
         with open(self.SCHEMA_PATH, 'r', encoding="utf-8") as schema_file:
