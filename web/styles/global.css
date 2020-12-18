@@ -16,3 +16,7 @@ body {
 .navbar-lang {
     cursor: pointer;
 }
+
+.navbar-toggler {
+    margin: 5px;
+}
