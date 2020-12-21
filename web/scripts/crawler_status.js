@@ -148,8 +148,12 @@ function initializeCalendarsWithFailedEventsTable() {
             {
                 targets: 3,
                 orderable: true,
-                render: function (data) {
-                    return `${data['failure_percentage'].toFixed(0)}% <span class="text-muted small">(${data['failed_events_count']}/${data['all_events_count']})</span>`;
+                render: function (data, type) {
+                    if (type === 'display') {
+                        return `${data['failure_percentage'].toFixed(0)}% <span class="text-muted small">(${data['failed_events_count']}/${data['all_events_count']})</span>`;
+                    } else {
+                        return data['failure_percentage'].toFixed(0)
+                    }
                 }
             }
         ]
