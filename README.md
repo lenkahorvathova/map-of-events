@@ -58,7 +58,7 @@ This is a tool for parsing of events from provided web calendars. Found events a
         This will set up regular execution of the tool using **cron** service.  
         > The process for parsing of events and generating of websites runs every day at 8 a.m.  
         An email with a weekly reminder to check crawler's status is being sent every Monday at 9 a.m.  
-        Clean-up of old HTML files is performed monthly at 8:30 a.m.
+        Clean-up of old HTML files is performed monthly at 7 a.m.
 
         ```console
         user@server:~$ crontab -e
