@@ -63,9 +63,9 @@ This is a tool for parsing of events from provided web calendars. Found events a
         ```console
         user@server:~$ crontab -e
 
-        8 * * * /your_path/repository/bin/process.sh
+        0 8 * * * /your_path/repository/bin/process.sh
         0 9 * * MON /your_path/repository/bin/send_email.sh
-        30 8 1 * * /your_path/repository/bin/clean_up_files.sh
+        0 7 1 * * /your_path/repository/bin/clean_up_files.sh
         ```
     - ### running scripts separately  
         Each of the Python scripts can be run separately and provides its description with several CLI arguments.
