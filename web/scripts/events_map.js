@@ -73,10 +73,12 @@ function prepareEventDataForEventsTable(eventId, eventDatetimes) {
     let location = null;
     if (event['location']) {
         location = event['location'];
-    } else if (event['has_default']) {
-        location = event['default_location'];
-    } else if (!event['has_default']) {
-        location = event['municipality'] + ", " + event['district'];
+    } else if (!event['online']) {
+        if (event['has_default']) {
+            location = event['default_location'];
+        } else {
+            location = event['municipality'] + ", " + event['district'];
+        }
     }
     event["table_location"] = location;
 
