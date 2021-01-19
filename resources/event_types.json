@@ -166,7 +166,7 @@
             "ples"
         ],
         "supertypes": [
-            "spoločenská akce",
+            "společenská akce",
             "tanec"
         ]
     },
@@ -216,7 +216,7 @@
             "slavnost"
         ],
         "supertypes": [
-            "spoločenská akce"
+            "společenská akce"
         ]
     },
     {
