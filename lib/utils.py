@@ -277,4 +277,4 @@ def sanitize_string_for_html(input_string: str) -> Optional[str]:
 
     if not input_string:
         return None
-    return input_string.replace('\n', '\\n').replace('\t', '\\t').replace('"', '\\"').replace('`', '\'')
+    return input_string.replace('\\', '\\\\').replace('\n', '\\n').replace('\t', '\\t').replace('"', '\\"').replace('`', '\'')
